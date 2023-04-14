@@ -30,7 +30,7 @@
                </VBox.margin>
             </Text>
             <Pane prefHeight="49.0" prefWidth="244.0" />
-            <HBox alignment="CENTER" prefHeight="27.0" prefWidth="244.0" spacing="10.0" stylesheets="@../css_file/style.css">
+            <HBox alignment="CENTER" prefHeight="27.0" prefWidth="244.0" spacing="10.0">
                <children>
                   <Pane prefHeight="27.0" prefWidth="28.0" styleClass="button-style-1">
                      <children>

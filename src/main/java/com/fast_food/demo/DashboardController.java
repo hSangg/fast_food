@@ -28,7 +28,7 @@ public class DashboardController implements Initializable {
         int column = 0;
         int row = 1;
 
-        // TODO Auto-generated method stub
+
         for(int i = 0; i < 10; i++) {
             FXMLLoader fxmlLoad = new FXMLLoader();
             fxmlLoad.setLocation(getClass().getResource("MenuItem.fxml"));

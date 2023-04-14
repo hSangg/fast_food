@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox prefHeight="949.0" prefWidth="1600.0" spacing="19.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.DashboardController">
+<HBox prefHeight="949.0" prefWidth="1600.0" spacing="19.0" stylesheets="@../../../css/style.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.DashboardController">
    <children>
       <VBox prefHeight="949.0" prefWidth="1317.0">
          <children>
@@ -35,7 +35,7 @@
                   </Label>
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="29.0" prefWidth="1156.0" spacing="23.0" stylesheets="@resource/css_file/style.css">
+            <HBox alignment="CENTER" prefHeight="29.0" prefWidth="1156.0" spacing="23.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="27.0" prefWidth="188.0" styleClass="button-style">
                      <children>
@@ -63,7 +63,7 @@
                   </GridPane>
                </content>
             </ScrollPane>
-            <HBox alignment="CENTER" prefHeight="29.0" prefWidth="1156.0" spacing="23.0" stylesheets="@resource/css_file/style.css">
+            <HBox alignment="CENTER" prefHeight="29.0" prefWidth="1156.0" spacing="23.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="button-style">
                      <children>
@@ -84,7 +84,7 @@
             </HBox>
             <ScrollPane prefHeight="422.0" prefWidth="981.0">
                <content>
-                  <GridPane fx:id="menu_layout1" prefHeight="675.0" prefWidth="1143.0" stylesheets="@resource/css_file/style.css">
+                  <GridPane fx:id="menu_layout1" prefHeight="675.0" prefWidth="1143.0" >
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
@@ -93,7 +93,7 @@
             </ScrollPane>
          </children>
       </VBox>
-      <VBox prefHeight="923.0" prefWidth="539.0" stylesheets="@resource/css_file/style.css">
+      <VBox prefHeight="923.0" prefWidth="539.0">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="395.0" spacing="8.0">
                <children>
@@ -107,7 +107,7 @@
             </HBox>
             <HBox prefHeight="50.0" prefWidth="428.0">
                <children>
-                  <TextField alignment="CENTER" prefHeight="42.0" prefWidth="395.0" promptText="user name" styleClass="text-field-style" stylesheets="@resource/css_file/style.css">
+                  <TextField alignment="CENTER" prefHeight="42.0" prefWidth="395.0" promptText="user name" styleClass="text-field-style" >
                      <font>
                         <Font name="Montserrat Regular" size="12.0" />
                      </font>
@@ -120,12 +120,12 @@
                   <Insets bottom="5.0" top="2.0" />
                </VBox.margin>
             </HBox>
-            <TextField alignment="CENTER" prefHeight="42.0" prefWidth="395.0" promptText="select table" styleClass="text-field-style" stylesheets="@resource/css_file/style.css">
+            <TextField alignment="CENTER" prefHeight="42.0" prefWidth="395.0" promptText="select table" styleClass="text-field-style">
                <font>
                   <Font name="Montserrat Regular" size="12.0" />
                </font>
             </TextField>
-            <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="395.0" spacing="8.0" stylesheets="@resource/css_file/style.css">
+            <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="395.0" spacing="8.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-decor" text="Order Detail">
                      <HBox.margin>
@@ -170,7 +170,7 @@
                   <Insets top="8.0" />
                </VBox.margin>
             </HBox>
-            <VBox prefHeight="131.0" prefWidth="351.0" styleClass="background_white" stylesheets="@resource/css_file/style.css">
+            <VBox prefHeight="131.0" prefWidth="351.0" styleClass="background_white">
                <children>
                   <HBox alignment="CENTER" prefHeight="33.0" prefWidth="351.0">
                      <children>
@@ -256,7 +256,7 @@
                </children>
             </VBox>
             <Pane prefHeight="61.0" prefWidth="395.0" VBox.vgrow="ALWAYS" />
-            <HBox alignment="CENTER" prefHeight="59.0" prefWidth="395.0" styleClass="button-style-1">
+            <HBox alignment="CENTER" prefHeight="59.0" prefWidth="395.0" styleClass="button-style-1" >
                <children>
                   <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Process Transaction">
                      <font>
