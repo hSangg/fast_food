@@ -12,12 +12,6 @@ public class HelloApplication extends Application {
         try{
             InitialScene ie = new InitialScene();
             ie.start(stage);
-
-//            CreateConnection db = new CreateConnection();
-//            db.getAllEmployees();
-
-
-
         } catch (Exception e) {e.printStackTrace();}
     }
 

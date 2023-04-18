@@ -48,5 +48,20 @@ public class ManagementController implements Initializable {
                 throw new RuntimeException(ex);
             }
         });
+
+        orders.setOnMouseClicked(e -> {
+            control_menu.setManaged(false);
+            control_menu.setVisible(false);
+
+
+            FXMLLoader employee_management = new FXMLLoader();
+            employee_management.setLocation(getClass().getResource("/com/fast_food/demo/EmployeesManagement.fxml"));
+
+            try {
+                scene_root.getChildren().add(employee_management.load());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 }
