@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1600.0" stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.LoginController">
+   <children>
+      <HBox prefHeight="299.0" prefWidth="676.0" style="-fx-background-radius: 500;">
+         <VBox.margin>
+            <Insets left="500.0" right="500.0" />
+         </VBox.margin>
+         <children>
+            <Pane prefHeight="334.0" prefWidth="600.0">
+               <children>
+                  <ImageView fx:id="image_background" fitHeight="303.0" fitWidth="606.0" opacity="0.7">
+                     <image>
+                        <Image url="@../../../images/118.png" />
+                     </image>
+                  </ImageView>
+                  <Text layoutX="11.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login" wrappingWidth="581.13671875">
+                     <font>
+                        <Font name="Fira Code SemiBold" size="29.0" />
+                     </font>
+                  </Text>
+                  <Label layoutX="12.0" layoutY="104.0" prefHeight="59.0" prefWidth="164.0" text="username:">
+                     <font>
+                        <Font name="Fira Code Medium" size="25.0" />
+                     </font>
+                  </Label>
+                  <TextField layoutX="158.0" layoutY="109.0" prefHeight="50.0" prefWidth="406.0" promptText="type here..." styleClass="text_field_input">
+                     <font>
+                        <Font name="Montserrat Regular" size="18.0" />
+                     </font></TextField>
+                  <Label layoutX="14.0" layoutY="161.0" prefHeight="59.0" prefWidth="164.0" text="password:">
+                     <font>
+                        <Font name="Fira Code Medium" size="25.0" />
+                     </font>
+                  </Label>
+                  <Text fill="#c9c9c9" layoutX="10.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="--------------------------------" wrappingWidth="581.13671875">
+                     <font>
+                        <Font name="Fira Code Light" size="29.0" />
+                     </font>
+                  </Text>
+                  <HBox fx:id="button_login" alignment="CENTER" layoutX="23.0" layoutY="236.0" prefHeight="54.0" prefWidth="557.0" style="-fx-background-color: #ffffff50; -fx-background-radius: 50;">
+                     <children>
+                        <Label text="LOGIN">
+                           <font>
+                              <Font name="Fira Code SemiBold" size="25.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <PasswordField layoutX="157.0" layoutY="167.0" prefHeight="50.0" prefWidth="406.0" promptText="type here..." styleClass="text_field_input">
+                     <font>
+                        <Font size="18.0" />
+                     </font></PasswordField>
+               </children>
+            </Pane>
+         </children>
+      </HBox>
+   </children>
+</VBox>

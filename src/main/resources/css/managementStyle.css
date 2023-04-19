@@ -1,0 +1,78 @@
+.text-header {
+  -fx-font-family: "Montserrat";
+  -fx-font-size: 25px;
+  -fx-font-weight: bold;
+}
+
+.text-normal {
+  -fx-font-family: "Montserrat";
+  -fx-font-size: 20px;
+  -fx-font-weight: normal;
+}
+
+.button-edit {
+  -fx-background-radius: 100;
+  fx-font-family: "Montserrat";
+  -fx-font-size: 25px;
+
+}
+
+.text-field {
+  -fx-background-radius: 100;
+  fx-font-family: "Montserrat";
+  -fx-font-size: 20px;
+  -font-weight: bold;
+}
+
+.button-delete {
+  -fx-background-radius: 100;
+  fx-font-family: "Montserrat";
+  -fx-font-size: 25px;
+}
+
+.background-employee {
+  -fx-background-radius: 50;
+  -fx-background-color: #f8717140;
+}
+
+.background-food {
+  -fx-background-radius: 50;
+  -fx-background-color: #fb923c50;
+}
+
+.background-order {
+  -fx-background-radius: 50;
+  -fx-background-color: #fb923c40;
+}
+.background-ingredient {
+  -fx-background-radius: 50;
+  -fx-background-color: #a855f740;
+}
+
+.background-form_submit {
+  -fx-background-radius: 30;
+  -fx-background-color: #cbd5e1;
+}
+
+
+.text_button{
+  fx-font-family: "Montserrat Black";
+  -fx-font-size: 18px;
+}
+
+.button_submit{
+  -fx-background-color: #3b82f6;
+    -fx-background-radius: 50;
+}
+
+.prompt_text_field{
+    -fx-prompt-text-fill: rgba(0, 0, 0, 0.9);
+}
+
+.text_field_input{
+-fx-background-color: #ffffff50;
+-fx-font-family: 'Fira Code Medium';
+-fx-font-weight: bold;
+-fx-font-size: 20;
+-fx-background-radius: 50;
+}

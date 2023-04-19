@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox prefHeight="800.0" prefWidth="1500.0" stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.OrdersManagementController">
+   <children>
+      <HBox prefHeight="76.0" prefWidth="1500.0" />
+      <HBox prefHeight="709.0" prefWidth="1500.0" spacing="15.0">
+         <children>
+            <TableView editable="true" prefHeight="312.0" prefWidth="1134.0" style="-fx-spacing: 10;" styleClass="text-normal" stylesheets="@../../../css/managementStyle.css">
+               <columns>
+                  <TableColumn fx:id="ten_khach_hang" prefWidth="148.0" text="Tên khách hàng" />
+                  <TableColumn fx:id="so_ban_dat" minWidth="0.0" prefWidth="99.0" text="Số bàn đặt" />
+                  <TableColumn fx:id="thoi_gian" minWidth="0.0" prefWidth="232.0" text="Thời gian" />
+                  <TableColumn fx:id="tong_tien" minWidth="0.0" prefWidth="142.0" text="Tổng tiền" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+            <VBox prefHeight="705.0" prefWidth="541.0" spacing="5.0" styleClass="background-form_submit">
+               <children>
+                  <Label prefHeight="32.0" prefWidth="451.0" styleClass="text-header" text="Chỉnh sửa thông tin đơn" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Hình thức thanh toán">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <ChoiceBox fx:id="hinh_thuc_thanh_toan" prefHeight="38.0" prefWidth="436.0" styleClass="text-normal" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Trạng thái">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <ChoiceBox fx:id="hinh_thuc_thanh_toan1" prefHeight="38.0" prefWidth="436.0" styleClass="text-normal" />
+                  <Pane prefHeight="200.0" prefWidth="200.0" styleClass="text-normal" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Pane>
+                  <HBox alignment="CENTER" prefHeight="48.0" prefWidth="436.0" spacing="5.0" styleClass="button_submit">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label text="HOÀN TẤT" textFill="WHITE">
+                           <font>
+                              <Font name="Montserrat Black" size="19.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="42.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/tick-dynamic-gradient.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="10.0" right="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>

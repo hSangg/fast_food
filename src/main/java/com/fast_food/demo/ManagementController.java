@@ -55,7 +55,7 @@ public class ManagementController implements Initializable {
 
 
             FXMLLoader employee_management = new FXMLLoader();
-            employee_management.setLocation(getClass().getResource("/com/fast_food/demo/EmployeesManagement.fxml"));
+            employee_management.setLocation(getClass().getResource("/com/fast_food/demo/OrdersManagement.fxml"));
 
             try {
                 scene_root.getChildren().add(employee_management.load());
