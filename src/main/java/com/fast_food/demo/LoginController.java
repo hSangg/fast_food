@@ -35,6 +35,8 @@ public class LoginController implements Initializable {
 
 
         button_login.setOnMouseClicked(e -> {
+
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/Management.fxml"));
             try {
                 Parent root = loader.load();

@@ -37,7 +37,6 @@ public class DashboardController implements Initializable {
             fxmlLoaderOrderLayout.setLocation(getClass().getResource("OrderItem.fxml"));
 
 
-
             try {
                 VBox ItemBox = fxmlLoad.load();
 

@@ -4,6 +4,7 @@ import model.Employee;
 import model.Order;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 
 public class DBHandler {
@@ -38,29 +39,42 @@ public class DBHandler {
             result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly ));
 
         }
-        conn.close();
+
         return result;
     }
 
     public HashSet<Order> getAllOrders() throws SQLException {
         Statement sm = conn.createStatement();
-        ResultSet rs = sm.executeQuery("");
+        ResultSet rs = sm.executeQuery("SELECT * FROM XU_LY_DON_HANG");
         HashSet<Order> result = new HashSet<>();
 
 
         while (rs.next()) {
             int id = rs.getInt("ID");
-            String ten = rs.getString("TEN");
-            String chuc_vu = rs.getString("CHUC_VU");
-            String sdt = rs.getString("SO_DIEN_THOAI");
-            int luong = rs.getInt("LUONG");
-            String nguoi_quan_ly = rs.getString("NGUOI_QUAN_LY");
-            int id_quan_ly = rs.getInt("ID_QUAN_LY");
+            int customerId = rs.getInt("ID_KH");
+            String customerName = rs.getString("TEN_KH");
+            int cashierId = rs.getInt("ID_TN");
+            String cashierName = rs.getString("TEN_TN");
+            int addressId = rs.getInt("DIA_CHI_ID");
+            String address = rs.getString("DIA_CHI");
+            int numTables = rs.getInt("SO_BAN_TAO_DON");
+            int total = rs.getInt("TONG_TIEN");
+            String paymentMethod = rs.getString("HINH_THUC_THANH_TOAN");
+            String status = rs.getString("TRANG_THAI");
+            int isOnline = rs.getInt("DAT_ONLINE");
+            Date orderDate = rs.getDate("NGAY_DAT");
+            String notes = rs.getString("GHI_CHU");
 
-//            result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly ));
+            // create a new Order object using the retrieved data
+            Order order = new Order(id, customerId, customerName, cashierId, cashierName,
+                    addressId, address, numTables, total, paymentMethod,
+                    status, isOnline, orderDate, notes);
 
+            result.add(order);
+
+            System.out.println(id);
         }
-        conn.close();
+
         return result;
     }
 

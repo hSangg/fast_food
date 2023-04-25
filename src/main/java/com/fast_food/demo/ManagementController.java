@@ -43,6 +43,7 @@ public class ManagementController implements Initializable {
             employee_management.setLocation(getClass().getResource("/com/fast_food/demo/EmployeesManagement.fxml"));
 
             try {
+                scene_root.getStylesheets().add("/css/managementStyle.css");
                 scene_root.getChildren().add(employee_management.load());
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
