@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<VBox stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.ManagementController">
+<VBox stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.ManagementController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1570.0" spacing="13.0" styleClass="text-header">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chào mừng" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\$ten_nguoi" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\\$ten_nguoi" />
+            <HBox fx:id="button_logout" prefHeight="100.0" prefWidth="200.0" />
          </children>
          <VBox.margin>
             <Insets />

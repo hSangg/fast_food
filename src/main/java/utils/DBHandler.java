@@ -1,8 +1,21 @@
 package utils;
 
+import com.fast_food.demo.ManagementController;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import model.Account;
 import model.Employee;
 import model.Order;
+import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.HashSet;
 
@@ -11,9 +24,9 @@ public class DBHandler {
      public DBHandler() {
         try{
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "1652003Sang_";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -63,5 +76,15 @@ public class DBHandler {
         conn.close();
         return result;
     }
-
+    public HashSet<Account> LoginUser() throws SQLException{
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT USERNAME, PASSWORD FROM TAIKHOAN_NV");
+        HashSet<Account> result = new HashSet<>();
+        while(rs.next()){
+            String name = rs.getString("USERNAME");
+            String password = rs.getString("PASSWORD");
+            result.add(new Account(name,password));
+        }
+        return result;
+    }
 }
