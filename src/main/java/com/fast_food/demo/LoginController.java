@@ -49,8 +49,6 @@ public class LoginController implements Initializable {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-
-
         });
 
     }
