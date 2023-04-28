@@ -6,8 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -20,7 +19,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicReference;
+
 
 
 public class EmployeesManagementController implements Initializable {
@@ -110,13 +109,6 @@ public class EmployeesManagementController implements Initializable {
         x.setVisible(y);
     }
 
-    public void addColumnHeaderIcon(TableColumn<?, ?> column, String imagePath, String columnHeader) {
-        ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
-        icon.setFitWidth(20);
-        icon.setFitHeight(20);
-        column.setGraphic(icon);
-        column.setText(columnHeader);
-    }
 
 
     public boolean check_is_error() {
@@ -197,6 +189,8 @@ public class EmployeesManagementController implements Initializable {
 
         DBHandler db = new DBHandler();
         ObservableList<Employee> employeeList = FXCollections.observableArrayList();
+        UtilityFunctions uf = new UtilityFunctions();
+
         choicebox_chuc_vu.getItems().addAll("Đầu bếp", "Quản lý", "Thu ngân");
 
         set_Text_Visible(text_error_validator_luong, false);
@@ -225,11 +219,11 @@ public class EmployeesManagementController implements Initializable {
             nguoi_quan_ly.setCellValueFactory(new PropertyValueFactory<>("nguoi_quan_ly"));
 
 
-            addColumnHeaderIcon(ten, "/images/text-dynamic-gradient.png", "Tên");
-            addColumnHeaderIcon(luong, "/images/money-dynamic-gradient.png", "Lương");
-            addColumnHeaderIcon(chuc_vu, "/images/star-dynamic-gradient.png", "Chức vụ");
-            addColumnHeaderIcon(sdt, "/images/phone-only-dynamic-gradient.png", "SĐT");
-            addColumnHeaderIcon(nguoi_quan_ly, "/images/flag-dynamic-gradient.png", "Người quản lý");
+            uf.addColumnHeaderIcon(ten, "/images/text-dynamic-gradient.png", "Tên");
+            uf.addColumnHeaderIcon(luong, "/images/money-dynamic-gradient.png", "Lương");
+            uf.addColumnHeaderIcon(chuc_vu, "/images/star-dynamic-gradient.png", "Chức vụ");
+            uf.addColumnHeaderIcon(sdt, "/images/phone-only-dynamic-gradient.png", "SĐT");
+            uf.addColumnHeaderIcon(nguoi_quan_ly, "/images/flag-dynamic-gradient.png", "Người quản lý");
 
 
             employee_list.setItems(employeeList);
@@ -294,8 +288,7 @@ public class EmployeesManagementController implements Initializable {
                     textfiel_ho_va_ten.setText(employee.getTen());
                     textfiel_luong.setText(String.valueOf(employee.getLuong()));
                     textfield_sdt.setText(employee.getSdt());
-                    text_ng_quan_ly.setVisible(true);
-                    text_ng_quan_ly.setManaged(true);
+                    set_Text_Visible(text_ng_quan_ly,true);
 
                     textfield_delete_e.setVisible(true);
                     textfield_delete_e.setManaged(true);
@@ -304,8 +297,8 @@ public class EmployeesManagementController implements Initializable {
                     if (employee.getChuc_vu().equals("Quản lý")) {
                         choicebox_nguoi_quan_ly.setVisible(false);
                         choicebox_nguoi_quan_ly.setManaged(false);
-                        text_ng_quan_ly.setVisible(false);
-                        text_ng_quan_ly.setManaged(false);
+                        set_Text_Visible(text_ng_quan_ly,false);
+
 
                     } else {
 

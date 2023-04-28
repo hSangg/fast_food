@@ -1,6 +1,7 @@
 package utils;
 
 import model.Employee;
+import model.FastFood;
 import model.Order;
 
 import java.sql.*;
@@ -72,7 +73,27 @@ public class DBHandler {
 
             result.add(order);
 
-            System.out.println(id);
+        }
+
+        return result;
+    }
+
+    public HashSet<FastFood> getFastFoodByIdOrder(int order_id) throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT MON_AN.ID, MON_AN.TEN_MON, MON_AN.MO_TA, MON_AN.LOAI, MON_AN.HINH_ANH, CHITIET_DON.SOLUONG" +
+                " FROM MON_AN" +
+                " JOIN CHITIET_DON ON MON_AN.ID = CHITIET_DON.ID_MON" +
+                " WHERE CHITIET_DON.ID_DON = " + order_id);
+        HashSet<FastFood> result = new HashSet<>();
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String tenMon = rs.getString("TEN_MON");
+            String moTa = rs.getString("MO_TA");
+            String loai = rs.getString("LOAI");
+            byte[] hinhAnh = rs.getBytes("HINH_ANH");
+            int soLuong = rs.getInt("SOLUONG");
+            FastFood fastFood = new FastFood(id, tenMon, moTa, loai, hinhAnh, soLuong);
+            result.add(fastFood);
         }
 
         return result;
