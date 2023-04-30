@@ -72,31 +72,15 @@ public class OrdersManagementController implements Initializable {
     }
 
     private boolean check_is_error() {
-        UtilityFunctions utilityFunctions = new UtilityFunctions();
-
-        boolean is_ht_tt_error = false;
-        boolean is_tt_error = false;
-
-        if (hinh_thuc_thanh_toan.getValue() == null) {
-            is_ht_tt_error=true;
-        }
-
-        if (cb_trang_thai.getValue() == null) {
-            is_tt_error=true;
-        }
-
-
+        boolean is_ht_tt_error = hinh_thuc_thanh_toan.getValue() == null;
+        boolean is_tt_error = cb_trang_thai.getValue() == null;
 
         set_Text_Visible(text_error_httt, is_ht_tt_error);
         set_Text_Visible(text_error_tt, is_tt_error);
 
-
-
-        return is_ht_tt_error || is_tt_error ;
-
-
-
+        return is_ht_tt_error || is_tt_error;
     }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

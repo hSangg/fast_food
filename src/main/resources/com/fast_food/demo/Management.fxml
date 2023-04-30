@@ -12,7 +12,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1570.0" spacing="13.0" styleClass="text-header">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chào mừng" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\$ten_nguoi" />
+            <Text fx:id="text_name" strokeType="OUTSIDE" strokeWidth="0.0" text="\$ten_nguoi" />
          </children>
          <VBox.margin>
             <Insets />

@@ -1,5 +1,6 @@
 package utils;
 
+import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,6 +19,12 @@ public class UtilityFunctions {
             return false; // Input is null or empty
         }
         return input.matches("^[0-9]+$");
+    }
+
+    public void setVisibleNode(Node node, boolean is_visible) {
+        node.setVisible(is_visible);
+        node.setManaged(is_visible);
+
     }
 
     public void addColumnHeaderIcon(TableColumn<?, ?> column, String imagePath, String columnHeader) {

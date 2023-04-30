@@ -1,9 +1,6 @@
 package utils;
 
-import model.Account;
-import model.Employee;
-import model.FastFood;
-import model.Order;
+import model.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -11,8 +8,10 @@ import java.util.HashSet;
 
 public class DBHandler {
     public Connection conn;
-     public DBHandler() {
-        try{
+    public int trang_thai_dang_nhap;
+
+    public DBHandler() {
+        try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
             String user = "SYSTEM";
@@ -20,7 +19,9 @@ public class DBHandler {
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
-        } catch(Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public HashSet<Employee> getAllEmployees() throws SQLException {
@@ -38,7 +39,7 @@ public class DBHandler {
             String nguoi_quan_ly = rs.getString("NGUOI_QUAN_LY");
             int id_quan_ly = rs.getInt("ID_QUAN_LY");
 
-            result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly ));
+            result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly));
 
         }
 
@@ -99,5 +100,35 @@ public class DBHandler {
 
         return result;
     }
+
+    public LogedInUser logIn(String username, String password) throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT COUNT(*) AS COUNT FROM TAIKHOAN_NV WHERE USERNAME = '" + username + "'");
+        int count = 0;
+
+        if (rs.next()) {
+            count = rs.getInt("COUNT");
+        }
+
+        if (count == 0) {
+            // The username does not exist in the database
+            return null;
+        }
+
+        // The username exists in the database, now check the password
+        rs = sm.executeQuery("SELECT TEN, PASSWORD, CHUC_VU FROM TAIKHOAN_NV JOIN NHAN_VIEN ON TAIKHOAN_NV.ID_NV = NHAN_VIEN.ID WHERE USERNAME = '" + username + "'");
+        LogedInUser logedReturn = null;
+
+        if (rs.next()) {
+            Account account = new Account(rs.getString("TEN"), rs.getString("PASSWORD"), rs.getString("CHUC_VU"));
+            if (account.getPassword().equals(password)) {
+                logedReturn = new LogedInUser();
+                logedReturn.setCurentAcc(account);
+            }
+        }
+
+        return logedReturn;
+    }
+
 
 }

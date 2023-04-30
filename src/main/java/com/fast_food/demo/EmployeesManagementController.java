@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 
 
-
 public class EmployeesManagementController implements Initializable {
 
     @FXML
@@ -110,7 +109,6 @@ public class EmployeesManagementController implements Initializable {
     }
 
 
-
     public boolean check_is_error() {
         UtilityFunctions utilityFunctions = new UtilityFunctions();
 
@@ -192,12 +190,11 @@ public class EmployeesManagementController implements Initializable {
         UtilityFunctions uf = new UtilityFunctions();
 
         choicebox_chuc_vu.getItems().addAll("Đầu bếp", "Quản lý", "Thu ngân");
-
-        set_Text_Visible(text_error_validator_luong, false);
-        set_Text_Visible(text_error_validator_name, false);
-        set_Text_Visible(text_error_validator_chuc_vu, false);
-        set_Text_Visible(text_error_validator_nguoi_ql, false);
-        set_Text_Visible(text_error_validator_sdt, false);
+        uf.setVisibleNode(text_error_validator_luong, false);
+        uf.setVisibleNode(text_error_validator_name, false);
+        uf.setVisibleNode(text_error_validator_chuc_vu, false);
+        uf.setVisibleNode(text_error_validator_nguoi_ql, false);
+        uf.setVisibleNode(text_error_validator_sdt, false);
 
         button_submit.setDisable(true);
 
@@ -210,6 +207,8 @@ public class EmployeesManagementController implements Initializable {
                     choicebox_nguoi_quan_ly.getItems().add(e.getTen());
                 }
             }
+
+            text_tong_nv.setText(String.valueOf(em.size()));
 
 
             luong.setCellValueFactory(new PropertyValueFactory<>("luong"));
@@ -242,15 +241,14 @@ public class EmployeesManagementController implements Initializable {
 
             choicebox_chuc_vu.setValue(null);
             choicebox_nguoi_quan_ly.setValue(null);
-            textfield_delete_e.setVisible(false);
-            textfield_delete_e.setManaged(false);
             button_submit.setDisable(false);
 
-            text_ng_quan_ly.setVisible(true);
-            text_ng_quan_ly.setManaged(true);
+            uf.setVisibleNode(text_ng_quan_ly, true);
+            uf.setVisibleNode(textfield_delete_e, false);
 
-            choicebox_nguoi_quan_ly.setVisible(true);
-            choicebox_nguoi_quan_ly.setManaged(true);
+            uf.setVisibleNode(choicebox_nguoi_quan_ly, true);
+
+
         });
 
         button_submit.setOnMouseClicked(e -> {
@@ -260,6 +258,8 @@ public class EmployeesManagementController implements Initializable {
                 System.out.println("Thêm nhân viên");
 
             }
+
+
             if (!is_error && rule_button_submit.equals("edit")) {
 
                 String e_name = textfiel_ho_va_ten.getText();
@@ -267,6 +267,7 @@ public class EmployeesManagementController implements Initializable {
                 if (e_name_delete.equals(e_name)) {
                     //xóa nhân viên
                     System.out.println("Xóa nhân viên");
+
                 } else {
                     // sửa những thay đổi
                     System.out.println("Sửa nhân viên");
@@ -288,23 +289,20 @@ public class EmployeesManagementController implements Initializable {
                     textfiel_ho_va_ten.setText(employee.getTen());
                     textfiel_luong.setText(String.valueOf(employee.getLuong()));
                     textfield_sdt.setText(employee.getSdt());
-                    set_Text_Visible(text_ng_quan_ly,true);
 
-                    textfield_delete_e.setVisible(true);
-                    textfield_delete_e.setManaged(true);
+                    uf.setVisibleNode(text_ng_quan_ly, true);
+                    uf.setVisibleNode(textfield_delete_e, true);
 
 
                     if (employee.getChuc_vu().equals("Quản lý")) {
-                        choicebox_nguoi_quan_ly.setVisible(false);
-                        choicebox_nguoi_quan_ly.setManaged(false);
-                        set_Text_Visible(text_ng_quan_ly,false);
+                        uf.setVisibleNode(choicebox_nguoi_quan_ly, false);
+                        uf.setVisibleNode(text_ng_quan_ly, false);
 
 
                     } else {
 
-                        choicebox_nguoi_quan_ly.setVisible(true);
-                        choicebox_nguoi_quan_ly.setManaged(true);
                         choicebox_nguoi_quan_ly.setValue(employee.getNguoi_quan_ly());
+                        uf.setVisibleNode(choicebox_nguoi_quan_ly, true);
                     }
 
 
