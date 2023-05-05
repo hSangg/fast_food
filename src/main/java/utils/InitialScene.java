@@ -21,7 +21,8 @@ public class InitialScene extends Application {
         Image icon = new Image(getClass().getResourceAsStream("/images/logo.png"));
         stage.getIcons().add(icon);
         stage.setTitle("QUẢN LÝ CỬA HÀNG THỨC ĂN NHANH");
-
+        stage.setX(1);
+        stage.setY(1);
         stage.setScene(scene);
         stage.show();
     }
