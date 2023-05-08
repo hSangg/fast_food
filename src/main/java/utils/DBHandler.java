@@ -13,9 +13,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "1652003Sang_";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -129,6 +129,74 @@ public class DBHandler {
 
         return logedReturn;
     }
+    public int find_manager_id(String MANAGER_NAME) throws SQLException {
+        int manager_id = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHAN_VIEN WHERE TEN = ? AND CHUC_VU='Quản lý'");
+        pstmt.setString(1, MANAGER_NAME);
+        ResultSet rs = pstmt.executeQuery();
+        if(rs.next()){
+            manager_id=rs.getInt(1);
+        }
+        return manager_id;
+    }
+    public void InsertEmp(String name, String sdt, String chuc_vu, int luong, int id_quan_ly) throws SQLException {
+        String sql = "INSERT INTO NHAN_VIEN ( ID, TEN, SO_DIEN_THOAI, CHUC_VU, LUONG, ID_QUAN_LY ) VALUES (?,?,?,?,?,?)";
+        Statement sm = conn.createStatement();
+        ResultSet rs =  sm.executeQuery("SELECT MAX(ID) FROM NHAN_VIEN");
+        int id = 0;
+        if(rs.next()) {
+            id = rs.getInt(1)+1;
+        }
+        try (PreparedStatement pstmt= conn.prepareStatement(sql)){
+            pstmt.setInt(1, id);
+            pstmt.setString(2, name);
+            pstmt.setString(3, sdt);
+            pstmt.setString(4, chuc_vu);
+            pstmt.setInt(5, luong);
+            if(chuc_vu.equals("Quản lý")) {
+                pstmt.setInt(6, Types.NULL);
+            }
+            else{
+                pstmt.setInt(6,id_quan_ly);
+            }
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
+    }
+    public void DeleteEmp(String emp_name) throws SQLException {
+        int id = find_id(emp_name);
+        String sql = "DELETE FROM NHAN_VIEN WHERE ID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setInt(1,id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public int find_id(String name) throws SQLException{
+        int id_ = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHAN_VIEN WHERE TEN = ?");
+        pstmt.setString(1, name);
+        ResultSet rs = pstmt.executeQuery();
+        if(rs.next()){
+            id_=rs.getInt(1);
+        }
+        return id_;
+    }
+    public void UpdateEmp(String name, String sdt,int luong, String ten_quan_ly) throws SQLException {
+        int id=find_id(name);
+        int id_quan_ly=find_manager_id(ten_quan_ly);
+        String sql = "UPDATE NHAN_VIEN SET SO_DIEN_THOAI=?, LUONG=?, ID_QUAN_LY=? WHERE ID=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, sdt);
+        pstmt.setInt(2, luong);
+        pstmt.setInt(3, id_quan_ly);
+        pstmt.setInt(4, id);
+        pstmt.executeUpdate();
+    }
 }
+
+

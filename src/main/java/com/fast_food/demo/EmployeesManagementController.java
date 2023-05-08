@@ -253,30 +253,60 @@ public class EmployeesManagementController implements Initializable {
 
         button_submit.setOnMouseClicked(e -> {
             boolean is_error = check_is_error();
-
+            DBHandler DB = new DBHandler();
             if (!is_error && rule_button_submit.equals("add")) {
+                int manager_id=0;
+                try {
+                    manager_id = DB.find_manager_id(choicebox_nguoi_quan_ly.getValue());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    DB.InsertEmp(textfiel_ho_va_ten.getText(),textfield_sdt.getText(),choicebox_chuc_vu.getValue(),Integer.parseInt(textfiel_luong.getText()),manager_id);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 System.out.println("Thêm nhân viên");
 
             }
-
-
             if (!is_error && rule_button_submit.equals("edit")) {
 
                 String e_name = textfiel_ho_va_ten.getText();
                 String e_name_delete = textfield_delete_e.getText();
                 if (e_name_delete.equals(e_name)) {
                     //xóa nhân viên
+                    try {
+                        DB.DeleteEmp(e_name);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     System.out.println("Xóa nhân viên");
-
                 } else {
                     // sửa những thay đổi
+                    try {
+                        DB.UpdateEmp(textfiel_ho_va_ten.getText(),textfield_sdt.getText(),Integer.parseInt(textfiel_luong.getText()),choicebox_nguoi_quan_ly.getValue());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     System.out.println("Sửa nhân viên");
-
-
                 }
-
             }
+            choicebox_nguoi_quan_ly.getItems().clear();
+            employee_list.getItems().clear();
+            try {
+                HashSet<Employee> em = db.getAllEmployees();
+                for (Employee emp : em) {
+                    employeeList.add(emp);
+                    if ("Quản lý".equals(emp.getChuc_vu())) {
+                        choicebox_nguoi_quan_ly.getItems().add(emp.getTen());
+                    }
+                }
+                employee_list.setItems(employeeList);
+                text_tong_nv.setText(String.valueOf(em.size()));
 
+            } catch (SQLException emp) {
+                throw new RuntimeException(emp);
+            }
         });
 
         employee_list.setOnMouseClicked(e -> {
