@@ -19,6 +19,11 @@ public class InitialScene extends Application {
         stage.setX(50);
         stage.setY(50);
         stage.setTitle("QUẢN LÝ CỬA HÀNG THỨC ĂN NHANH");
+<<<<<<< HEAD
+=======
+        stage.setX(1);
+        stage.setY(1);
+>>>>>>> 9b84ed2add4b36cf7cfc62360fe950b00027380c
         stage.setScene(scene);
         stage.show();
     }

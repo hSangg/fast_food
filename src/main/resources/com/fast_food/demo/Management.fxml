@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<<<<<<< HEAD
 <VBox stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.ManagementController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1570.0" spacing="13.0" styleClass="text-header">
@@ -12,6 +13,14 @@
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome" />
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\\$ten_nguoi" />
             <HBox fx:id="button_logout" prefHeight="100.0" prefWidth="200.0" />
+=======
+<VBox prefHeight="1000.0" prefWidth="1600.0" stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.ManagementController">
+   <children>
+      <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1570.0" spacing="13.0" styleClass="text-header">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chào mừng" />
+            <Text fx:id="text_name" strokeType="OUTSIDE" strokeWidth="0.0" text="\$ten_nguoi" />
+>>>>>>> 9b84ed2add4b36cf7cfc62360fe950b00027380c
          </children>
          <VBox.margin>
             <Insets />
@@ -33,7 +42,10 @@
                                     <Image url="@../../../images/boy-dynamic-color.png" />
                                  </image>
                               </ImageView>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý nhân viên" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý nhân viên">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin></Text>
                            </children>
                         </VBox>
                         <VBox fx:id="orders" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="301.0" styleClass="background-order">
@@ -43,7 +55,10 @@
                                     <Image url="@../../../images/bag-dynamic-color.png" />
                                  </image>
                               </ImageView>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý đơn hàng" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý đơn hàng">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin></Text>
                            </children>
                         </VBox>
                         <VBox fx:id="menu" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="301.0" styleClass="background-order">
@@ -56,7 +71,10 @@
                                     <Insets />
                                  </VBox.margin>
                               </ImageView>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý thực đơn" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý thực đơn">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin></Text>
                            </children>
                         </VBox>
                         <VBox fx:id="ingredient" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="301.0" styleClass="background-ingredient">
@@ -69,7 +87,10 @@
                                     <Insets />
                                  </VBox.margin>
                               </ImageView>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý nguyên liệu" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý nguyên liệu">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin></Text>
                            </children>
                         </VBox>
                      </children>
