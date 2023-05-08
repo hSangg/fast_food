@@ -198,5 +198,4 @@ public class DBHandler {
         pstmt.setInt(4, id);
         pstmt.executeUpdate();
     }
-
 }
