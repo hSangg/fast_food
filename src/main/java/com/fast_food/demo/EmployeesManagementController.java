@@ -99,86 +99,32 @@ public class EmployeesManagementController implements Initializable {
 
     public String rule_button_submit;
 
+    UtilityFunctions uf = new UtilityFunctions();
+
+
     public EmployeesManagementController() {
 
     }
 
-    public void set_Text_Visible(Text x, boolean y) {
-        x.setManaged(y);
-        x.setVisible(y);
-    }
 
 
     public boolean check_is_error() {
-        UtilityFunctions utilityFunctions = new UtilityFunctions();
 
-        boolean is_ten_error = false;
-        boolean is_sdt_error = false;
-        boolean is_luong_error = false;
-        boolean is_chuc_vu_error = false;
-        boolean is_nguoi_ql_error = false;
+        boolean hasError = false;
 
-        String s_ten = textfiel_ho_va_ten.getText();
-        String s_sdt = textfield_sdt.getText();
-        String s_luong = textfiel_luong.getText();
-        String s_nguoi_ql = choicebox_nguoi_quan_ly.getValue();
-        String s_chuc_vu = choicebox_chuc_vu.getValue();
+        hasError |= uf.isEmptyString(textfiel_ho_va_ten.getText()) ? uf.setErrorMsg(text_error_validator_name, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_name);
+        hasError |= uf.isEmptyString(textfield_sdt.getText()) ? uf.setErrorMsg(text_error_validator_sdt, "Vui lòng điền thông tin") :
+                (!uf.isPhoneNumber(textfield_sdt.getText()) ? uf.setErrorMsg(text_error_validator_sdt, "Sai định dạng số điện thoại") : uf.hideErrorMsg(text_error_validator_sdt));
+        hasError |= uf.isEmptyString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Vui lòng điền thông tin") :
+                (!uf.isNumericString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Sai định dạng lương") : uf.hideErrorMsg(text_error_validator_luong));
+        hasError |= uf.isEmptyString(choicebox_chuc_vu.getValue()) ? uf.setErrorMsg(text_error_validator_chuc_vu, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_chuc_vu);
+        hasError |= uf.isEmptyString(choicebox_nguoi_quan_ly.getValue()) ? uf.setErrorMsg(text_error_validator_nguoi_ql, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_nguoi_ql);
 
-        if (utilityFunctions.isEmptyString(s_nguoi_ql)) {
-            is_nguoi_ql_error = true;
-        }
-
-        if (utilityFunctions.isEmptyString(s_chuc_vu)) {
-            is_chuc_vu_error = true;
-        }
-
-        if (utilityFunctions.isEmptyString(s_ten)) {
-            text_error_validator_name.setText("Tên đang bị bỏ trống");
-
-            is_ten_error = true;
-        } else {
-            set_Text_Visible(text_error_validator_name, false);
-        }
-
-        if (utilityFunctions.isEmptyString(s_sdt)) {
-            text_error_validator_sdt.setText("Số điện thoại đang bị bỏ trống");
-            is_sdt_error = true;
-
-        } else {
-            if (!utilityFunctions.isPhoneNumber(s_sdt)) {
-                text_error_validator_sdt.setText("Sai định dạng số điện thoại");
-                is_sdt_error = true;
-            } else {
-                set_Text_Visible(text_error_validator_sdt, false);
-            }
-
-        }
-
-
-        if (utilityFunctions.isEmptyString(s_luong)) {
-            text_error_validator_luong.setText("Lương đang bị bỏ trống");
-            is_luong_error = true;
-
-        } else {
-            if (!utilityFunctions.isNumericString(s_luong)) {
-                text_error_validator_luong.setText("Sai định dạng lương");
-                is_luong_error = true;
-            } else {
-                set_Text_Visible(text_error_validator_luong, false);
-
-            }
-
-        }
-
-        set_Text_Visible(text_error_validator_name, is_ten_error);
-        set_Text_Visible(text_error_validator_sdt, is_sdt_error);
-        set_Text_Visible(text_error_validator_luong, is_luong_error);
-        set_Text_Visible(text_error_validator_chuc_vu, is_chuc_vu_error);
-        set_Text_Visible(text_error_validator_nguoi_ql, is_nguoi_ql_error);
-
-
-        return is_ten_error || is_luong_error || is_sdt_error;
+        return hasError;
     }
+
+
+
 
     HashSet<Employee> ds_nguoi_quan_ly;
 
@@ -187,7 +133,10 @@ public class EmployeesManagementController implements Initializable {
 
         DBHandler db = new DBHandler();
         ObservableList<Employee> employeeList = FXCollections.observableArrayList();
-        UtilityFunctions uf = new UtilityFunctions();
+
+        choicebox_chuc_vu.getItems().clear();
+        choicebox_nguoi_quan_ly.getItems().clear();
+
 
         choicebox_chuc_vu.getItems().addAll("Đầu bếp", "Quản lý", "Thu ngân");
         uf.setVisibleNode(text_error_validator_luong, false);
@@ -256,6 +205,8 @@ public class EmployeesManagementController implements Initializable {
 
             if (!is_error && rule_button_submit.equals("add")) {
                 System.out.println("Thêm nhân viên");
+
+                this.initialize(url, resourceBundle);
 
             }
 

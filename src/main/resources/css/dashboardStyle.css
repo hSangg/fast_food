@@ -17,6 +17,11 @@
   -fx-background-radius: 10 10 10 10;
 }
 
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
 .text-field-style {
   -fx-border-color: #2563eb;
   -fx-border-width: 2px;
@@ -34,7 +39,7 @@
 }
 
 .background_black {
-  -fx-background-color: #e0e0e0;
+  -fx-background-color: #00000010;
 }
 
 .background_white {
@@ -53,3 +58,10 @@
   -fx-border-width: 0 0 1 0;
 }
 
+.background_menu_item {
+    -fx-background-color: white;
+    -fx-border-color: orange;
+    -fx-border-width: 2px;
+    -fx-border-radius: 20;
+    -fx-background-radius: 100;
+}

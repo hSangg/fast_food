@@ -66,17 +66,16 @@ public class OrdersManagementController implements Initializable {
     @FXML
     private Text text_error_tt;
 
-    public void set_Text_Visible(Text x, boolean y) {
-        x.setManaged(y);
-        x.setVisible(y);
-    }
+    UtilityFunctions uf = new UtilityFunctions();
+
+
 
     private boolean check_is_error() {
         boolean is_ht_tt_error = hinh_thuc_thanh_toan.getValue() == null;
         boolean is_tt_error = cb_trang_thai.getValue() == null;
 
-        set_Text_Visible(text_error_httt, is_ht_tt_error);
-        set_Text_Visible(text_error_tt, is_tt_error);
+        uf.setVisibleNode(text_error_httt, is_ht_tt_error);
+        uf.setVisibleNode(text_error_tt, is_tt_error);
 
         return is_ht_tt_error || is_tt_error;
     }
@@ -87,8 +86,8 @@ public class OrdersManagementController implements Initializable {
         hinh_thuc_thanh_toan.getItems().addAll("Tiền mặt", "Chuyển khoản");
         cb_trang_thai.getItems().addAll("Chưa xác nhận", "Đã Thanh Toán", "Đã Hoàn Thành", "Bị Hủy");
         button_submit.setDisable(true);
-        set_Text_Visible(text_error_httt, false);
-        set_Text_Visible(text_error_tt, false);
+        uf.setVisibleNode(text_error_httt, false);
+        uf.setVisibleNode(text_error_tt, false);
 
         ObservableList<Order> orderList = FXCollections.observableArrayList();
         ObservableList<FastFood> foodInOrder = FXCollections.observableArrayList();

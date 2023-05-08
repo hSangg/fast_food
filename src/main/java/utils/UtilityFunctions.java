@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 
 public class UtilityFunctions {
     public boolean isPhoneNumber(String input) {
@@ -34,5 +35,17 @@ public class UtilityFunctions {
         column.setGraphic(icon);
         column.setText(columnHeader);
     }
+
+    public boolean setErrorMsg(Text errorLabel, String errorMsg) {
+        setVisibleNode(errorLabel, true);
+        errorLabel.setText(errorMsg);
+        return true;
+    }
+
+    public boolean hideErrorMsg(Text errorLabel) {
+        setVisibleNode(errorLabel, false);
+        return false;
+    }
+
 
 }

@@ -48,6 +48,12 @@
   -fx-background-color: #fb923c40;
 }
 
+.button_orange {
+  -fx-background-color: #FC4F00;
+  -fx-background-radius: 10;
+  -fx-padding: 2 2 2 2;
+  -fx-font-weight: bold;
+}
 .background-ingredient {
   -fx-background-radius: 50;
   -fx-background-color: #a855f740;
@@ -250,4 +256,9 @@
 
 .table_order .scroll-bar:horizontal {
   -fx-background-insets: -1;
+}
+
+.scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
 }

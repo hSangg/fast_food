@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -10,115 +11,76 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="500.0" stylesheets="@../../../css/dashboardStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="370.0" styleClass="background_menu_item" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.MenuItemController">
    <children>
-      <HBox alignment="CENTER" prefHeight="134.0" prefWidth="500.0" spacing="8.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" prefHeight="286.0" prefWidth="370.0">
          <children>
-            <ImageView fitHeight="200.0" fitWidth="194.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="image" fitHeight="318.0" fitWidth="346.0">
                <image>
-                  <Image url="@../../../images/heart-dynamic-gradient.png" />
+                  <Image url="@../../../../../../../../Downloads/DALL·E%202023-04-29%2022.12.09.png" />
                </image>
                <HBox.margin>
-                  <Insets left="5.0" top="4.0" />
+                  <Insets top="5.0" />
                </HBox.margin>
             </ImageView>
-            <VBox prefHeight="138.0" prefWidth="316.0">
-               <children>
-                  <Label prefHeight="52.0" prefWidth="293.0" text="Gà rán nóng bỏng">
-                     <font>
-                        <Font name="Montserrat Bold" size="23.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Text fill="#8d8d8d" strokeType="OUTSIDE" strokeWidth="0.0" text="Gà rán cực nóng bỏng, sẵn sàng nằm trên dĩa chờ bạn xơi, với hương vị giòn tan, món gà kkk sẽ làm chiều lòng đến những rán thường được kèm với các loại rau xanh hoặc khoai tây chiên, tạo nên sự kết hợp hoàn hảo giữa vị giòn tan và vị ngọt của rau củ." wrappingWidth="273.5852966308594" VBox.vgrow="ALWAYS">
-                     <font>
-                        <Font name="Montserrat SemiBold" size="15.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="14.0" top="3.0" />
-                     </VBox.margin>
-                  </Text>
-                  <HBox prefHeight="22.0" prefWidth="287.0">
-                     <children>
-                        <VBox alignment="CENTER" style="-fx-background-color: #16a34a;" styleClass="background_white">
-                           <children>
-                              <Text fill="#fcfcfc" strokeType="OUTSIDE" strokeWidth="0.0" text="avaiable" wrappingWidth="46.83400344848633">
-                                 <font>
-                                    <Font name="Montserrat Regular" size="11.0" />
-                                 </font>
-                              </Text>
-                           </children>
-                           <padding>
-                              <Insets bottom="3.0" left="12.0" right="12.0" top="3.0" />
-                           </padding>
-                           <HBox.margin>
-                              <Insets top="2.0" />
-                           </HBox.margin>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </children>
-               <HBox.margin>
-                  <Insets top="2.0" />
-               </HBox.margin>
-            </VBox>
          </children>
-         <VBox.margin>
-            <Insets top="2.0" />
-         </VBox.margin>
-         <padding>
-            <Insets left="4.0" />
-         </padding>
       </HBox>
-      <HBox prefHeight="32.0" prefWidth="500.0">
+      <HBox alignment="CENTER" prefHeight="24.0" prefWidth="419.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="\$150" textAlignment="CENTER" wrappingWidth="181.87800216674805">
+            <Text fx:id="name" strokeType="OUTSIDE" strokeWidth="0.0" text="Gà Chiên" wrappingWidth="357.864990234375">
                <font>
-                  <Font name="Montserrat ExtraBold" size="26.0" />
+                  <Font name="Montserrat Black" size="19.0" />
                </font>
                <HBox.margin>
-                  <Insets bottom="3.0" left="13.0" />
+                  <Insets top="5.0" />
                </HBox.margin>
             </Text>
-            <HBox alignment="CENTER" prefHeight="32.0" prefWidth="356.0" spacing="30.0" HBox.hgrow="ALWAYS">
+         </children>
+      </HBox>
+      <Label fx:id="description" alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="95.0" prefWidth="356.0" style="-fx-font-size: 17px;" text="awefiuoqwhagoqwhgoiqwhgoiiahwgoiawhegoiawhegioaehgoiawhegoiahwegoiawehgioaghieogihawogihaew" wrapText="true">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Pane prefHeight="19.0" prefWidth="370.0" />
+      <HBox alignment="CENTER_LEFT" prefHeight="33.0" prefWidth="355.0" spacing="2.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="32.0" prefWidth="213.0" styleClass="button_orange">
                <children>
-                  <Pane prefHeight="32.0" prefWidth="33.0" styleClass="button-style-1">
-                     <children>
-                        <Text fill="WHITE" layoutX="7.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="button-style-1" text="+" textAlignment="CENTER" wrappingWidth="18.760000228881836">
-                           <font>
-                              <Font name="Montserrat ExtraLight" size="20.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </Pane>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="3">
-                     <font>
-                        <Font name="Montserrat Black" size="15.0" />
-                     </font>
-                  </Text>
-                  <Pane prefHeight="32.0" prefWidth="33.0" styleClass="button-style-2">
-                     <children>
-                        <Text layoutX="11.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="button-style-2" text="-" wrappingWidth="4.690000057220459">
-                           <font>
-                              <Font name="Montserrat ExtraLight" size="26.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </Pane>
+                  <Label prefHeight="28.0" prefWidth="123.0" style="-fx-pref-width: -1;" styleClass="text-header" text="Đặt ngay" textFill="WHITE" />
+                  <ImageView fitHeight="10.0" fitWidth="11.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../images/right-arrow.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </ImageView>
                </children>
-               <HBox.margin>
-                  <Insets bottom="3.0" />
-               </HBox.margin>
             </HBox>
+            <Pane prefHeight="25.0" prefWidth="197.0" />
+            <Text fx:id="price" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-header" text="\$150" wrappingWidth="88.87800216674805">
+               <font>
+                  <Font name="Montserrat ExtraBold" size="18.0" />
+               </font>
+               <HBox.margin>
+                  <Insets bottom="5.0" />
+               </HBox.margin>
+            </Text>
          </children>
          <VBox.margin>
-            <Insets top="25.0" />
+            <Insets bottom="5.0" top="5.0" />
          </VBox.margin>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
       </HBox>
    </children>
+   <stylesheets>
+      <URL value="@../../../css/dashboardStyle.css" />
+      <URL value="@../../../css/managementStyle.css" />
+   </stylesheets>
    <padding>
-      <Insets left="4.0" right="4.0" />
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
    </padding>
 </VBox>

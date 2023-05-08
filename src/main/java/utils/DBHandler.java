@@ -3,7 +3,6 @@ package utils;
 import model.*;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 
 public class DBHandler {
@@ -129,6 +128,21 @@ public class DBHandler {
 
         return logedReturn;
     }
-
+    public HashSet<MenuItem> getAllMenuItems() throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("select ID, TEN_MON, MO_TA, LOAI, GIA, HINH_ANH from MON_AN");
+        HashSet<MenuItem> result = new HashSet<>();
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String tenMon = rs.getString("TEN_MON");
+            String moTa = rs.getString("MO_TA");
+            String loai = rs.getString("LOAI");
+            int gia = rs.getInt("GIA");
+            byte[] hinhAnh = rs.getBytes("HINH_ANH");
+            MenuItem item = new MenuItem(id, tenMon, moTa, loai, gia, hinhAnh);
+            result.add(item);
+        }
+        return result;
+    }
 
 }
