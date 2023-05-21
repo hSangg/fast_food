@@ -4,6 +4,7 @@ import model.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class DBHandler {
@@ -196,6 +197,62 @@ public class DBHandler {
         pstmt.setInt(3, id_quan_ly);
         pstmt.setInt(4, id);
         pstmt.executeUpdate();
+    }
+    public ArrayList<YearRevenu> getYearRevenu()throws SQLException{
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT SUM(TONG_TIEN) AS TONG_DOANH_THU, EXTRACT(MONTH FROM NGAY_DAT) AS THANG FROM DON_HANG\n" +
+                "GROUP BY EXTRACT(MONTH FROM NGAY_DAT);\n" +
+                "\n");
+        ArrayList<YearRevenu> result = new ArrayList<>();
+        while(rs.next()){
+            int thang = rs.getInt("THANG");
+            int tong = rs.getInt("TONG_DOANH_THU");
+            YearRevenu YR = new YearRevenu(thang,tong);
+            result.add(YR);
+        }
+        return result;
+    }
+
+    public ArrayList<YearRevenu> get3Month() throws SQLException{
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT SUM(TONG_TIEN) AS TONG_DOANH_THU, EXTRACT(MONTH FROM NGAY_DAT) AS THANG \n" +
+                "FROM DON_HANG\n" +
+                "WHERE EXTRACT(MONTH FROM NGAY_DAT) IN (EXTRACT(MONTH FROM SYSDATE),EXTRACT(MONTH FROM SYSDATE)-1,EXTRACT(MONTH FROM SYSDATE)-2)\n" +
+                "GROUP BY EXTRACT(MONTH FROM NGAY_DAT);");
+        ArrayList<YearRevenu> result = new ArrayList<>();
+        while(rs.next()){
+            int thang = rs.getInt("THANG");
+            int tong = rs.getInt("TONG_DOANH_THU");
+            YearRevenu YR = new YearRevenu(thang,tong);
+            result.add(YR);
+        }
+        return result;
+    }
+
+    public ArrayList<ItemTopSeller> TopItem(int top)throws SQLException{
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT TEN_MON, GIA, SUM(SOLUONG) AS TONG_SO_LUONG_DA_BAN\n" +
+                "FROM MON_AN, CHITIET_DON \n" +
+                "WHERE MON_AN.ID=CHITIET_DON.ID_MON\n" +
+                "GROUP BY TEN_MON,GIA\n" +
+                "ORDER BY SUM(SOLUONG) DESC\n" +
+                "FETCH FIRST " + top + " ROWS ONLY;");
+        ArrayList<ItemTopSeller> Items = new ArrayList<>();
+        while(rs.next()){
+            String tenMon=rs.getString("TEN_MON");
+            int gia=rs.getInt("GIA");
+            int sL=rs.getInt("TONG_SO_LUONG_DA_BAN");
+            ItemTopSeller Item = new ItemTopSeller(tenMon,gia,sL);
+            Items.add(Item);
+        }
+        for(int i=0;i<Items.size();i++){
+            String query = "SELECT HINH_ANH FROM MON_AN WHERE TEN_MON = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, Items.get(i).getTenMon());
+            rs = ps.executeQuery();
+            Items.get(i).setImage(rs.getBytes("HINH_ANH"));
+        }
+        return Items;
     }
 }
 

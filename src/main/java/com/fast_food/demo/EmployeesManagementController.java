@@ -95,6 +95,8 @@ public class EmployeesManagementController implements Initializable {
 
     @FXML
     private Text text_error_validator_sdt;
+    @FXML
+    private Text t_chuc_vu;
 
 
     public String rule_button_submit;
@@ -107,7 +109,10 @@ public class EmployeesManagementController implements Initializable {
         x.setManaged(y);
         x.setVisible(y);
     }
-
+    public void set_ChoiceBox_Visible(ChoiceBox x, boolean y){
+        x.setManaged(y);
+        x.setVisible(y);
+    }
 
     public boolean check_is_error() {
         UtilityFunctions utilityFunctions = new UtilityFunctions();
@@ -233,13 +238,27 @@ public class EmployeesManagementController implements Initializable {
         }
 
         button_them_nv.setOnMouseClicked(e -> {
+            set_Text_Visible(text_error_validator_nguoi_ql,false);
+            textfiel_ho_va_ten.setEditable(true);
             rule_button_submit = "add";
             text_csua_them.setText("Thêm nhân viên");
             textfield_sdt.clear();
             textfiel_luong.clear();
             textfiel_ho_va_ten.clear();
-
+            set_Text_Visible(t_chuc_vu,true);
+            set_ChoiceBox_Visible(choicebox_chuc_vu,true);
             choicebox_chuc_vu.setValue(null);
+            choicebox_chuc_vu.setOnAction(event -> {
+                String selectedChucVu = "";
+                selectedChucVu = choicebox_chuc_vu.getValue();
+                if (selectedChucVu.equals("Quản lý")) {
+                    set_ChoiceBox_Visible(choicebox_nguoi_quan_ly,false);
+                    set_Text_Visible(text_ng_quan_ly,false);
+                } else {
+                    set_Text_Visible(text_ng_quan_ly,true);
+                    set_ChoiceBox_Visible(choicebox_nguoi_quan_ly,true);
+                }
+            });
             choicebox_nguoi_quan_ly.setValue(null);
             button_submit.setDisable(false);
 
@@ -291,6 +310,7 @@ public class EmployeesManagementController implements Initializable {
                     System.out.println("Sửa nhân viên");
                 }
             }
+            String ten_ng_qly = choicebox_nguoi_quan_ly.getValue();
             choicebox_nguoi_quan_ly.getItems().clear();
             employee_list.getItems().clear();
             try {
@@ -307,12 +327,15 @@ public class EmployeesManagementController implements Initializable {
             } catch (SQLException emp) {
                 throw new RuntimeException(emp);
             }
+            choicebox_nguoi_quan_ly.setValue(ten_ng_qly);
         });
 
         employee_list.setOnMouseClicked(e -> {
+            set_Text_Visible(text_error_validator_nguoi_ql,false);
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 Employee employee = employee_list.getSelectionModel().getSelectedItem();
                 if (employee != null) {
+                    textfiel_ho_va_ten.setEditable(false);
                     button_submit.setDisable(false);
                     rule_button_submit = "edit";
                     text_csua_them.setText("Chỉnh sửa nhân viên");
@@ -322,8 +345,8 @@ public class EmployeesManagementController implements Initializable {
 
                     uf.setVisibleNode(text_ng_quan_ly, true);
                     uf.setVisibleNode(textfield_delete_e, true);
-
-
+                    set_ChoiceBox_Visible(choicebox_chuc_vu,false);
+                    set_Text_Visible(t_chuc_vu,false);
                     if (employee.getChuc_vu().equals("Quản lý")) {
                         uf.setVisibleNode(choicebox_nguoi_quan_ly, false);
                         uf.setVisibleNode(text_ng_quan_ly, false);
