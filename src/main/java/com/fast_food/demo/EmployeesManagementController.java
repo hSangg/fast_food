@@ -274,6 +274,8 @@ public class EmployeesManagementController implements Initializable {
             boolean is_error = check_is_error();
             DBHandler DB = new DBHandler();
             if (!is_error && rule_button_submit.equals("add")) {
+                if(choicebox_nguoi_quan_ly.getValue()=="Quản lý"){
+                }
                 int manager_id=0;
                 try {
                     manager_id = DB.find_manager_id(choicebox_nguoi_quan_ly.getValue());
@@ -327,7 +329,11 @@ public class EmployeesManagementController implements Initializable {
             } catch (SQLException emp) {
                 throw new RuntimeException(emp);
             }
+            if(choicebox_chuc_vu.getValue().equals("Quản lý")){
+                set_Text_Visible(text_error_validator_nguoi_ql,false);
+            }
             choicebox_nguoi_quan_ly.setValue(ten_ng_qly);
+
         });
 
         employee_list.setOnMouseClicked(e -> {
