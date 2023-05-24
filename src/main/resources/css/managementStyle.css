@@ -4,6 +4,12 @@
   -fx-font-weight: bold;
 }
 
+.text-header-1 {
+  -fx-font-family: "Montserrat ExtraBold";
+  -fx-font-size: 30px;
+  -fx-font-weight: bold;
+}
+
 .root {
   -fx-font-family: "Montserrat";
 }
@@ -41,6 +47,16 @@
 .background-food {
   -fx-background-radius: 50;
   -fx-background-color: #fb923c50;
+}
+
+.border-bottom-thu{
+-fx-border-color: #316aff;
+-fx-border-width: 0 0 2 0;
+}
+
+.border-bottom-chi{
+-fx-border-color: #ff8110;
+-fx-border-width: 0 0 2 0;
 }
 
 .background-order {
@@ -210,6 +226,9 @@
     -fx-border-color: transparent; /* Màu của đường viền */
     -fx-border-width: 0 0 5px 0; /* Độ rộng của đường viền */
     -fx-border-insets: 0 0 -5px 0; /* Điều chỉnh vị trí của đường viền */
+    -fx-border-radius: 10px;
+   -fx-border-radius: 10px
+
 }
 
 .table_order .column-header .label {
@@ -239,8 +258,9 @@
 
 /* Set the border color and width for table cells */
 .table_order .table-cell {
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 0.5px;
+     -fx-border-color: transparent transparent transparent transparent;
+     -fx-border-width: 0 0 1px 0;
+     -fx-border-style: solid;
 }
 
 /* Set the padding for table cells */
@@ -261,4 +281,5 @@
 .scroll-pane {
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;
+    -fx-background-color: transparent;
 }

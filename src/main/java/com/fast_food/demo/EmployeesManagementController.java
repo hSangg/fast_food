@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -19,6 +20,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 
 public class EmployeesManagementController implements Initializable {
@@ -88,6 +90,9 @@ public class EmployeesManagementController implements Initializable {
     private Text text_error_validator_luong;
 
     @FXML
+    private Text t_chuc_vu;
+
+    @FXML
     private Text text_error_validator_name;
 
     @FXML
@@ -100,6 +105,9 @@ public class EmployeesManagementController implements Initializable {
     public String rule_button_submit;
 
     UtilityFunctions uf = new UtilityFunctions();
+    DBHandler db = new DBHandler();
+
+    HashSet<Employee> employeeHashSet = new HashSet<Employee>();
 
 
     public EmployeesManagementController() {
@@ -123,20 +131,68 @@ public class EmployeesManagementController implements Initializable {
         return hasError;
     }
 
-
-
-
     HashSet<Employee> ds_nguoi_quan_ly;
+
+    public void renderTableEmployee() {
+
+        ObservableList<Employee> employeeList = FXCollections.observableArrayList();
+        String ten_ng_qly = choicebox_nguoi_quan_ly.getValue();
+        choicebox_nguoi_quan_ly.getItems().clear();
+        employee_list.getItems().clear();
+        try {
+            HashSet<Employee> em = db.getAllEmployees();
+            for (Employee emp : em) {
+                employeeList.add(emp);
+                if ("Quản lý".equals(emp.getChuc_vu())) {
+                    choicebox_nguoi_quan_ly.getItems().add(emp.getTen());
+                }
+            }
+            employee_list.setItems(employeeList);
+            text_tong_nv.setText(String.valueOf(em.size()));
+
+        } catch (SQLException emp) {
+            throw new RuntimeException(emp);
+        }
+        if(choicebox_chuc_vu.getValue().equals("Quản lý")){
+            uf.setVisibleNode(text_error_validator_nguoi_ql,false);
+        }
+        choicebox_nguoi_quan_ly.setValue(ten_ng_qly);
+    }
+
+    public void renderTableEmployeeFollowingName(String name) throws SQLException {
+        ObservableList<Employee> employeeList = FXCollections.observableArrayList();
+        String ten_ng_qly = choicebox_nguoi_quan_ly.getValue();
+        choicebox_nguoi_quan_ly.getItems().clear();
+        employee_list.getItems().clear();
+        HashSet<Employee> em = db.getAllEmployeesFollowingName(name);
+        for (Employee emp : em) {
+            employeeList.add(emp);
+            if ("Quản lý".equals(emp.getChuc_vu())) {
+                choicebox_nguoi_quan_ly.getItems().add(emp.getTen());
+            }
+        }
+
+        for(Employee emp: employeeHashSet) {
+            if ("Quản lý".equals(emp.getChuc_vu())) {
+                choicebox_nguoi_quan_ly.getItems().add(emp.getTen());
+            }
+        }
+        employee_list.setItems(employeeList);
+        text_tong_nv.setText(String.valueOf(em.size()));
+//
+//        if (choicebox_chuc_vu.getValue().equals("Quản lý")) {
+//            uf.setVisibleNode(text_error_validator_nguoi_ql, false);
+//        }
+//        choicebox_nguoi_quan_ly.setValue(ten_ng_qly);
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         DBHandler db = new DBHandler();
         ObservableList<Employee> employeeList = FXCollections.observableArrayList();
-
-        choicebox_chuc_vu.getItems().clear();
-        choicebox_nguoi_quan_ly.getItems().clear();
-
+        UtilityFunctions uf = new UtilityFunctions();
 
         choicebox_chuc_vu.getItems().addAll("Đầu bếp", "Quản lý", "Thu ngân");
         uf.setVisibleNode(text_error_validator_luong, false);
@@ -152,6 +208,7 @@ public class EmployeesManagementController implements Initializable {
             HashSet<Employee> em = db.getAllEmployees();
             for (Employee e : em) {
                 employeeList.add(e);
+                employeeHashSet.add(e);
                 if ("Quản lý".equals(e.getChuc_vu())) {
                     choicebox_nguoi_quan_ly.getItems().add(e.getTen());
                 }
@@ -182,13 +239,30 @@ public class EmployeesManagementController implements Initializable {
         }
 
         button_them_nv.setOnMouseClicked(e -> {
+            uf.setVisibleNode(text_error_validator_nguoi_ql,false);
+            textfiel_ho_va_ten.setEditable(true);
             rule_button_submit = "add";
             text_csua_them.setText("Thêm nhân viên");
             textfield_sdt.clear();
             textfiel_luong.clear();
             textfiel_ho_va_ten.clear();
 
+            uf.setVisibleNode(t_chuc_vu, true);
+            uf.setVisibleNode(choicebox_chuc_vu, true);
+
+
             choicebox_chuc_vu.setValue(null);
+            choicebox_chuc_vu.setOnAction(event -> {
+                String selectedChucVu = "";
+                selectedChucVu = choicebox_chuc_vu.getValue();
+                if (selectedChucVu.equals("Quản lý")) {
+                    uf.setVisibleNode(choicebox_nguoi_quan_ly,false);
+                    uf.setVisibleNode(text_ng_quan_ly,false);
+                } else {
+                    uf.setVisibleNode(text_ng_quan_ly,true);
+                    uf.setVisibleNode(choicebox_nguoi_quan_ly,true);
+                }
+            });
             choicebox_nguoi_quan_ly.setValue(null);
             button_submit.setDisable(false);
 
@@ -202,38 +276,59 @@ public class EmployeesManagementController implements Initializable {
 
         button_submit.setOnMouseClicked(e -> {
             boolean is_error = check_is_error();
-
+            System.out.println(is_error);
+            DBHandler DB = new DBHandler();
             if (!is_error && rule_button_submit.equals("add")) {
+                if(choicebox_nguoi_quan_ly.getValue()=="Quản lý"){
+                }
+                int manager_id=0;
+                try {
+                    manager_id = DB.find_manager_id(choicebox_nguoi_quan_ly.getValue());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    DB.InsertEmp(textfiel_ho_va_ten.getText(),textfield_sdt.getText(),choicebox_chuc_vu.getValue(),Integer.parseInt(textfiel_luong.getText()),manager_id);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 System.out.println("Thêm nhân viên");
-
-                this.initialize(url, resourceBundle);
+                renderTableEmployee();
+                textfield_tim_kiem_nv.clear();
 
             }
-
-
             if (!is_error && rule_button_submit.equals("edit")) {
 
                 String e_name = textfiel_ho_va_ten.getText();
                 String e_name_delete = textfield_delete_e.getText();
                 if (e_name_delete.equals(e_name)) {
                     //xóa nhân viên
+                    try {
+                        DB.DeleteEmp(e_name);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     System.out.println("Xóa nhân viên");
-
+                    renderTableEmployee();
                 } else {
                     // sửa những thay đổi
+                    try {
+                        DB.UpdateEmp(textfiel_ho_va_ten.getText(),textfield_sdt.getText(),Integer.parseInt(textfiel_luong.getText()),choicebox_nguoi_quan_ly.getValue());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     System.out.println("Sửa nhân viên");
-
-
+                    renderTableEmployee();
                 }
-
             }
-
         });
 
         employee_list.setOnMouseClicked(e -> {
+            uf.setVisibleNode(text_error_validator_nguoi_ql,false);
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 Employee employee = employee_list.getSelectionModel().getSelectedItem();
                 if (employee != null) {
+                    textfiel_ho_va_ten.setEditable(false);
                     button_submit.setDisable(false);
                     rule_button_submit = "edit";
                     text_csua_them.setText("Chỉnh sửa nhân viên");
@@ -243,8 +338,8 @@ public class EmployeesManagementController implements Initializable {
 
                     uf.setVisibleNode(text_ng_quan_ly, true);
                     uf.setVisibleNode(textfield_delete_e, true);
-
-
+                    uf.setVisibleNode(choicebox_chuc_vu,false);
+                    uf.setVisibleNode(t_chuc_vu,false);
                     if (employee.getChuc_vu().equals("Quản lý")) {
                         uf.setVisibleNode(choicebox_nguoi_quan_ly, false);
                         uf.setVisibleNode(text_ng_quan_ly, false);
@@ -261,6 +356,26 @@ public class EmployeesManagementController implements Initializable {
                 }
             }
 
+        });
+
+        textfield_tim_kiem_nv.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                String enteredText = textfield_tim_kiem_nv.getText();
+                System.out.println("Entered text: " + enteredText);
+                try {
+                    //
+                    textfiel_luong.clear();
+                    textfiel_ho_va_ten.clear();
+                    choicebox_chuc_vu.setValue(null);
+                    choicebox_nguoi_quan_ly.setValue(null);
+                    textfield_sdt.clear();
+                    //
+                    renderTableEmployeeFollowingName(enteredText);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
         });
 
 

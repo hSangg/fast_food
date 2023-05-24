@@ -134,7 +134,7 @@
                      </VBox.margin>
                   </TextField>
                   <Text fx:id="text_error_validator_luong" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="error_text_validator" text="Sai định dạng lương" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Chức vụ">
+                  <Text fx:id="t_chuc_vu" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Chức vụ">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
