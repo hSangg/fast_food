@@ -89,3 +89,69 @@
     -fx-border-radius: 20;
     -fx-background-radius: 100;
 }
+
+.table_food {
+  -fx-font-family: "Montserrat";
+  -fx-font-size: 13pt;
+  -fx-background-color: transparent;
+}
+
+.table_food .column-header {
+  -fx-font-size: 12pt;
+  -fx-font-weight: bold;
+  -fx-background-color: #ffffff;
+}
+
+.table_food .table-row-cell {
+  -fx-alignment: center;
+}
+
+.table_food .column-header-background .text-field {
+  -fx-background-color: #f2f2f2;
+  -fx-background-radius: 5px;
+  -fx-border-radius: 5px;
+  -fx-border-color: #ccc;
+}
+
+.table_food .scroll-bar:vertical {
+  -fx-background-insets: -1;
+}
+
+.table_food .scroll-bar:horizontal {
+  -fx-background-insets: -1;
+}
+
+.table_food .table-cell {
+  -fx-border-color: #ccc;
+  -fx-border-width: 0px;
+}
+
+.table_food .header {
+  -fx-background-color: #87ceeb;
+  -fx-background-insets: 0, 1, 2;
+  -fx-opacity: 1;
+}
+
+.table_food .header .label {
+  -fx-text-fill: white;
+}
+
+.table_food .table-row-cell:selected .table-cell {
+  -fx-text-fill: #de8a96;
+  -fx-background-color: #fff;
+}
+
+/* Chỉnh giữa cột */
+.table_food .table-cell {
+  -fx-alignment: center;
+}
+
+/* Tăng khoảng cách giữa các hàng */
+.table_food .table-row-cell {
+  -fx-padding: 3px;
+}
+
+/* Background trong suốt */
+.table_food {
+  -fx-background-color: transparent;
+}

@@ -4,25 +4,30 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import model.Ingredient;
 import model.Material;
 import model.MenuItem;
 import utils.DBHandler;
+import utils.UtilityFunctions;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MenuManagementController implements Initializable {
@@ -72,11 +77,41 @@ public class MenuManagementController implements Initializable {
     @FXML
     private TableColumn<?, ?> tablecolumn_tenmon;
 
+
+    @FXML
+    private Text texterror_validator_donvi;
+
+    @FXML
+    private Text texterror_validator_gia;
+
+    @FXML
+    private Text texterror_validator_loai;
+
+    @FXML
+    private Text texterror_validator_mota;
+
+    @FXML
+    private Text texterror_validator_sl;
+
+    @FXML
+    private Text texterror_validator_tenmon;
+
+    @FXML
+    private Text texterror_validator_tennl;
+
     @FXML
     private TextField text_field_gia;
 
+
+    @FXML
+    private Label label_them_chinh_sua_nl;
+
     @FXML
     private TextField textfield_donvi;
+
+
+    @FXML
+    private TextField textfield_xoa_nl;
 
     @FXML
     private TextField textfield_mota;
@@ -90,12 +125,12 @@ public class MenuManagementController implements Initializable {
     @FXML
     private TextField textfield_tenmon;
 
-    public String mode = "";
+    public String mode = "ADD_NL";
     /*
     + EDIT_MON_AN (không sửa nguyên liệu)
     + EDIT_MON_AN_NL (có sửa nguyên liệu)
     + DELETE_NGUYEN_LIEU (xóa nguyên liệu)
-    + ADD_NGUYEN_LIEU
+    + ADD_NL
     + ADD_MON_AN
     + DELETE_MON_AN
     *
@@ -105,8 +140,9 @@ public class MenuManagementController implements Initializable {
 
     List<Material> materialList;
     List<Ingredient> ingredientList;
-    List<String> nameIngredientList;
 
+
+    UtilityFunctions uf = new UtilityFunctions();
     DBHandler db = new DBHandler();
 
     public void clearChiTietMonAn() {
@@ -135,9 +171,80 @@ public class MenuManagementController implements Initializable {
         textfield_donvi.setDisable(x);
     }
 
+    public void renderTableNguyenLieu() {
+        table_nguyen_lieu.getItems().clear();
+        //-----------THEM NGUYEN LIEU TUONG UNG VOI MON
+        ObservableList<Material> nguyenLieu = FXCollections.observableArrayList();
+
+        for (Material x : materialList) {
+            nguyenLieu.add(x);
+            System.out.println(x.getName());
+        }
+
+
+        //-----------THEM NGUYEN LIEU TUONG UNG VOI MON
+        tablecolumn_tennl.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tablecolumn_dv.setCellValueFactory(new PropertyValueFactory<>("unit"));
+        tablecolumn_slnl.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+        table_nguyen_lieu.setItems(nguyenLieu);
+    }
+
+    public boolean check_is_error_nl() {
+
+        boolean hasError = false;
+
+        hasError |= uf.isEmptyString(choicebox_tennguyenlieu.getValue()) ? uf.setErrorMsg(texterror_validator_tennl, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_tennl);
+
+        hasError |= uf.isEmptyString(textfield_soluong.getText()) ? uf.setErrorMsg(texterror_validator_sl, "Vui lòng điền thông tin") :
+                (!uf.isNumericString(textfield_soluong.getText()) ? uf.setErrorMsg(texterror_validator_sl, "Sai định dạng số") : uf.hideErrorMsg(texterror_validator_sl));
+
+
+        hasError |= uf.isEmptyString(textfield_donvi.getText()) ? uf.setErrorMsg(texterror_validator_donvi, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_donvi);
+
+
+        return hasError;
+    }
+
+    public boolean check_is_error() {
+
+        boolean hasError = false;
+
+        hasError |= uf.isEmptyString(choicebox_loai.getValue()) ? uf.setErrorMsg(texterror_validator_loai, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_loai);
+
+        hasError |= uf.isEmptyString(text_field_gia.getText()) ? uf.setErrorMsg(texterror_validator_gia, "Vui lòng điền thông tin") :
+                (!uf.isNumericString(text_field_gia.getText()) ? uf.setErrorMsg(texterror_validator_gia, "Sai định dạng số") : uf.hideErrorMsg(texterror_validator_gia));
+
+
+        hasError |= uf.isEmptyString(textfield_tenmon.getText()) ? uf.setErrorMsg(texterror_validator_tenmon, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_tenmon);
+        hasError |= uf.isEmptyString(textfield_mota.getText()) ? uf.setErrorMsg(texterror_validator_mota, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_mota);
+
+
+        return hasError;
+    }
+
+    public boolean check_is_exit(String tennl) {
+        return materialList.stream().filter(material1 -> material1.getName().equals(tennl)).collect(Collectors.toList()).size() > 0 ? uf.setErrorMsg(texterror_validator_tennl, "nguyên liệu đã tồn tại") : uf.hideErrorMsg(texterror_validator_tennl);
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // DEFAULT--------------------------------
+        uf.setVisibleNode(texterror_validator_donvi, false);
+        uf.setVisibleNode(texterror_validator_gia, false);
+        uf.setVisibleNode(texterror_validator_loai, false);
+        uf.setVisibleNode(texterror_validator_mota, false);
+        uf.setVisibleNode(texterror_validator_tennl, false);
+        uf.setVisibleNode(texterror_validator_tenmon, false);
+        uf.setVisibleNode(texterror_validator_sl, false);
+
+        button_hoantat.setPrefHeight(75);
+        button_hoantat.setMinHeight(50);
+        button_hoantat.setMaxHeight(50);
+
+
+
         try {
             menuList = db.getAllMenuItems();
             //-------RENDER DEFAULT VALUE -----------------
@@ -156,7 +263,7 @@ public class MenuManagementController implements Initializable {
             isDisableChiTietMonAn(true);
             isDisableChiTietNguyenLieu(true);
             button_xoanguyenlieu.setDisable(true);
-            button_xoamon.setDisable(true);
+
             button_themnguyenlieu.setDisable(true);
 
 
@@ -164,17 +271,116 @@ public class MenuManagementController implements Initializable {
 
 
             // ------XU LY BUTTON-------------------
+            //XU LY KHI AN THEM NGUYEN LIEU
             button_themnguyenlieu.setOnMouseClicked(e -> {
-                clearChiTietNguyenLieu();
-                this.mode = "ADD_NGUYEN_LIEU";
+                if (this.mode.equals("ADD_NL")) {
+                    if (!check_is_error_nl()) {
+                        String ten_nl = choicebox_tennguyenlieu.getValue();
+                        String so_luong = textfield_soluong.getText();
+                        String don_vi = textfield_donvi.getText();
+                        Material material = new Material(ten_nl, don_vi, Integer.parseInt(so_luong));
+
+                        if (check_is_exit(ten_nl)) {
+                            System.out.println("Da ton tai");
+                            // xử lý đã tồn tại
+                        } else {
+                            materialList.add(material);
+
+                            //////////////////
+                            /*
+                             * XU LY VOI DB
+                             *
+                             *
+                             *
+                             * */
+
+                            /////////////////
+
+                            clearChiTietNguyenLieu();
+                            renderTableNguyenLieu();
+                        }
+                    }
+                } else if (this.mode.equals("EDIT_NL")) {
+
+                    // Lấy dữ liệu từ các TextField
+                    String ten_nl = choicebox_tennguyenlieu.getValue();
+                    String don_vi = textfield_donvi.getText();
+                    int so_luong = Integer.parseInt(textfield_soluong.getText());
+
+
+                    Material monAn = new Material(ten_nl, don_vi, so_luong);
+                    materialList.forEach(material -> {
+                        if (material.getName().equals(ten_nl)) {
+                            material.setUnit(don_vi);
+                            material.setQuantity(so_luong);
+                        }
+                    });
+
+                    //////////////////
+                    /*
+                     * XU LY VOI DB
+                     *
+                     *
+                     *
+                     * */
+
+                    /////////////////
+
+                    this.mode = "ADD_NL";
+                    clearChiTietNguyenLieu();
+                    label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
+                    renderTableNguyenLieu();
+                }
+
+
             });
 
+            textfield_xoa_nl.setOnKeyPressed(event -> {
+                int result = 0;
+                if (event.getCode() == KeyCode.ENTER) {
+                    String monCanXoa = textfield_xoa_nl.getText();
+
+                    // Lọc allMaterial và loại bỏ các phần tử giống với filterString
+                    Iterator<Material> iterator = materialList.iterator();
+                    while (iterator.hasNext()) {
+                        Material material = iterator.next();
+                        if (material.getName().equalsIgnoreCase(monCanXoa)) {
+                            ++result;
+                            iterator.remove();
+                        }
+                    }
+                    if (result != 0) {
+                        textfield_xoa_nl.clear();
+                        textfield_xoa_nl.setPromptText("đã xóa thành công");
+                        renderTableNguyenLieu();
+                        System.out.println("Enter key pressed");
+
+                    } else {
+                        textfield_xoa_nl.clear();
+                        textfield_xoa_nl.setPromptText("Lỗi");
+
+                    }
+                }
+            });
+
+
             button_themmon.setOnMouseClicked(e -> {
-                isDisableChiTietMonAn(false);
-                clearChiTietMonAn();
-                clearChiTietNguyenLieu();
-                table_nguyen_lieu.getItems().clear();
-                this.mode = "ADD_MON_AN";
+                //open new UI
+                System.out.println("click");
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/AddingFood.fxml"));
+
+
+                Scene scene = null;
+                try {
+                    scene = new Scene(fxmlLoader.load());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                Stage stage = new Stage();
+
+                stage.setScene(scene);
+                stage.show();
+
             });
 
             button_hoantat.setOnMouseClicked(e -> {
@@ -244,7 +450,7 @@ public class MenuManagementController implements Initializable {
                         isDisableChiTietMonAn(false);
                         button_xoamon.setDisable(false);
                         button_themnguyenlieu.setDisable(false);
-                        this.mode = "EDIT_MON_AN";
+                        isDisableChiTietNguyenLieu(false);
 
                         textfield_tenmon.setText(selectedItem.getName());
                         text_field_gia.setText(String.valueOf(selectedItem.getPrice()));
@@ -273,7 +479,6 @@ public class MenuManagementController implements Initializable {
 
                         //-----------XU LY KHI DOUBLE CLICK VAO 1 HANG CUA TABLE MON AN
 
-                        this.mode = "EDIT_MON_AN";
                     }
                 });
                 return row;
@@ -284,10 +489,12 @@ public class MenuManagementController implements Initializable {
                 TableRow<Material> row = new TableRow<>();
                 row.setOnMouseClicked(event -> {
                     if (event.getClickCount() == 2 && !row.isEmpty()) {
+                        this.mode = "EDIT_NL";
+                        label_them_chinh_sua_nl.setText("Chỉnh sửa hoàn tất");
+
                         Material selectedItem = row.getItem();
                         isDisableChiTietNguyenLieu(false);
                         button_xoanguyenlieu.setDisable(false);
-                        this.mode = "EDIT_MON_AN_NL";
 
 
                         //---------RENDER VALUE-------------
