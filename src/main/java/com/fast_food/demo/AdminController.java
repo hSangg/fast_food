@@ -86,7 +86,7 @@ public class AdminController implements Initializable {
         chart_doanh_thu.getData().add(series);
 
 
-
+        // DUNG DE HIEN DU LIEU CU THE KHI HOVER CHUOT VAO DUONG LINE
         Tooltip tooltip = new Tooltip();
         tooltip.setShowDelay(Duration.ZERO);
         tooltip.setHideDelay(Duration.ZERO);
@@ -113,7 +113,8 @@ public class AdminController implements Initializable {
                 });
             }
         }
-        // ---------------------------------
+        // -----------------------------------------------------------------
+
         // RENDER CHART DOANH SỐ THU/CHI
 
         XYChart.Series line_thu = new XYChart.Series<>();
@@ -131,9 +132,11 @@ public class AdminController implements Initializable {
         chart_doanh_thu_thang.getData().add(line_thu);
         chart_doanh_thu_thang.getData().add(line_chi);
 
+
+        //CSS CHO CHART DOANH THU
+
         line_chi.getNode().lookup(".chart-series-line").setStyle("-fx-stroke: #ff8110;");
         line_thu.getNode().lookup(".chart-series-line").setStyle("-fx-stroke: #316aff;");
-
 
         String chartStyle = "-fx-background-color: #316aff, white;";
         String legendStyle = "-fx-text-fill: #316aff;";
@@ -163,11 +166,10 @@ public class AdminController implements Initializable {
         }
 
         // ---------------------------------
-        // XỬ LÝ SỐ LƯỢNG MÓN ĂN CẦN RENDER
+        // XỬ LÝ SỐ LƯỢNG MÓN ĂN BEST SELLER CẦN RENDER
         num_best_seller_show.setOnAction(event -> {
             String enteredText = num_best_seller_show.getText();
             render_top_seller(Integer.parseInt(enteredText));
-
         });
 
         // ---------------------------------
