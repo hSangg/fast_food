@@ -25,7 +25,7 @@
             </HBox>
             <HBox fx:id="button_xoamon">
                <children>
-                  <TextField alignment="CENTER" promptText="Nhap món cần xóa" style="-fx-border-width: 2px; -fx-background-color: transparent;">
+                  <TextField alignment="CENTER" prefHeight="64.0" prefWidth="278.0" promptText="Nhap món cần xóa" style="-fx-border-width: 2px; -fx-background-color: transparent;">
                      <styleClass>
                         <String fx:value="text_field_delete_employee" />
                         <String fx:value="text-button" />
@@ -39,7 +39,7 @@
             <Insets left="10.0" />
          </VBox.margin>
       </HBox>
-      <HBox prefHeight="954.0" prefWidth="1600.0" spacing="10.0">
+      <HBox alignment="CENTER" prefHeight="954.0" prefWidth="1600.0" spacing="10.0">
          <children>
             <ScrollPane prefHeight="947.0" prefWidth="568.0">
                <content>

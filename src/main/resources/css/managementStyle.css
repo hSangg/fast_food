@@ -20,6 +20,12 @@
   -fx-font-weight: normal;
 }
 
+.text-normal-plus {
+  -fx-font-family: "Montserrat";
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+}
+
 .button-edit {
   -fx-background-radius: 100;
   fx-font-family: "Montserrat";

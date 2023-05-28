@@ -320,8 +320,6 @@ public class AddingFoodController implements Initializable {
                 label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
                 renderTableMaterial();
             }
-
-
         });
 
     }

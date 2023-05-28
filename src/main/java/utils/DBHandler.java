@@ -144,11 +144,11 @@ public class DBHandler {
         }
 
         // The username exists in the database, now check the password
-        rs = sm.executeQuery("SELECT TEN, PASSWORD, CHUC_VU FROM TAIKHOAN_NV JOIN NHAN_VIEN ON TAIKHOAN_NV.ID_NV = NHAN_VIEN.ID WHERE USERNAME = '" + username + "'");
+        rs = sm.executeQuery("SELECT TEN, PASSWORD, CHUC_VU, NHAN_VIEN.ID as IDNHANVIEN, ID_QUAN_LY FROM TAIKHOAN_NV JOIN NHAN_VIEN ON TAIKHOAN_NV.ID_NV = NHAN_VIEN.ID WHERE USERNAME = '" + username + "'");
         LogedInUser logedReturn = null;
 
         if (rs.next()) {
-            Account account = new Account(rs.getString("TEN"), rs.getString("PASSWORD"), rs.getString("CHUC_VU"));
+            Account account = new Account(rs.getString("TEN"), rs.getString("PASSWORD"), rs.getString("CHUC_VU"), rs.getInt("IDNHANVIEN"), rs.getInt("ID_QUAN_LY"));
             if (account.getPassword().equals(password)) {
                 logedReturn = new LogedInUser();
                 logedReturn.setCurentAcc(account);
@@ -219,7 +219,7 @@ public class DBHandler {
                 String ten = resultSet.getString("TEN");
                 String donVi = resultSet.getString("DON_VI");
                 int soLuongTrongKho = resultSet.getInt("SO_LUONG_TRONG_KHO");
-                double giaNL = resultSet.getDouble("GIA_NL");
+                int giaNL = resultSet.getInt("GIA_NL");
 
                 Ingredient ingredient = new Ingredient(id, ten, donVi, soLuongTrongKho, giaNL);
                 ingredients.add(ingredient);
@@ -319,6 +319,109 @@ public class DBHandler {
         pstmt.setInt(3, id_quan_ly);
         pstmt.setInt(4, id);
         pstmt.executeUpdate();
+    }
+
+    public List<Supplier> getAllNhaCungCap() throws SQLException {
+        List<Supplier> nhaCungCapList = new ArrayList<>();
+        Statement sm = conn.createStatement();
+        ResultSet resultSet = sm.executeQuery("SELECT * FROM NHA_CUNG_CAP");
+
+        while (resultSet.next()) {
+            Supplier nhaCungCap = new Supplier();
+            nhaCungCap.setId(resultSet.getInt("ID"));
+            nhaCungCap.setTen(resultSet.getString("TEN"));
+            nhaCungCap.setSoDienThoai(resultSet.getString("SO_DIEN_THOAI"));
+            nhaCungCap.setEmail(resultSet.getString("EMAIL"));
+            nhaCungCap.setDiaChi(resultSet.getString("DIA_CHI"));
+
+            nhaCungCapList.add(nhaCungCap);
+        }
+
+        return nhaCungCapList;
+    }
+
+    public List<SuperSuppiler> getAllNhaCungCapWithNguyenLieu() throws SQLException {
+        List<SuperSuppiler> superSupplierList = new ArrayList<>();
+        Statement statement = conn.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT NHA_CUNG_CAP.*, x1.IDNGUYENLIEU, x1.TENNGUYENLIEU " +
+                "FROM NHA_CUNG_CAP " +
+                "LEFT JOIN (SELECT NGUYEN_LIEU.ID AS IDNGUYENLIEU, TEN AS TENNGUYENLIEU, ID_NHA_CUNG_CAP " +
+                "           FROM NGUYEN_LIEU, NCC_NL " +
+                "           WHERE NCC_NL.ID_NGUYEN_LIEU = NGUYEN_LIEU.ID) x1 ON x1.ID_NHA_CUNG_CAP = NHA_CUNG_CAP.ID");
+
+        while (resultSet.next()) {
+            int id = resultSet.getInt("ID");
+            String ten = resultSet.getString("TEN");
+
+            String soDienThoai = resultSet.getString("SO_DIEN_THOAI");
+            if (resultSet.wasNull()) {
+                soDienThoai = "unknown"; // Set your desired default value here
+            }
+
+            String email = resultSet.getString("EMAIL");
+            String diaChi = resultSet.getString("DIA_CHI");
+            int nguyenLieuId = resultSet.getInt("IDNGUYENLIEU");
+            String nguyenLieuTen = resultSet.getString("TENNGUYENLIEU");
+
+            SuperSuppiler superSupplier = new SuperSuppiler(id, ten, soDienThoai, email, diaChi, nguyenLieuId, nguyenLieuTen);
+            superSupplierList.add(superSupplier);
+        }
+
+        return superSupplierList;
+    }
+
+    public List<SuperIngredient> getAllSuperIngredients() throws SQLException {
+        List<SuperIngredient> superIngredientList = new ArrayList<>();
+        Statement sm = conn.createStatement();
+        ResultSet resultSet = sm.executeQuery("SELECT NL.ID, NL.TEN, NL.DON_VI, NL.SO_LUONG_TRONG_KHO, NL.GIA_NL, NCC_NL.NGAY_NL_NHAP_KHO " +
+                "FROM NGUYEN_LIEU NL " +
+                "LEFT JOIN NHACUNGCAP_NGUYENLIEU_QUANLY_BEP NCC_NL ON NL.ID = NCC_NL.ID_NL");
+
+        while (resultSet.next()) {
+            SuperIngredient superIngredient = new SuperIngredient();
+            superIngredient.setId(resultSet.getInt("ID"));
+            superIngredient.setTen(resultSet.getString("TEN"));
+            superIngredient.setDonVi(resultSet.getString("DON_VI"));
+            superIngredient.setSoLuongTrongKho(resultSet.getInt("SO_LUONG_TRONG_KHO"));
+            superIngredient.setGia(resultSet.getInt("GIA_NL"));
+
+            Date ngayNhapKhoValue = resultSet.getDate("NGAY_NL_NHAP_KHO");
+            if (ngayNhapKhoValue != null) {
+                superIngredient.setNgayNhapKho(ngayNhapKhoValue);
+            } else {
+                superIngredient.setNgayNhapKho(null); // Set null value if NGAY_NL_NHAP_KHO is null
+            }
+
+            superIngredientList.add(superIngredient);
+        }
+
+        return superIngredientList;
+    }
+
+    public List<Supplier> getNhaCungCapByNguyenLieuId(int nguyenLieuId) throws SQLException {
+        List<Supplier> nhaCungCapList = new ArrayList<>();
+
+        String sql = "SELECT NCC.ID, NCC.TEN, NCC.SO_DIEN_THOAI, NCC.EMAIL, NCC.DIA_CHI " +
+                "FROM NHA_CUNG_CAP NCC " +
+                "INNER JOIN NCC_NL NN ON NCC.ID = NN.ID_NHA_CUNG_CAP " +
+                "WHERE NN.ID_NGUYEN_LIEU = ?";
+
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setInt(1, nguyenLieuId);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            Supplier nhaCungCap = new Supplier();
+            nhaCungCap.setId(resultSet.getInt("ID"));
+            nhaCungCap.setTen(resultSet.getString("TEN"));
+            nhaCungCap.setSoDienThoai(resultSet.getString("SO_DIEN_THOAI"));
+            nhaCungCap.setEmail(resultSet.getString("EMAIL"));
+            nhaCungCap.setDiaChi(resultSet.getString("DIA_CHI"));
+
+            nhaCungCapList.add(nhaCungCap);
+        }
+
+        return nhaCungCapList;
     }
 }
 

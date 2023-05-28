@@ -262,8 +262,6 @@ public class MenuManagementController implements Initializable {
             }
             isDisableChiTietMonAn(true);
             isDisableChiTietNguyenLieu(true);
-            button_xoanguyenlieu.setDisable(true);
-
             button_themnguyenlieu.setDisable(true);
 
 

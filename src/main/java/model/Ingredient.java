@@ -5,14 +5,22 @@ public class Ingredient {
     private String ten;
     private String donVi;
     private int soLuongTrongKho;
-    private double giaNL;
+    private int giaNL;
 
-    public Ingredient(int id, String ten, String donVi, int soLuongTrongKho, double giaNL) {
+    public Ingredient(int id, String ten, String donVi, int soLuongTrongKho, int giaNL) {
         this.id = id;
         this.ten = ten;
         this.donVi = donVi;
         this.soLuongTrongKho = soLuongTrongKho;
         this.giaNL = giaNL;
+    }
+
+    public Ingredient() {
+        this.id = 0;
+        this.ten = "";
+        this.donVi = "";
+        this.soLuongTrongKho = 0;
+        this.giaNL = 0;
     }
 
     // Getters and Setters
@@ -48,11 +56,11 @@ public class Ingredient {
         this.soLuongTrongKho = soLuongTrongKho;
     }
 
-    public double getGiaNL() {
+    public int getGiaNL() {
         return giaNL;
     }
 
-    public void setGiaNL(double giaNL) {
+    public void setGiaNL(int giaNL) {
         this.giaNL = giaNL;
     }
 }

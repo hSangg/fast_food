@@ -28,8 +28,7 @@ public class Employee {
     private String ten;
 
 
-
-    private  int luong;
+    private int luong;
     private String nguoi_quan_ly;
 
     public Employee() {

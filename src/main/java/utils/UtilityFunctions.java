@@ -6,6 +6,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class UtilityFunctions {
     public boolean isPhoneNumber(String input) {
         return input.matches("^0[0-9]{9}$|^\\+84[0-9]{9}$|^\\(\\+84\\)\\s?[0-9]{9}$");
@@ -20,6 +23,16 @@ public class UtilityFunctions {
             return false; // Input is null or empty
         }
         return input.matches("^[0-9]+$");
+    }
+
+    public  boolean isValidEmail(String email) {
+
+        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     public void setVisibleNode(Node node, boolean is_visible) {

@@ -148,10 +148,48 @@
 
 /* Tăng khoảng cách giữa các hàng */
 .table_food .table-row-cell {
-  -fx-padding: 3px;
+  -fx-padding: 0px;
 }
 
 /* Background trong suốt */
 .table_food {
   -fx-background-color: transparent;
 }
+
+.date-picker {
+    -fx-background-color: transparent;
+    -fx-border-color: #2563eb;
+    -fx-border-width: 2px;
+    -fx-border-radius: 50px;
+    -fx-background-radius: 5px;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-pref-width: 30px; /* Kích thước rộng */
+    -fx-pref-height: 30px; /* Kích thước cao */
+}
+
+.date-picker .text-field {
+    -fx-background-color: transparent;
+    -fx-prompt-text-fill: #999999;
+}
+
+.date-picker .popup-content {
+    -fx-background-color: #ffffff;
+}
+
+.date-picker .calendar-date-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+}
+
+.date-picker .calendar-date-cell:hover {
+    -fx-background-color: #eeeeee;
+}
+
+.date-picker .calendar-date-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: #ffffff;
+}
+
