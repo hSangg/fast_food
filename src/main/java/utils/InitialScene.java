@@ -16,7 +16,7 @@ public class InitialScene extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/fast_food/demo/SuppilerManagement.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/com/fast_food/demo/VoucherManagement.fxml"));
         Scene scene = new Scene(root);
         Image icon = new Image(getClass().getResourceAsStream("/images/logo.png"));
         stage.getIcons().add(icon);

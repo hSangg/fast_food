@@ -221,6 +221,32 @@ public class SuppilerManagementController implements Initializable {
                 }
             });
 
+            table_nha_cung_cap.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.DELETE) {
+                    SuperSuppiler selectedRow = table_nha_cung_cap.getSelectionModel().getSelectedItem();
+                    if (selectedRow != null) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Are you sure you want to delete this row?");
+
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isPresent() && result.get() == ButtonType.OK) {
+                            table_nha_cung_cap.getItems().remove(selectedRow);
+
+                            Iterator<SuperSuppiler> iterator = suppilerList.iterator();
+                            while (iterator.hasNext()) {
+                                SuperSuppiler x = iterator.next();
+                                if (x.getId() == selectedRow.getId()) {
+                                    iterator.remove();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
             button_themnguyenlieu.setOnMouseClicked(e -> {
                 if (this.mode.equals("ADD_NL")) {
                     if (!check()) {

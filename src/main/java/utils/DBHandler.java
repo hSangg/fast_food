@@ -423,6 +423,27 @@ public class DBHandler {
 
         return nhaCungCapList;
     }
+
+    public List<Voucher> getAllVoucher() throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT * FROM CHUONG_TRINH_KM");
+
+        List<Voucher> vouchers = new ArrayList<>();
+
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String moTa = rs.getString("MO_TA");
+            Date ngayBatDau = rs.getDate("NGAY_BAT_DAU");
+            Date ngayKetThuc = rs.getDate("NGAY_KET_THUC");
+            String maGiamGia = rs.getString("MA_GIAM_GIA");
+            int phanTramGiamGia = rs.getInt("PHAN_TRAM_GIAM_GIA");
+
+            Voucher voucher = new Voucher(id, moTa, ngayBatDau, ngayKetThuc, maGiamGia, phanTramGiamGia);
+            vouchers.add(voucher);
+        }
+
+        return vouchers;
+    }
 }
 
 
