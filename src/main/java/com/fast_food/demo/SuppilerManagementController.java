@@ -9,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import model.Ingredient;
 import model.SuperIngredient;
 import model.SuperSuppiler;
 import utils.DBHandler;
@@ -94,12 +95,15 @@ public class SuppilerManagementController implements Initializable {
     DBHandler db = new DBHandler();
 
     List<SuperSuppiler> suppilerList = new ArrayList<>();
+    List<Ingredient> ingredientList = new ArrayList<>();
 
     void clearChiTiet() {
         choice_box_nlcc.setValue(null);
         textfield_sdt.clear();
         textfield_emailncc.clear();
-        textfield_emailncc.clear();
+        textfield_diachi.clear();
+        textfield_ncc.clear();
+
     }
 
 
@@ -109,6 +113,7 @@ public class SuppilerManagementController implements Initializable {
 
     public boolean check() {
         boolean hasError = false;
+        hasError |= uf.isEmptyString(choice_box_nlcc.getValue()) ? uf.setErrorMsg(texterror_validator_nlcc, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_nlcc);
 
 
         hasError |= uf.isEmptyString(textfield_ncc.getText()) ? uf.setErrorMsg(texterror_validator_tencc, "Vui lòng điền thông tin") : uf.hideErrorMsg(texterror_validator_tencc);
@@ -157,11 +162,24 @@ public class SuppilerManagementController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        uf.setVisibleNode(texterror_validator_sdt, false);
+        uf.setVisibleNode(texterror_validator_tencc, false);
+        uf.setVisibleNode(texterror_validator_nlcc, false);
+        uf.setVisibleNode(texterror_validator_diachi, false);
+        uf.setVisibleNode(texterror_validator_emailncc, false);
+
+
         try {
             suppilerList = db.getAllNhaCungCapWithNguyenLieu();
+            ingredientList = db.getAllIngredients();
+
             renderTableNguyenLieu();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+
+        for(Ingredient i : ingredientList) {
+            choice_box_nlcc.getItems().add(i.getTen());
         }
 
         table_nha_cung_cap.setOnMouseClicked(event -> {
@@ -169,7 +187,7 @@ public class SuppilerManagementController implements Initializable {
 
                 SuperSuppiler selectedItem = table_nha_cung_cap.getSelectionModel().getSelectedItem();
                 if (selectedItem != null) {
-                    this.mode = "EDIT_NL";
+                    this.mode = "EDIT_NCC";
                     label_them_chinh_sua_nl.setText("Chỉnh sửa hoàn tất");
 
 
@@ -193,112 +211,81 @@ public class SuppilerManagementController implements Initializable {
                 }
             }
 
-            textfield_xoa_nl.setOnKeyPressed(e -> {
-                int result = 0;
-                if (e.getCode() == KeyCode.ENTER) {
-                    String nlCanXoa = textfield_xoa_nl.getText();
 
 
-                    Iterator<SuperSuppiler> iterator = suppilerList.iterator();
-                    while (iterator.hasNext()) {
-                        SuperSuppiler nl = iterator.next();
-                        if (nl.getTen().equalsIgnoreCase(nlCanXoa)) {
-                            ++result;
-                            iterator.remove();
+        });
+        textfield_xoa_nl.setOnKeyPressed(e -> {
+            int result = 0;
+            if (e.getCode() == KeyCode.ENTER) {
+                String nlCanXoa = textfield_xoa_nl.getText();
+
+
+                Iterator<SuperSuppiler> iterator = suppilerList.iterator();
+                while (iterator.hasNext()) {
+                    SuperSuppiler nl = iterator.next();
+                    if (nl.getTen().equalsIgnoreCase(nlCanXoa)) {
+                        ++result;
+                        iterator.remove();
+                    }
+                }
+                if (result != 0) {
+                    textfield_xoa_nl.clear();
+                    textfield_xoa_nl.setPromptText("đã xóa thành công");
+                    renderTableNguyenLieu();
+                    System.out.println("Enter key pressed");
+
+                } else {
+                    textfield_xoa_nl.clear();
+                    textfield_xoa_nl.setPromptText("Lỗi");
+
+                }
+            }
+        });
+
+        table_nha_cung_cap.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.DELETE) {
+                SuperSuppiler selectedRow = table_nha_cung_cap.getSelectionModel().getSelectedItem();
+                if (selectedRow != null) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirmation");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Are you sure you want to delete this row?");
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        table_nha_cung_cap.getItems().remove(selectedRow);
+
+                        Iterator<SuperSuppiler> iterator = suppilerList.iterator();
+                        while (iterator.hasNext()) {
+                            SuperSuppiler x = iterator.next();
+                            if (x.getId() == selectedRow.getId()) {
+                                iterator.remove();
+                            }
                         }
                     }
-                    if (result != 0) {
-                        textfield_xoa_nl.clear();
-                        textfield_xoa_nl.setPromptText("đã xóa thành công");
-                        renderTableNguyenLieu();
-                        System.out.println("Enter key pressed");
+                }
+            }
+        });
 
+
+        button_themnguyenlieu.setOnMouseClicked(e -> {
+            if (this.mode.equals("ADD_NCC")) {
+                if (!check()) {
+
+                    String ten_ncc = textfield_ncc.getText();
+                    String sdt = textfield_sdt.getText();
+                    String email = textfield_emailncc.getText();
+                    String nl = choice_box_nlcc.getValue();
+                    String diachi = textfield_diachi.getText();
+
+                    int id = suppilerList.size() + 1;
+
+                    SuperSuppiler superSuppiler = new SuperSuppiler(id, ten_ncc, sdt, email, diachi, currentSuppilerClick.getNguyenLieuId(), choice_box_nlcc.getValue());
+                    if (check_is_exit(ten_ncc)) {
+                        System.out.println("Da ton tai");
+                        // xử lý đã tồn tại
                     } else {
-                        textfield_xoa_nl.clear();
-                        textfield_xoa_nl.setPromptText("Lỗi");
-
-                    }
-                }
-            });
-
-            table_nha_cung_cap.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.DELETE) {
-                    SuperSuppiler selectedRow = table_nha_cung_cap.getSelectionModel().getSelectedItem();
-                    if (selectedRow != null) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Confirmation");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Are you sure you want to delete this row?");
-
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.isPresent() && result.get() == ButtonType.OK) {
-                            table_nha_cung_cap.getItems().remove(selectedRow);
-
-                            Iterator<SuperSuppiler> iterator = suppilerList.iterator();
-                            while (iterator.hasNext()) {
-                                SuperSuppiler x = iterator.next();
-                                if (x.getId() == selectedRow.getId()) {
-                                    iterator.remove();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-
-            button_themnguyenlieu.setOnMouseClicked(e -> {
-                if (this.mode.equals("ADD_NL")) {
-                    if (!check()) {
-
-                        String ten_ncc = textfield_ncc.getText();
-                        String sdt = textfield_sdt.getText();
-                        String email = textfield_emailncc.getText();
-                        String nl = choice_box_nlcc.getValue();
-                        String diachi = textfield_diachi.getText();
-
-                        int id = suppilerList.size() + 1;
-
-                        SuperSuppiler superSuppiler = new SuperSuppiler(id, ten_ncc, sdt, email, diachi, currentSuppilerClick.getNguyenLieuId(), choice_box_nlcc.getValue());
-                        if (check_is_exit(ten_ncc)) {
-                            System.out.println("Da ton tai");
-                            // xử lý đã tồn tại
-                        } else {
-                            suppilerList.add(superSuppiler);
-
-                            //////////////////
-                            /*
-                             * XU LY VOI DB
-                             *
-                             *
-                             *
-                             * */
-
-                            /////////////////
-
-                            clearChiTiet();
-                            renderTableNguyenLieu();
-                        }
-                    }
-                } else if (this.mode.equals("EDIT_NL")) {
-                    if (!check()) {
-                        String ten_ncc = textfield_ncc.getText();
-                        String sdt = textfield_sdt.getText();
-                        String email = textfield_emailncc.getText();
-                        String nl = choice_box_nlcc.getValue();
-                        String diachi = textfield_diachi.getText();
-
-                        suppilerList.forEach(suppiler -> {
-                            if (currentSuppilerClick.getId() == suppiler.getId()) {
-
-                                suppiler.setEmail(email);
-                                suppiler.setTen(ten_ncc);
-                                suppiler.setDiaChi(diachi);
-                                suppiler.setSoDienThoai(sdt);
-
-
-                            }
-                        });
+                        suppilerList.add(superSuppiler);
 
                         //////////////////
                         /*
@@ -310,14 +297,46 @@ public class SuppilerManagementController implements Initializable {
 
                         /////////////////
 
-                        this.mode = "ADD_NL";
                         clearChiTiet();
-                        label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
                         renderTableNguyenLieu();
                     }
                 }
-            });
+            } else if (this.mode.equals("EDIT_NCC")) {
+                if (!check()) {
+                    String ten_ncc = textfield_ncc.getText();
+                    String sdt = textfield_sdt.getText();
+                    String email = textfield_emailncc.getText();
+                    String nl = choice_box_nlcc.getValue();
+                    String diachi = textfield_diachi.getText();
 
+                    suppilerList.forEach(suppiler -> {
+                        if (currentSuppilerClick.getId() == suppiler.getId()) {
+
+                            suppiler.setEmail(email);
+                            suppiler.setTen(ten_ncc);
+                            suppiler.setDiaChi(diachi);
+                            suppiler.setSoDienThoai(sdt);
+
+
+                        }
+                    });
+
+                    //////////////////
+                    /*
+                     * XU LY VOI DB
+                     *
+                     *
+                     *
+                     * */
+
+                    /////////////////
+
+                    this.mode = "ADD_NCC";
+                    clearChiTiet();
+                    label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
+                    renderTableNguyenLieu();
+                }
+            }
         });
     }
 }
