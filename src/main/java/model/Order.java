@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 public class Order {
 
 
+    public Order() {
+
+    }
+
     public int getId() {
         return id;
     }
@@ -48,21 +52,7 @@ public class Order {
         this.ten_tn = ten_tn;
     }
 
-    public int getId_dc() {
-        return id_dc;
-    }
 
-    public void setId_dc(int id_dc) {
-        this.id_dc = id_dc;
-    }
-
-    public String getTen_dc() {
-        return ten_dc;
-    }
-
-    public void setTen_dc(String ten_dc) {
-        this.ten_dc = ten_dc;
-    }
 
     public int getSo_ban_dat() {
         return so_ban_dat;
@@ -126,8 +116,7 @@ public class Order {
 
     private int id_tn;
     private String ten_tn;
-    private int id_dc;
-    private String ten_dc;
+
     private int so_ban_dat;
     private int tong_tien;
     private String hinh_thuc_thanh_toan;
@@ -136,14 +125,13 @@ public class Order {
     private Date ngay_dat;
     private String ghi_chu;
 
-    public Order(int id, int id_kh, String ten_kh, int id_tn, String ten_tn, int id_dc, String ten_dc, int so_ban_dat, int tong_tien, String hinh_thuc_thanh_toan, String trang_thai, int dat_online, Date ngay_dat, String ghi_chu) {
+    public Order(int id, int id_kh, String ten_kh, int id_tn, String ten_tn, int so_ban_dat, int tong_tien, String hinh_thuc_thanh_toan, String trang_thai, int dat_online, Date ngay_dat, String ghi_chu) {
         this.id = id;
         this.id_kh = id_kh;
         this.ten_kh = ten_kh;
         this.id_tn = id_tn;
         this.ten_tn = ten_tn;
-        this.id_dc = id_dc;
-        this.ten_dc = ten_dc;
+
         this.so_ban_dat = so_ban_dat;
         this.tong_tien = tong_tien;
         this.hinh_thuc_thanh_toan = hinh_thuc_thanh_toan;

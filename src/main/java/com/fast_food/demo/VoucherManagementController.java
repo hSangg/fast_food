@@ -250,8 +250,20 @@ public class VoucherManagementController implements Initializable {
                             Voucher x = iterator.next();
                             if (x.getId() == selectedRow.getId()) {
                                 iterator.remove();
+
+                                //////////////////
+                                /*
+                                 * XU LY VOI DB
+                                 *
+                                 *
+                                 *
+                                 * */
+
+                                /////////////////
                             }
                         }
+
+
                     }
                 }
             }
@@ -261,7 +273,7 @@ public class VoucherManagementController implements Initializable {
         button_themnguyenlieu.setOnMouseClicked(e -> {
             if (this.mode.equals("ADD_VC")) {
                 if (!check()) {
-                    int id = voucherList.size()+1;
+                    int id = voucherList.size() + 1;
                     String mota = textfield_mota.getText();
                     String phanTramGiamGia = textfield_phantramgiamgia.getText();
                     String maGiamGia = textfield_magiamgia.getText();
@@ -269,7 +281,7 @@ public class VoucherManagementController implements Initializable {
                     Date ngayKT = Date.from(textfield_ngaykt.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 
-                    Voucher voucher = new Voucher(id, mota,ngayBD,ngayKT,maGiamGia,Integer.parseInt(phanTramGiamGia));
+                    Voucher voucher = new Voucher(id, mota, ngayBD, ngayKT, maGiamGia, Integer.parseInt(phanTramGiamGia));
                     if (check_is_exit(mota)) {
                         System.out.println("Da ton tai");
                         // xử lý đã tồn tại
@@ -287,7 +299,7 @@ public class VoucherManagementController implements Initializable {
                         /////////////////
 
                         clear();
-                       renderTableVoucher();
+                        renderTableVoucher();
                     }
                 }
             } else if (this.mode.equals("EDIT_VC")) {

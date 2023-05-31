@@ -86,8 +86,7 @@ public class DBHandler {
             String customerName = rs.getString("TEN_KH");
             int cashierId = rs.getInt("ID_TN");
             String cashierName = rs.getString("TEN_TN");
-            int addressId = rs.getInt("DIA_CHI_ID");
-            String address = rs.getString("DIA_CHI");
+
             int numTables = rs.getInt("SO_BAN_TAO_DON");
             int total = rs.getInt("TONG_TIEN");
             String paymentMethod = rs.getString("HINH_THUC_THANH_TOAN");
@@ -97,8 +96,8 @@ public class DBHandler {
             String notes = rs.getString("GHI_CHU");
 
             // create a new Order object using the retrieved data
-            Order order = new Order(id, customerId, customerName, cashierId, cashierName,
-                    addressId, address, numTables, total, paymentMethod,
+            Order order = new Order(id, customerId, customerName, cashierId, cashierName
+                    , numTables, total, paymentMethod,
                     status, isOnline, orderDate, notes);
 
             result.add(order);
