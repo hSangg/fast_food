@@ -443,6 +443,98 @@ public class DBHandler {
 
         return vouchers;
     }
+
+    public void AddFood(String ten, String moTa, String loai,int gia,String imagePath,String image) throws SQLException {
+        String sql = "INSERT INTO MON_AN ( ID, TEN_MON, MO_TA, LOAI, GIA ) VALUES (?,?,?,?,?)";
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT MAX(ID) FROM MON_AN");
+        int id=0;
+        id = rs.getInt(1)+1;
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, ten);
+            pstmt.setString(3, moTa);
+            pstmt.setString(4, loai);
+            pstmt.setInt(5, gia);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        sql = "{call UPDATE_MON(?, ?, ?)}";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, image);
+        pstmt.setInt(2, id);
+        pstmt.setString(3, imagePath);
+        pstmt.executeUpdate();
+    }
+    public void UpdateFood(int idMon, String ten, String moTa, String loai, int gia,String imagePath,String image) throws SQLException {
+        String sql = "UPDATE MON_AN SET TEN_MON=?, MO_TA=?, LOAI=?,GIA=? WHERE ID=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,ten);
+        pstmt.setString(2,moTa);
+        pstmt.setString(3,loai);
+        pstmt.setInt(4,gia);
+        pstmt.setInt(5,idMon);
+        pstmt.executeUpdate();
+        if(!imagePath.isEmpty()&&!image.isEmpty()) {
+            sql = "{call UPDATE_MON(?, ?, ?)}";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, image);
+            pstmt.setInt(2, idMon);
+            pstmt.setString(3, imagePath);
+            pstmt.executeUpdate();
+
+        }
+    }
+
+    public int findIdMon(String tenMon) throws SQLException{
+        int idMon = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM MON_AN WHERE TEN_MON = ?");
+        pstmt.setString(1, tenMon);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            idMon = rs.getInt(1);
+        }
+        return idMon;
+    }
+
+    public int findIdNl(String tenNl) throws SQLException{
+        int idNl = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NGUYEN_LIEU WHERE TEN = ?");
+        pstmt.setString(1, tenNl);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            idNl = rs.getInt(1);
+        }
+        return idNl;
+    }
+    public void EditNlOfMon(int idMon,  String tenMon, String tenNl,int sL) throws SQLException {
+        int idNl = find_id(tenNl);
+        String sql ="Update NGUYEN_LIEU_MON_AN SET SO_LUONG=?  WHERE ID_MON=? AND ID_NL=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1,sL);
+        pstmt.setInt(2,idMon);
+        pstmt.setInt(3,idNl);
+        pstmt.executeUpdate();
+    }
+
+    public void DelNlOfMon(String tenMon, String tenNl) throws SQLException {
+        int idMon = findIdMon(tenMon);
+        int idNl = findIdNl(tenNl);
+        PreparedStatement pstmt = conn.prepareStatement("DELETE FROM NGUYEN_LIEU_MON_AN WHERE ID_MON=? AND ID_NL=?");
+        pstmt.setInt(1,idMon);
+        pstmt.setInt(2,idNl);
+        pstmt.executeUpdate();
+    }
+    public void InsNl(String tenMon,String tenNl,int sL) throws SQLException{
+        int idMon = findIdMon(tenMon);
+        int idNl = findIdNl(tenNl);
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NGUYEN_LIEU_MON_AN VALUES (?,?,?)");
+        pstmt.setInt(1,idNl);
+        pstmt.setInt(2,idMon);
+        pstmt.setInt(3,sL);
+        pstmt.executeUpdate();
+    }
 }
 
 

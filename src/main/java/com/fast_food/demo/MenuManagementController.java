@@ -1,5 +1,6 @@
 package com.fast_food.demo;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,7 +17,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Employee;
 import model.Ingredient;
 import model.Material;
 import model.MenuItem;
@@ -24,12 +27,17 @@ import utils.DBHandler;
 import utils.UtilityFunctions;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 public class MenuManagementController implements Initializable {
     @FXML
     private HBox button_chonanh;
@@ -124,7 +132,11 @@ public class MenuManagementController implements Initializable {
 
     @FXML
     private TextField textfield_tenmon;
-
+    private Stage primaryStage;
+    private String imagePath="";
+    private String imageName="";
+    private MenuItem currentMenuItemClick;
+    private Material currentMaterielClick;
     public String mode = "ADD_NL";
     /*
     + EDIT_MON_AN (không sửa nguyên liệu)
@@ -227,7 +239,54 @@ public class MenuManagementController implements Initializable {
         return materialList.stream().filter(material1 -> material1.getName().equals(tennl)).collect(Collectors.toList()).size() > 0 ? uf.setErrorMsg(texterror_validator_tennl, "nguyên liệu đã tồn tại") : uf.hideErrorMsg(texterror_validator_tennl);
     }
 
+    public void renderTableMonAn() throws SQLException {
+        table_mon_an.getItems().clear();
+        HashSet<MenuItem> menu_list = db.getAllMenuItems();
 
+        ObservableList<MenuItem> monan = FXCollections.observableArrayList();
+        tablecolumn_anh.setCellFactory(column -> new TableCell<MenuItem, Image>() {
+            private final ImageView imageView = new ImageView();
+
+            @Override
+            protected void updateItem(Image image, boolean empty) {
+                super.updateItem(image, empty);
+                if (empty || image == null) {
+                    setGraphic(null);
+                } else {
+
+                    imageView.setImage(image);
+                    imageView.setFitWidth(50);  // Set the desired width of the image
+                    imageView.setFitHeight(50); // Set the desired height of the image
+
+                    Rectangle clip = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
+                    clip.setArcWidth(40);
+                    clip.setArcHeight(40);
+                    imageView.setClip(clip);
+
+
+                    setGraphic(imageView);
+                }
+            }
+        });
+
+        tablecolumn_anh.setCellValueFactory(cellData -> {
+            byte[] imageData = cellData.getValue().getImage(); // Assuming "getHinhAnh()" returns the byte array
+            if (imageData != null) {
+                ByteArrayInputStream bis = new ByteArrayInputStream(imageData);
+                Image image = new Image(bis);
+                return new SimpleObjectProperty<>(image);
+            } else {
+                return new SimpleObjectProperty<>(null);
+            }
+        });
+
+        tablecolumn_tenmon.setCellValueFactory(new PropertyValueFactory<>("name"));
+        for (MenuItem x : menu_list) {
+            monan.add(x);
+        }
+
+        table_mon_an.setItems(monan);
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // DEFAULT--------------------------------
@@ -242,7 +301,9 @@ public class MenuManagementController implements Initializable {
         button_hoantat.setPrefHeight(75);
         button_hoantat.setMinHeight(50);
         button_hoantat.setMaxHeight(50);
-
+        Platform.runLater(() -> {
+            primaryStage = (Stage) button_chonanh.getScene().getWindow();
+        });
 
 
         try {
@@ -262,6 +323,8 @@ public class MenuManagementController implements Initializable {
             }
             isDisableChiTietMonAn(true);
             isDisableChiTietNguyenLieu(true);
+            button_xoanguyenlieu.setDisable(true);
+
             button_themnguyenlieu.setDisable(true);
 
 
@@ -271,6 +334,7 @@ public class MenuManagementController implements Initializable {
             // ------XU LY BUTTON-------------------
             //XU LY KHI AN THEM NGUYEN LIEU
             button_themnguyenlieu.setOnMouseClicked(e -> {
+                choicebox_tennguyenlieu.setDisable(false);
                 if (this.mode.equals("ADD_NL")) {
                     if (!check_is_error_nl()) {
                         String ten_nl = choicebox_tennguyenlieu.getValue();
@@ -283,17 +347,11 @@ public class MenuManagementController implements Initializable {
                             // xử lý đã tồn tại
                         } else {
                             materialList.add(material);
-
-                            //////////////////
-                            /*
-                             * XU LY VOI DB
-                             *
-                             *
-                             *
-                             * */
-
-                            /////////////////
-
+                            try {
+                                db.InsNl(textfield_tenmon.getText(),ten_nl,Integer.parseInt(so_luong));
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
                             clearChiTietNguyenLieu();
                             renderTableNguyenLieu();
                         }
@@ -303,6 +361,7 @@ public class MenuManagementController implements Initializable {
                     // Lấy dữ liệu từ các TextField
                     String ten_nl = choicebox_tennguyenlieu.getValue();
                     String don_vi = textfield_donvi.getText();
+                    String ten_mon = textfield_tenmon.getText();
                     int so_luong = Integer.parseInt(textfield_soluong.getText());
 
 
@@ -314,15 +373,12 @@ public class MenuManagementController implements Initializable {
                         }
                     });
 
-                    //////////////////
-                    /*
-                     * XU LY VOI DB
-                     *
-                     *
-                     *
-                     * */
-
-                    /////////////////
+                    try {
+                        int idMon = currentMenuItemClick.getId();
+                        db.EditNlOfMon(idMon,ten_mon,ten_nl, so_luong);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
                     this.mode = "ADD_NL";
                     clearChiTietNguyenLieu();
@@ -348,6 +404,12 @@ public class MenuManagementController implements Initializable {
                         }
                     }
                     if (result != 0) {
+                        try {
+                            int idMon = currentMenuItemClick.getId();
+                            db.DelNlOfMon(textfield_tenmon.getText(),monCanXoa);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
                         textfield_xoa_nl.clear();
                         textfield_xoa_nl.setPromptText("đã xóa thành công");
                         renderTableNguyenLieu();
@@ -356,7 +418,6 @@ public class MenuManagementController implements Initializable {
                     } else {
                         textfield_xoa_nl.clear();
                         textfield_xoa_nl.setPromptText("Lỗi");
-
                     }
                 }
             });
@@ -379,15 +440,48 @@ public class MenuManagementController implements Initializable {
                 stage.setScene(scene);
                 stage.show();
 
-            });
 
+            });
+            button_chonanh.setOnMouseClicked(e ->{
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Chọn ảnh");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Ảnh", "*.jpg", "*.jpeg", "*.png")
+                );
+
+                File selectedFile = fileChooser.showOpenDialog(primaryStage);
+                if (selectedFile != null) {
+                    String chuoi = selectedFile.getAbsolutePath();
+                    int viTriCuoi = chuoi.lastIndexOf("\\");
+                    if (viTriCuoi != -1) {
+                        imagePath = chuoi.substring(0, viTriCuoi);
+                    }
+                    imageName = selectedFile.getName();
+                    System.out.println(imagePath);
+                    System.out.println(imageName);
+                    // Ứng dụng logic để sử dụng đường dẫn ảnh (imagePath) trong ứng dụng của bạn
+                }
+            });
             button_hoantat.setOnMouseClicked(e -> {
+                try {
+                    int idMon =  currentMenuItemClick.getId();
+                    System.out.println(idMon);
+                    db.UpdateFood(idMon, textfield_tenmon.getText(),textfield_mota.getText(),choicebox_loai.getValue(),Integer.parseInt(text_field_gia.getText()),imagePath,imageName);
+                    renderTableMonAn();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                imagePath="";
+                imageName="";
                 System.out.println(this.mode);
             });
 
             button_xoanguyenlieu.setOnMouseClicked(e -> {
                 this.mode = "DELETE_NGUYEN_LIEU";
+
             });
+
+
 
             // ------XU LY BUTTON-------------------
 
@@ -445,6 +539,7 @@ public class MenuManagementController implements Initializable {
                     if (event.getClickCount() == 2 && !row.isEmpty()) {
                         MenuItem selectedItem = row.getItem();
                         //-----------XU LY KHI DOUBLE CLICK VAO 1 HANG CUA TABLE MON AN
+                        currentMenuItemClick = new MenuItem(selectedItem.getId(),selectedItem.getName(),selectedItem.getDescription(),selectedItem.getCategory(),selectedItem.getPrice(), selectedItem.getImage());
                         isDisableChiTietMonAn(false);
                         button_xoamon.setDisable(false);
                         button_themnguyenlieu.setDisable(false);
@@ -491,6 +586,7 @@ public class MenuManagementController implements Initializable {
                         label_them_chinh_sua_nl.setText("Chỉnh sửa hoàn tất");
 
                         Material selectedItem = row.getItem();
+                        currentMaterielClick = new Material(selectedItem.getName(),selectedItem.getUnit(),selectedItem.getQuantity());
                         isDisableChiTietNguyenLieu(false);
                         button_xoanguyenlieu.setDisable(false);
 
@@ -499,6 +595,7 @@ public class MenuManagementController implements Initializable {
                         textfield_donvi.setText(selectedItem.getUnit());
                         textfield_soluong.setText(String.valueOf(selectedItem.getQuantity()));
                         choicebox_tennguyenlieu.setValue(selectedItem.getName());
+                        choicebox_tennguyenlieu.setDisable(true);
                         //---------RENDER VALUE-------------
                     }
                 });
