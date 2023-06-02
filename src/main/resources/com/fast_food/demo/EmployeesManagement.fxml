@@ -134,7 +134,7 @@
                      </VBox.margin>
                   </TextField>
                   <Text fx:id="text_error_validator_luong" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="error_text_validator" text="Sai định dạng lương" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Chức vụ">
+                  <Text fx:id="t_chuc_vu" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Chức vụ">
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
@@ -148,7 +148,7 @@
                   </Text>
                   <ChoiceBox fx:id="choicebox_nguoi_quan_ly" prefHeight="40.0" prefWidth="555.0" styleClass="custom-choice-box" />
                   <Text fx:id="text_error_validator_nguoi_ql" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="error_text_validator" text="Người quản lý đang bị bỏ trống" />
-                  <Pane prefHeight="200.0" prefWidth="200.0" styleClass="text-normal" VBox.vgrow="ALWAYS">
+                  <Pane prefHeight="200.0" prefWidth="451.0" styleClass="text-normal" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>

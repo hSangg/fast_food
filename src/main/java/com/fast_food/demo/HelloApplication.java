@@ -3,7 +3,7 @@ package com.fast_food.demo;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import utils.InitialScene;
-
+import utils.DBHandler;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
@@ -14,8 +14,6 @@ public class HelloApplication extends Application {
             ie.start(stage);
         } catch (Exception e) {e.printStackTrace();}
     }
-
-
     public static void main(String[] args) {
         launch();
     }

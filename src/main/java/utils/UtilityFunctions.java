@@ -4,6 +4,10 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UtilityFunctions {
     public boolean isPhoneNumber(String input) {
@@ -21,6 +25,16 @@ public class UtilityFunctions {
         return input.matches("^[0-9]+$");
     }
 
+    public  boolean isValidEmail(String email) {
+
+        String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
     public void setVisibleNode(Node node, boolean is_visible) {
         node.setVisible(is_visible);
         node.setManaged(is_visible);
@@ -34,5 +48,17 @@ public class UtilityFunctions {
         column.setGraphic(icon);
         column.setText(columnHeader);
     }
+
+    public boolean setErrorMsg(Text errorLabel, String errorMsg) {
+        setVisibleNode(errorLabel, true);
+        errorLabel.setText(errorMsg);
+        return true;
+    }
+
+    public boolean hideErrorMsg(Text errorLabel) {
+        setVisibleNode(errorLabel, false);
+        return false;
+    }
+
 
 }

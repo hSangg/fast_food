@@ -93,6 +93,24 @@ public class ManagementController implements Initializable {
             }
         });
 
+        ingredient.setOnMouseClicked(e -> {
+            control_menu.setManaged(false);
+            control_menu.setVisible(false);
+
+
+            FXMLLoader fxml = new FXMLLoader();
+            fxml.setLocation(getClass().getResource("/com/fast_food/demo/IngredientManagement.fxml"));
+
+
+            try {
+                scene_root.getChildren().add(fxml.load());
+                IngredientManagementController IMC = fxml.getController();
+                IMC.setCurrentUser(userlogin);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         orders.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);

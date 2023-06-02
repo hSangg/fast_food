@@ -4,6 +4,12 @@
   -fx-font-weight: bold;
 }
 
+.text-header-1 {
+  -fx-font-family: "Montserrat ExtraBold";
+  -fx-font-size: 30px;
+  -fx-font-weight: bold;
+}
+
 .root {
   -fx-font-family: "Montserrat";
 }
@@ -12,6 +18,12 @@
   -fx-font-family: "Montserrat";
   -fx-font-size: 20px;
   -fx-font-weight: normal;
+}
+
+.text-normal-plus {
+  -fx-font-family: "Montserrat";
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
 }
 
 .button-edit {
@@ -43,11 +55,27 @@
   -fx-background-color: #fb923c50;
 }
 
+.border-bottom-thu{
+-fx-border-color: #316aff;
+-fx-border-width: 0 0 2 0;
+}
+
+.border-bottom-chi{
+-fx-border-color: #ff8110;
+-fx-border-width: 0 0 2 0;
+}
+
 .background-order {
   -fx-background-radius: 50;
   -fx-background-color: #fb923c40;
 }
 
+.button_orange {
+  -fx-background-color: #FC4F00;
+  -fx-background-radius: 10;
+  -fx-padding: 2 2 2 2;
+  -fx-font-weight: bold;
+}
 .background-ingredient {
   -fx-background-radius: 50;
   -fx-background-color: #a855f740;
@@ -146,6 +174,10 @@
   -fx-background-color: #fff;
 }
 
+
+
+
+
 .button_add_employee {
   -fx-background-color: #fff;
   -fx-border-radius: 59px;
@@ -204,6 +236,9 @@
     -fx-border-color: transparent; /* Màu của đường viền */
     -fx-border-width: 0 0 5px 0; /* Độ rộng của đường viền */
     -fx-border-insets: 0 0 -5px 0; /* Điều chỉnh vị trí của đường viền */
+    -fx-border-radius: 10px;
+   -fx-border-radius: 10px
+
 }
 
 .table_order .column-header .label {
@@ -233,8 +268,9 @@
 
 /* Set the border color and width for table cells */
 .table_order .table-cell {
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 0.5px;
+     -fx-border-color: transparent transparent transparent transparent;
+     -fx-border-width: 0 0 1px 0;
+     -fx-border-style: solid;
 }
 
 /* Set the padding for table cells */
@@ -251,22 +287,9 @@
 .table_order .scroll-bar:horizontal {
   -fx-background-insets: -1;
 }
-.table_order .scroll-bar:horizontal {
-   -fx-background-insets: -1;
-}
-.table-view *.scroll-bar:horizontal *.increment-button,
-.table-view *.scroll-bar:horizontal *.decrement-button {
-    -fx-background-color: null;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
 
-.table-view *.scroll-bar:horizontal *.increment-arrow,
-.table-view *.scroll-bar:horizontal *.decrement-arrow {
-    -fx-background-color: null;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-shape: null;
- }
+.scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+    -fx-background-color: transparent;
+}
