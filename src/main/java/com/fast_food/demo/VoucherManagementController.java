@@ -33,6 +33,9 @@ public class VoucherManagementController implements Initializable {
     private HBox button_themnguyenlieu;
 
     @FXML
+    private HBox button_xoanl;
+
+    @FXML
     private Label label_ngaynhapkho;
 
     @FXML
@@ -173,6 +176,18 @@ public class VoucherManagementController implements Initializable {
         uf.setVisibleNode(texterror_validator_mota, false);
         uf.setVisibleNode(texterror_validator_magiamgia, false);
         uf.setVisibleNode(texterror_validator_phantramgiamgia, false);
+
+        textfield_ngaybd.getEditor().setOnMouseClicked(event -> {
+            textfield_ngaybd.show();
+        });
+
+        textfield_ngaykt.getEditor().setOnMouseClicked(event -> {
+            textfield_ngaykt.show();
+        });
+
+
+
+
         try {
             this.voucherList = db.getAllVoucher();
         } catch (SQLException e) {
@@ -230,6 +245,41 @@ public class VoucherManagementController implements Initializable {
                 }
             }
 
+        });
+
+        button_xoanl.setOnMouseClicked(e -> {
+            Voucher selectedRow = currentVoucherClick;
+            if (selectedRow != null) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to delete this row?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    table_voucher.getItems().remove(selectedRow);
+
+                    Iterator<Voucher> iterator = voucherList.iterator();
+                    while (iterator.hasNext()) {
+                        Voucher x = iterator.next();
+                        if (x.getId() == selectedRow.getId()) {
+                            iterator.remove();
+
+                            //////////////////
+                            /*
+                             * XU LY VOI DB
+                             *
+                             *
+                             *
+                             * */
+
+                            /////////////////
+                        }
+                    }
+
+
+                }
+            }
         });
 
         table_voucher.setOnKeyPressed(e -> {

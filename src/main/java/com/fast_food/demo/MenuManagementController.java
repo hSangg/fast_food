@@ -287,6 +287,55 @@ public class MenuManagementController implements Initializable {
 
         table_mon_an.setItems(monan);
     }
+
+    public void renderTableMonAnFollowingUI() throws SQLException {
+        table_mon_an.getItems().clear();
+
+        ObservableList<MenuItem> monan = FXCollections.observableArrayList();
+        tablecolumn_anh.setCellFactory(column -> new TableCell<MenuItem, Image>() {
+            private final ImageView imageView = new ImageView();
+
+            @Override
+            protected void updateItem(Image image, boolean empty) {
+                super.updateItem(image, empty);
+                if (empty || image == null) {
+                    setGraphic(null);
+                } else {
+
+                    imageView.setImage(image);
+                    imageView.setFitWidth(50);  // Set the desired width of the image
+                    imageView.setFitHeight(50); // Set the desired height of the image
+
+                    Rectangle clip = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
+                    clip.setArcWidth(40);
+                    clip.setArcHeight(40);
+                    imageView.setClip(clip);
+
+
+                    setGraphic(imageView);
+                }
+            }
+        });
+
+        tablecolumn_anh.setCellValueFactory(cellData -> {
+            byte[] imageData = cellData.getValue().getImage(); // Assuming "getHinhAnh()" returns the byte array
+            if (imageData != null) {
+                ByteArrayInputStream bis = new ByteArrayInputStream(imageData);
+                Image image = new Image(bis);
+                return new SimpleObjectProperty<>(image);
+            } else {
+                return new SimpleObjectProperty<>(null);
+            }
+        });
+
+        tablecolumn_tenmon.setCellValueFactory(new PropertyValueFactory<>("name"));
+        for (MenuItem x : menuList) {
+            monan.add(x);
+        }
+
+        table_mon_an.setItems(monan);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // DEFAULT--------------------------------
