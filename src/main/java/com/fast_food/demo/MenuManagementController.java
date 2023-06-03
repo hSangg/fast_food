@@ -132,6 +132,7 @@ public class MenuManagementController implements Initializable {
 
     @FXML
     private TextField textfield_tenmon;
+    @FXML TextField textfield_xoa_mon;
     private Stage primaryStage;
     private String imagePath="";
     private String imageName="";
@@ -182,7 +183,53 @@ public class MenuManagementController implements Initializable {
         textfield_soluong.setDisable(x);
         textfield_donvi.setDisable(x);
     }
+    public void renderTableMonAnFollowingUI()  {
+        table_mon_an.getItems().clear();
 
+        ObservableList<MenuItem> monan = FXCollections.observableArrayList();
+        tablecolumn_anh.setCellFactory(column -> new TableCell<MenuItem, Image>() {
+            private final ImageView imageView = new ImageView();
+
+            @Override
+            protected void updateItem(Image image, boolean empty) {
+                super.updateItem(image, empty);
+                if (empty || image == null) {
+                    setGraphic(null);
+                } else {
+
+                    imageView.setImage(image);
+                    imageView.setFitWidth(50);  // Set the desired width of the image
+                    imageView.setFitHeight(50); // Set the desired height of the image
+
+                    Rectangle clip = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
+                    clip.setArcWidth(40);
+                    clip.setArcHeight(40);
+                    imageView.setClip(clip);
+
+
+                    setGraphic(imageView);
+                }
+            }
+        });
+
+        tablecolumn_anh.setCellValueFactory(cellData -> {
+            byte[] imageData = cellData.getValue().getImage(); // Assuming "getHinhAnh()" returns the byte array
+            if (imageData != null) {
+                ByteArrayInputStream bis = new ByteArrayInputStream(imageData);
+                Image image = new Image(bis);
+                return new SimpleObjectProperty<>(image);
+            } else {
+                return new SimpleObjectProperty<>(null);
+            }
+        });
+
+        tablecolumn_tenmon.setCellValueFactory(new PropertyValueFactory<>("name"));
+        for (MenuItem x : menuList) {
+            monan.add(x);
+        }
+
+        table_mon_an.setItems(monan);
+    }
     public void renderTableNguyenLieu() {
         table_nguyen_lieu.getItems().clear();
         //-----------THEM NGUYEN LIEU TUONG UNG VOI MON
@@ -422,6 +469,35 @@ public class MenuManagementController implements Initializable {
                 }
             });
 
+            textfield_xoa_mon.setOnKeyPressed(event -> {
+                int result = 0;
+                int id=-99;
+                if(event.getCode() == KeyCode.ENTER){
+                    String monCanXoa = textfield_xoa_mon.getText();
+                    Iterator<MenuItem> iterator = menuList.iterator();
+                    while(iterator.hasNext()){
+                        MenuItem menuItem = iterator.next();
+                        if(menuItem.getName().equalsIgnoreCase(monCanXoa)){
+                            id=menuItem.getId();
+                            ++result;
+                            iterator.remove();
+                        }
+                    }
+                    if(result!=0){
+                        try {
+                            db.DelMon(id);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        textfield_xoa_mon.clear();
+                        textfield_xoa_mon.setPromptText("Đã xóa thành công");
+
+                            renderTableMonAnFollowingUI();
+
+
+                    }
+                }
+            });
 
             button_themmon.setOnMouseClicked(e -> {
                 //open new UI

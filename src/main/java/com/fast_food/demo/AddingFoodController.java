@@ -1,5 +1,6 @@
 package com.fast_food.demo;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,11 +10,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.Ingredient;
 import model.Material;
 import utils.DBHandler;
 import utils.UtilityFunctions;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -96,6 +100,9 @@ public class AddingFoodController implements Initializable {
 
     @FXML
     private Text texterror_validator_tennl;
+    private Stage primaryStage;
+    private String imagePath;
+    private String imageName;
 
     List<Material> allMaterial = new ArrayList<>(); // luu toan bo so luong, don vi, ten nguyen lieu de nau mon an them vo, se duoc re-render
 
@@ -185,7 +192,9 @@ public class AddingFoodController implements Initializable {
 
         button_hoantat.setPrefHeight(75);
         button_hoantat.setMinHeight(50);
-
+        Platform.runLater(() -> {
+            primaryStage = (Stage) button_chonanh.getScene().getWindow();
+        });
 
         choicebox_loai.getItems().add("do an");
         choicebox_loai.getItems().add("do uong");
@@ -201,17 +210,44 @@ public class AddingFoodController implements Initializable {
             throw new RuntimeException(e);
         }
 
+        button_chonanh.setOnMouseClicked(e ->{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Chọn ảnh");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Ảnh", "*.jpg", "*.jpeg", "*.png")
+            );
+
+            File selectedFile = fileChooser.showOpenDialog(primaryStage);
+            if (selectedFile != null) {
+                String chuoi = selectedFile.getAbsolutePath();
+                int viTriCuoi = chuoi.lastIndexOf("\\");
+                if (viTriCuoi != -1) {
+                    imagePath = chuoi.substring(0, viTriCuoi);
+                }
+                imageName = selectedFile.getName();
+                System.out.println(imagePath);
+                System.out.println(imageName);
+                // Ứng dụng logic để sử dụng đường dẫn ảnh (imagePath) trong ứng dụng của bạn
+            }
+        });
         button_hoantat.setOnMouseClicked(event -> {
 
                 if(!check_is_error()) {
-                    //
+                    try {
+                        db.AddFood(textfield_tenmon.getText(),textfield_mota.getText(),choicebox_loai.getValue(),Integer.parseInt(text_field_gia.getText()),imagePath,imageName);
+                        for (Material material : allMaterial) {
+                            db.InsNl(textfield_tenmon.getText(),material.getName(),material.getQuantity());
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
         });
 
         table_nguyen_lieu.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) { // Kiểm tra double click
-
+                choicebox_tennguyenlieu.setDisable(true);
                 Material selectedMaterial = table_nguyen_lieu.getSelectionModel().getSelectedItem();
                 if (selectedMaterial != null) {
                     this.mode = "EDIT_NL";
@@ -244,6 +280,7 @@ public class AddingFoodController implements Initializable {
                     }
                 }
                 if(result != 0) {
+
                     textfield_xoa_nl.clear();
                     textfield_xoa_nl.setPromptText("đã xóa thành công");
                     renderTableMaterial();
@@ -261,6 +298,7 @@ public class AddingFoodController implements Initializable {
         //------------------------------------------------------------------------------
         //XU LY KHI AN THEM NGUYEN LIEU
         button_themnguyenlieu.setOnMouseClicked(e -> {
+            choicebox_tennguyenlieu.setDisable(false);
             if(this.mode.equals("ADD_NL")){
                 if (!check_is_error_nl()) {
                     String ten_nl = choicebox_tennguyenlieu.getValue();
@@ -278,7 +316,7 @@ public class AddingFoodController implements Initializable {
                         /*
                          * XU LY VOI DB
                          *
-                         *
+                         * khong can
                          *
                          * */
 
@@ -309,7 +347,7 @@ public class AddingFoodController implements Initializable {
                 /*
                 * XU LY VOI DB
                 *
-                *
+                * khong can
                 *
                 * */
 

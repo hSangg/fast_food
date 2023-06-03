@@ -14,9 +14,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "1652003Sang_";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -449,7 +449,9 @@ public class DBHandler {
         Statement sm = conn.createStatement();
         ResultSet rs = sm.executeQuery("SELECT MAX(ID) FROM MON_AN");
         int id=0;
-        id = rs.getInt(1)+1;
+        while(rs.next()) {
+            id = rs.getInt(1) + 1;
+        }
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.setString(2, ten);
@@ -533,6 +535,17 @@ public class DBHandler {
         pstmt.setInt(1,idNl);
         pstmt.setInt(2,idMon);
         pstmt.setInt(3,sL);
+        pstmt.executeUpdate();
+    }
+    public void DelMon(int idMon) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement("DELETE FROM NGUYEN_LIEU_MON_AN WHERE ID_MON = ?");
+        pstmt.setInt(1,idMon);
+        pstmt.executeUpdate();
+        pstmt = conn.prepareStatement("DELETE FROM CHITIET_DON WHERE ID_MON = ?");
+        pstmt.setInt(1,idMon);
+        pstmt.executeUpdate();
+        pstmt = conn.prepareStatement("DELETE FROM MON_AN WHERE ID = ?");
+        pstmt.setInt(1,idMon);
         pstmt.executeUpdate();
     }
 }
