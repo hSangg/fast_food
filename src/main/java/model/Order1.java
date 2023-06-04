@@ -3,10 +3,10 @@ package model;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
-public class Order {
+public class Order1 {
 
 
-    public Order() {
+    public Order1() {
 
     }
 
@@ -26,13 +26,7 @@ public class Order {
         this.id_kh = id_kh;
     }
 
-    public String getTen_kh() {
-        return ten_kh;
-    }
 
-    public void setTen_kh(String ten_kh) {
-        this.ten_kh = ten_kh;
-    }
 
 
 
@@ -44,13 +38,8 @@ public class Order {
         this.id_tn = id_tn;
     }
 
-    public String getTen_tn() {
-        return ten_tn;
-    }
 
-    public void setTen_tn(String ten_tn) {
-        this.ten_tn = ten_tn;
-    }
+
 
 
 
@@ -112,9 +101,8 @@ public class Order {
 
     private int id;
     private int id_kh;
-    private String ten_kh;
+    private int id_km;
     private int id_tn;
-    private String ten_tn;
     private int so_ban_dat;
     private int tong_tien;
     private String hinh_thuc_thanh_toan;
@@ -123,13 +111,11 @@ public class Order {
     private Date ngay_dat;
     private String ghi_chu;
 
-    public Order(int id, int id_kh, String ten_kh, int id_tn, String ten_tn, int so_ban_dat, int tong_tien, String hinh_thuc_thanh_toan, String trang_thai, int dat_online, Date ngay_dat, String ghi_chu) {
+    public Order1(int id, int id_kh, int id_km, int id_tn, int so_ban_dat, int tong_tien, String hinh_thuc_thanh_toan, String trang_thai, int dat_online, Date ngay_dat, String ghi_chu) {
         this.id = id;
         this.id_kh = id_kh;
-        this.ten_kh = ten_kh;
+        this.id_km = id_km;
         this.id_tn = id_tn;
-        this.ten_tn = ten_tn;
-
         this.so_ban_dat = so_ban_dat;
         this.tong_tien = tong_tien;
         this.hinh_thuc_thanh_toan = hinh_thuc_thanh_toan;

@@ -16,13 +16,16 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import model.FastFood;
 import model.Order;
+import model.Voucher;
 import utils.DBHandler;
 import utils.UtilityFunctions;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -65,7 +68,8 @@ public class OrdersManagementController implements Initializable {
 
     @FXML
     private Text text_error_tt;
-
+    public static int currentId;
+    HashSet<Order> result=new HashSet<>();
     UtilityFunctions uf = new UtilityFunctions();
 
 
@@ -97,7 +101,7 @@ public class OrdersManagementController implements Initializable {
         // init table order
 
         try {
-            HashSet<Order> result = db.getAllOrders();
+             result = db.getAllOrders();
             for (Order or : result) {
                 orderList.add(or);
             }
@@ -118,17 +122,12 @@ public class OrdersManagementController implements Initializable {
         //
 
         button_submit.setOnMouseClicked(e -> {
-
             if (!check_is_error()) {
                 System.out.println("submit");
-
             }
-
         });
 
         //
-
-
         order_list.setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 button_submit.setDisable(false);
