@@ -723,7 +723,7 @@ public class DBHandler {
 
     }
     public void EditOfIngre(int id,String ten,String don_vi,int sl,int gia) throws SQLException {
-        String sql ="UPDATE NHA_CUNG_CAP SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
+        String sql ="UPDATE NGUYEN_LIEU SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1,ten);
         pstmt.setString(2,don_vi);
@@ -761,7 +761,6 @@ public class DBHandler {
         pstmt.executeUpdate();
     }
     public void InsRequest(int id_nl,int id_ncc,int id_quan_ly,int id_bep,int tongtien,LocalDate ngayNhap,int soluong) throws SQLException{
-        java.sql.Date ngaynhap=java.sql.Date.valueOf(ngayNhap);
         PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO) VALUES (?,?,?,?,?,?,?)");
         pstmt.setInt(1,id_nl);
         pstmt.setInt(2,id_ncc);
@@ -769,7 +768,7 @@ public class DBHandler {
         pstmt.setInt(4,id_bep);
         pstmt.setInt(5,tongtien);
         pstmt.setInt(6,soluong);
-        pstmt.setDate(7,ngaynhap);
+        pstmt.setDate(7,null);
         pstmt.executeUpdate();
     }
 

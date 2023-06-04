@@ -339,20 +339,11 @@ public class IngredientManagementController implements Initializable {
 
             Scene scene = null;
             try {
-                if(db.isBep(LoginController.id_nv)) {
                     scene = new Scene(fxmlLoader.load());
                     RequestForIngredientController RFIC = fxmlLoader.getController();
                     RFIC.setCurrentUser(user);
                 }
-                else{
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("error");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Không phải nhân viên bếp");
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            } catch (SQLException ex) {
+             catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
             Stage stage = new Stage();
@@ -375,7 +366,7 @@ public class IngredientManagementController implements Initializable {
                         ++result;
                         iterator.remove();
                         try {
-                            db.xoaNCC(nl.getId());
+                            db.xoaIngre(nl.getId());
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
