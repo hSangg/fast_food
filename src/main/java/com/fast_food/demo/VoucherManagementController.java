@@ -149,8 +149,6 @@ public class VoucherManagementController implements Initializable {
                 return new SimpleStringProperty(formattedDate);
             }
         });
-
-
         tablecolumn_ngayketthuc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Voucher, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Voucher, String> p) {
@@ -192,7 +190,6 @@ public class VoucherManagementController implements Initializable {
 
 
                     this.currentVoucherClick = selectedItem;
-
                     int id = selectedItem.getId();
                     String mota = selectedItem.getMoTa();
                     String maGiamGia = selectedItem.getMaGiamGia();

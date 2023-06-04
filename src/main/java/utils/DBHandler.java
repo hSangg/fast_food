@@ -3,11 +3,11 @@ package utils;
 import model.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.sql.Date;
-import java.util.Set;
 
 public class DBHandler {
     public Connection conn;
@@ -50,9 +50,7 @@ public class DBHandler {
             int id_quan_ly = rs.getInt("ID_QUAN_LY");
 
             result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly));
-
         }
-
         return result;
     }
 
@@ -113,6 +111,34 @@ public class DBHandler {
 
         }
 
+        return result;
+    }
+    public HashSet<Order1> getAllOrders1() throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT * FROM DON_HANG");
+        HashSet<Order1> result = new HashSet<>();
+
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            int customerId = rs.getInt("ID_KH");
+            int voucherId = rs.getInt("ID_KM");
+            int cashierId = rs.getInt("ID_THU_NGAN");
+            int numTables = rs.getInt("SO_BAN_TAO_DON");
+            int total = rs.getInt("TONG_TIEN");
+            String paymentMethod = rs.getString("HINH_THUC_THANH_TOAN");
+            String status = rs.getString("TRANG_THAI");
+            int isOnline = rs.getInt("DAT_ONLINE");
+            Date orderDate = rs.getDate("NGAY_DAT");
+            String notes = rs.getString("GHI_CHU");
+
+            // create a new Order object using the retrieved data
+            Order1 order = new Order1(id, customerId, voucherId, cashierId, numTables
+                   , total, paymentMethod,
+                    status, isOnline, orderDate, notes);
+
+            result.add(order);
+
+        }
         return result;
     }
 
@@ -219,7 +245,7 @@ public class DBHandler {
 
     public List<Ingredient> getAllIngredients() throws SQLException {
         List<Ingredient> ingredients = new ArrayList<>();
-        String query = "SELECT N.ID,TEN,DON_VI,SO_LUONG_TRONG_KHO,GIA_NL,NGAY_NL_NHAP_KHO FROM NGUYEN_LIEU N INNER JOIN NHACUNGCAP_NGUYENLIEU_QUANLY_BEP M";
+        String query = "SELECT N.ID,TEN,DON_VI,SO_LUONG_TRONG_KHO,GIA_NL,NGAY_NL_NHAP_KHO FROM NGUYEN_LIEU N FULL JOIN NHACUNGCAP_NGUYENLIEU_QUANLY_BEP M on N.ID=M.ID_NL";
         try (Statement statement = conn.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
@@ -235,6 +261,7 @@ public class DBHandler {
         }
         return ingredients;
     }
+
 
 
     public List<Material> getMaterialsForDish(int dishId) throws SQLException {
@@ -268,6 +295,29 @@ public class DBHandler {
         }
         return manager_id;
     }
+    public int find_manager_id2(int id_nv) throws SQLException {
+        int manager_id = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID_QUAN_LY FROM NHAN_VIEN WHERE ID = ?");
+        pstmt.setInt(1, id_nv);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            manager_id = rs.getInt(1);
+        }
+        return manager_id;
+    }
+    public boolean isBep(int id_nv) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHAN_VIEN WHERE ID = ? AND CHUC_VU='Đầu bếp'");
+        pstmt.setInt(1, id_nv);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            if(String.valueOf(rs.getInt(1))!=null){
+               return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public void InsertEmp(String name, String sdt, String chuc_vu, int luong, int id_quan_ly) throws SQLException {
         String sql = "INSERT INTO NHAN_VIEN ( ID, TEN, SO_DIEN_THOAI, CHUC_VU, LUONG, ID_QUAN_LY ) VALUES (?,?,?,?,?,?)";
@@ -315,6 +365,16 @@ public class DBHandler {
             id_ = rs.getInt(1);
         }
         return id_;
+    }
+    public int find_idNl(String name) throws SQLException {
+        int id = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NGUYEN_LIEU WHERE TEN = ?");
+        pstmt.setString(1, name);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+        return id;
     }
 
     public void UpdateEmp(String name, String sdt, int luong, String ten_quan_ly) throws SQLException {
@@ -505,6 +565,58 @@ public class DBHandler {
         }
         return idMon;
     }
+    public int findIdncc(String tenNcc) throws SQLException{
+        int idncc = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHA_CUNG_CAP WHERE TEN = ?");
+        pstmt.setString(1, tenNcc);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            idncc = rs.getInt(1);
+        }
+        return idncc;
+    }
+    public int findIdKh(String tenKh) throws SQLException{
+        int idKh = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM KHACH_HANG WHERE TEN = ?");
+        pstmt.setString(1, tenKh);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            idKh = rs.getInt(1);
+        }
+        return idKh;
+    }
+    public int findIdKm() throws SQLException{
+        LocalDate currentDate = LocalDate.now();
+        java.sql.Date ngayHienTai=java.sql.Date.valueOf(currentDate);
+        int idKm = 0;
+        Statement pstmt = conn.createStatement();
+        ResultSet rs = pstmt.executeQuery("SELECT * FROM CHUONG_TRINH_KM");
+        while (rs.next()) {
+            java.sql.Date ngayBatDau=rs.getDate(3);
+            java.sql.Date ngayKetThuc=rs.getDate(4);
+            if(ngayHienTai.compareTo(ngayBatDau)>=0 && ngayHienTai.compareTo(ngayKetThuc)<=0){
+                idKm=rs.getInt(1);
+            }
+        }
+        pstmt.close();
+        return idKm;
+    }
+    public double findPhanTramGiamGia() throws SQLException{
+        LocalDate currentDate = LocalDate.now();
+        java.sql.Date ngayHienTai=java.sql.Date.valueOf(currentDate);
+        double PhanTramGiamGia = 0;
+        Statement pstmt = conn.createStatement();
+        ResultSet rs = pstmt.executeQuery("SELECT * FROM CHUONG_TRINH_KM");
+        while (rs.next()) {
+            java.sql.Date ngayBatDau=rs.getDate(3);
+            java.sql.Date ngayKetThuc=rs.getDate(4);
+            if(ngayHienTai.compareTo(ngayBatDau)>=0 && ngayHienTai.compareTo(ngayKetThuc)<=0){
+                PhanTramGiamGia=rs.getDouble(6);
+            }
+        }
+        pstmt.close();
+        return PhanTramGiamGia;
+    }
 
     public int findIdNl(String tenNl) throws SQLException{
         int idNl = 0;
@@ -547,9 +659,6 @@ public class DBHandler {
     public void InsVC(int id,String mota,String phanTramGiamGia,String maGiamGia,java.util.Date ngayBatDau,java.util.Date ngayKetThuc) throws SQLException{
         java.sql.Date ngayBatDauSql=new java.sql.Date(ngayBatDau.getTime());
         java.sql.Date ngayKetThucSql=new java.sql.Date(ngayKetThuc.getTime());
-        System.out.println(ngayBatDauSql);
-        System.out.println(ngayKetThucSql);
-        System.out.println(id);
         PreparedStatement pstmt = conn.prepareStatement("INSERT INTO CHUONG_TRINH_KM (ID, MO_TA, NGAY_BAT_DAU, NGAY_KET_THUC, MA_GIAM_GIA, PHAN_TRAM_GIAM_GIA) VALUES (?,?,?,?,?,?)");
         pstmt.setInt(1,id);
         pstmt.setString(2,mota);
@@ -628,6 +737,42 @@ public class DBHandler {
         pstmt.setInt(1,id);
         pstmt.executeUpdate();
     }
+    public void InsOrder(int id, int id_kh, int id_km, Integer id_thu_ngan, int tongtien, int soban, String hinhthuc, String trangthai, int datonl, LocalDate ngay_dat, String ghiChu) throws SQLException{
+        java.sql.Date ngaydat=java.sql.Date.valueOf(ngay_dat.toString());
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO DON_HANG (ID, ID_KH, ID_KM,ID_THU_NGAN, TONG_TIEN, SO_BAN_TAO_DON,HINH_THUC_THANH_TOAN,TRANG_THAI,DAT_ONLINE,NGAY_DAT,GHI_CHU) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+        pstmt.setInt(1,id);
+       pstmt.setString(2,null);
+       pstmt.setInt(3,id_km);
+       pstmt.setString(4,null);
+       pstmt.setInt(5,tongtien);
+       pstmt.setInt(6,soban);
+       pstmt.setString(7,hinhthuc);
+       pstmt.setString(8,trangthai);
+       pstmt.setInt(9,datonl);
+       pstmt.setString(10,ngaydat.toString());
+       pstmt.setString(11,ghiChu);
+        pstmt.executeUpdate();
+    }
+    public void InsOrderDetail(int id_don,int id_mon,int soluong) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO CHITIET_DON (ID_DON, ID_MON,SOLUONG) VALUES (?,?,?)");
+        pstmt.setInt(1,id_don);
+        pstmt.setInt(2,id_mon);
+        pstmt.setInt(3,soluong);
+        pstmt.executeUpdate();
+    }
+    public void InsRequest(int id_nl,int id_ncc,int id_quan_ly,int id_bep,int tongtien,LocalDate ngayNhap,int soluong) throws SQLException{
+        java.sql.Date ngaynhap=java.sql.Date.valueOf(ngayNhap);
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO) VALUES (?,?,?,?,?,?,?)");
+        pstmt.setInt(1,id_nl);
+        pstmt.setInt(2,id_ncc);
+        pstmt.setInt(3,id_quan_ly);
+        pstmt.setInt(4,id_bep);
+        pstmt.setInt(5,tongtien);
+        pstmt.setInt(6,soluong);
+        pstmt.setDate(7,ngaynhap);
+        pstmt.executeUpdate();
+    }
+
 }
 
 

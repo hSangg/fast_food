@@ -339,10 +339,20 @@ public class IngredientManagementController implements Initializable {
 
             Scene scene = null;
             try {
-                scene = new Scene(fxmlLoader.load());
-                RequestForIngredientController RFIC = fxmlLoader.getController();
-                RFIC.setCurrentUser(user);
+                if(db.isBep(LoginController.id_nv)) {
+                    scene = new Scene(fxmlLoader.load());
+                    RequestForIngredientController RFIC = fxmlLoader.getController();
+                    RFIC.setCurrentUser(user);
+                }
+                else{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Không phải nhân viên bếp");
+                }
             } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
             Stage stage = new Stage();
