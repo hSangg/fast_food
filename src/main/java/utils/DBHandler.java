@@ -576,13 +576,18 @@ public class DBHandler {
         return idncc;
     }
     public int findIdKh(String tenKh) throws SQLException{
-        int idKh = 0;
+        int idKh;
         PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM KHACH_HANG WHERE TEN = ?");
         pstmt.setString(1, tenKh);
         ResultSet rs = pstmt.executeQuery();
         if (rs.next()) {
-            idKh = rs.getInt(1);
+                idKh = rs.getInt(1);
         }
+        else{
+            idKh=0;
+        }
+        rs.close();
+        pstmt.close();
         return idKh;
     }
     public int findIdKm() throws SQLException{
@@ -741,7 +746,12 @@ public class DBHandler {
         java.sql.Date ngaydat=java.sql.Date.valueOf(ngay_dat.toString());
         PreparedStatement pstmt = conn.prepareStatement("INSERT INTO DON_HANG (ID, ID_KH, ID_KM,ID_THU_NGAN, TONG_TIEN, SO_BAN_TAO_DON,HINH_THUC_THANH_TOAN,TRANG_THAI,DAT_ONLINE,NGAY_DAT,GHI_CHU) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
         pstmt.setInt(1,id);
-       pstmt.setString(2,null);
+        if(id_kh==0) {
+            pstmt.setString(2, null);
+        }
+        else{
+            pstmt.setInt(2,id_kh);
+        }
        pstmt.setInt(3,id_km);
        pstmt.setString(4,null);
        pstmt.setInt(5,tongtien);

@@ -213,6 +213,7 @@ public class DashboardController implements Initializable, Callbacks {
         });
 
         Submit.setOnMouseClicked(e->{
+
             try {
                 this.result = db.getAllOrders1();
                 db.findIdKm();
@@ -233,7 +234,10 @@ public class DashboardController implements Initializable, Callbacks {
             int id_don = maxNumber + 1;
             System.out.println(id_don);
             try {
-                db.InsOrder(id_don, db.findIdKh(tenKh.getText()), db.findIdKm(), null, Integer.parseInt(total.getText().substring(2)), Integer.parseInt(soBandat.getText()), "chưa quyết định", "chưa thanh toán", 0, currentdate, "khong co");
+                if(tenKh.getText().isEmpty()){
+                    tenKh.setText("");
+                }
+                db.InsOrder(id_don, db.findIdKh(tenKh.getText()), db.findIdKm(), null, totalBill, Integer.parseInt(soBandat.getText()), "chưa quyết định", "chưa thanh toán", 0, currentdate, "khong co");
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
