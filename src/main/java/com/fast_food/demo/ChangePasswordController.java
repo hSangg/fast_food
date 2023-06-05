@@ -85,18 +85,11 @@ public class ChangePasswordController implements Initializable {
 
 
                         // continue
-                        String newPassword = texterror_validator_mkmoi.getText();
-                        String confirmPassword = texterror_validator_xnmk.getText();
+                        String newPassword = textfield_mkmoi.getText();
+                        String confirmPassword = textfield_xnmk.getText();
                         if (newPassword.equals(confirmPassword)) {
                             uf.hideErrorMsg(texterror_validator_xnmk);
-                            //DB
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //
-                            //
+                            db.changePassword(username,textfield_mkmoi.getText());
 
                         } else {
                             uf.setErrorMsg(texterror_validator_xnmk, "Mật khẩu xác nhận không trùng khớp");

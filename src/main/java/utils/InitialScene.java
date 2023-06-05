@@ -20,7 +20,8 @@ public class InitialScene extends Application {
         Scene scene = new Scene(root);
         Image icon = new Image(getClass().getResourceAsStream("/images/logo.png"));
         stage.getIcons().add(icon);
-
+        stage.setX(0);
+        stage.setY(0);
         stage.setTitle("QUẢN LÝ CỬA HÀNG THỨC ĂN NHANH");
 
         stage.setScene(scene);

@@ -56,7 +56,6 @@ public class ManagementController implements Initializable {
         UtilityFunctions uf = new UtilityFunctions();
         //phan quyen
         if (currentAccout.getps().equals("Quản lý")) {
-            uf.setVisibleNode(menu, false);
             uf.setVisibleNode(orders, false);
             uf.setVisibleNode(ingredient, false);
         } else if (currentAccout.getps().equals("Đầu bếp")) {

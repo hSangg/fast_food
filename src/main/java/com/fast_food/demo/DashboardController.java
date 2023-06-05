@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -15,18 +18,22 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.MenuItem;
+import model.Order;
+import model.Order1;
 import model.OrderDetail;
 import utils.DBHandler;
 import utils.UtilityFunctions;
 
 
 public class DashboardController implements Initializable, Callbacks {
-
+    @FXML
+    private HBox Submit;
     @FXML
     private GridPane menu_layout;
 
@@ -45,6 +52,10 @@ public class DashboardController implements Initializable, Callbacks {
 
     @FXML
     private Text total_bill;
+    @FXML
+    private TextField tenKh;
+    @FXML
+    private TextField soBandat;
 
     public String render_type;
 
@@ -55,8 +66,11 @@ public class DashboardController implements Initializable, Callbacks {
     public DBHandler db;
 
     public int totalBill = 0;
-
-    public double km = 0.1;
+    //Order 1 là import bảng DON_HANG
+    public double km;
+    HashSet<Order1> result;
+    Iterator<Order1> iterator;
+    public static int maxNumber;
 
     public UtilityFunctions uf = new UtilityFunctions();
 
@@ -104,7 +118,6 @@ public class DashboardController implements Initializable, Callbacks {
 
         FXMLLoader fxmlLoad = new FXMLLoader();
         fxmlLoad.setLocation(getClass().getResource("/com/fast_food/demo/OrderItem.fxml"));
-
         HBox ItemBox = fxmlLoad.load();
         OrderItemOnDashboardController odc = fxmlLoad.getController();
         odc.setCallbacks(this);
@@ -128,7 +141,6 @@ public class DashboardController implements Initializable, Callbacks {
         int row = 1;
 
         try {
-
             for (MenuItem item : menu) {
                 FXMLLoader fxmlLoad = new FXMLLoader();
                 fxmlLoad.setLocation(getClass().getResource("/com/fast_food/demo/MenuItem.fxml"));
@@ -184,6 +196,8 @@ public class DashboardController implements Initializable, Callbacks {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
         this.render_menu_list(menu_list);
 
         bt_drink.setOnMouseClicked(e -> {
@@ -193,13 +207,46 @@ public class DashboardController implements Initializable, Callbacks {
             }).collect(Collectors.toCollection(HashSet::new)));
         });
         bt_food.setOnMouseClicked(e -> {
-
             this.render_menu_list(menu_list.stream().filter(x -> {
                 return x.getCategory().equals("do an");
             }).collect(Collectors.toCollection(HashSet::new)));
         });
 
+        Submit.setOnMouseClicked(e->{
+            try {
+                this.result = db.getAllOrders1();
+                db.findIdKm();
+                km = db.findPhanTramGiamGia();
+            } catch (SQLException em) {
+                throw new RuntimeException(em);
+            }
+            maxNumber = 0;
+            LocalDate currentdate = LocalDate.now();
 
+            iterator = result.iterator();
+            while (iterator.hasNext()) {
+                Order1 order = iterator.next();
+                if (order.getId() > maxNumber) {
+                    maxNumber = order.getId();
+                }
+            }
+            int id_don = maxNumber + 1;
+            System.out.println(id_don);
+            try {
+                db.InsOrder(id_don, db.findIdKh(tenKh.getText()), db.findIdKm(), null, Integer.parseInt(total.getText().substring(2)), Integer.parseInt(soBandat.getText()), "chưa quyết định", "chưa thanh toán", 0, currentdate, "khong co");
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            try {
+                for (OrderDetail i : order_list) {
+                    int id_mon = i.getOrder().getId();
+                    db.InsOrderDetail(id_don, id_mon, i.getCount());
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        });
 
 
     }
@@ -219,10 +266,7 @@ public class DashboardController implements Initializable, Callbacks {
             System.out.println(x.getOrder().getName() + " co so luong la:  " + x.getCount());
         }
         System.out.println("---------------------------------");
-
-
     }
-
     @Override
     public void deleteItem(String ten_mon, HBox box) {
         this.order_list = this.order_list.stream().filter(mon_an -> {

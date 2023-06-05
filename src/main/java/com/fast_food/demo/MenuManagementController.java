@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,7 +18,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.Employee;
 import model.Ingredient;
 import model.Material;
 import model.MenuItem;
@@ -35,8 +33,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-import java.io.File;
-import java.net.URL;
 import java.util.ResourceBundle;
 public class MenuManagementController implements Initializable {
     @FXML
@@ -132,6 +128,8 @@ public class MenuManagementController implements Initializable {
 
     @FXML
     private TextField textfield_tenmon;
+    @FXML
+    private TextField textfield_xoa_mon;
     private Stage primaryStage;
     private String imagePath="";
     private String imageName="";
@@ -156,6 +154,8 @@ public class MenuManagementController implements Initializable {
 
     UtilityFunctions uf = new UtilityFunctions();
     DBHandler db = new DBHandler();
+
+
 
     public void clearChiTietMonAn() {
         textfield_mota.clear();
@@ -268,7 +268,6 @@ public class MenuManagementController implements Initializable {
                 }
             }
         });
-
         tablecolumn_anh.setCellValueFactory(cellData -> {
             byte[] imageData = cellData.getValue().getImage(); // Assuming "getHinhAnh()" returns the byte array
             if (imageData != null) {
@@ -354,7 +353,6 @@ public class MenuManagementController implements Initializable {
             primaryStage = (Stage) button_chonanh.getScene().getWindow();
         });
 
-
         try {
             menuList = db.getAllMenuItems();
             //-------RENDER DEFAULT VALUE -----------------
@@ -437,7 +435,37 @@ public class MenuManagementController implements Initializable {
 
 
             });
+            textfield_xoa_mon.setOnKeyPressed(event -> {
+                int result = 0;
+                int id=-99;
+                if(event.getCode() == KeyCode.ENTER){
+                    String monCanXoa = textfield_xoa_mon.getText();
+                    Iterator<MenuItem> iterator = menuList.iterator();
+                    while(iterator.hasNext()){
+                        MenuItem menuItem = iterator.next();
+                        if(menuItem.getName().equalsIgnoreCase(monCanXoa)){
+                            id=menuItem.getId();
+                            ++result;
+                            iterator.remove();
+                        }
+                    }
+                    if(result!=0){
+                        try {
+                            db.DelMon(id);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        textfield_xoa_mon.clear();
+                        textfield_xoa_mon.setPromptText("Đã xóa thành công");
 
+                        try {
+                            renderTableMonAnFollowingUI();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            });
             textfield_xoa_nl.setOnKeyPressed(event -> {
                 int result = 0;
                 if (event.getCode() == KeyCode.ENTER) {
