@@ -312,8 +312,6 @@ public class RequestForIngredientController implements Initializable {
         button_themnguyenlieu.setOnMouseClicked(e -> {
             if (this.mode.equals("ADD_NL")) {
                 if (!check_is_error_nl()) {
-
-
                     if (check_is_exit(currentIngredientClick.getTen())) {
                         System.out.println("Da ton tai");
                         // xử lý đã tồn tại
@@ -349,12 +347,7 @@ public class RequestForIngredientController implements Initializable {
                 });
 
                 //////////////////
-                /*
-                 * XU LY VOI DB
-                 *
-                 *
-                 *
-                 * */
+
 
                 /////////////////
 
@@ -414,7 +407,22 @@ public class RequestForIngredientController implements Initializable {
                 }
             }
         });
+        button_hoantat.setOnMouseClicked(e->{
+            for(int i=0;i<table_phieunguyenlieu.getItems().size();i++){
+                try {
+                    int id_nl= db.find_idNl(table_phieunguyenlieu.getItems().get(i).getIngredientName());
+                    int id_ql=db.find_manager_id2(LoginController.id_nv);
+                    int id_bep=LoginController.id_nv;
+                    int soluong=table_nguyenlieu.getItems().get(i).getSoLuongTrongKho();
 
+                    int id_ncc=db.findIdncc(table_phieunguyenlieu.getItems().get(i).getSupplierName());
+                    int tongtien= Integer.parseInt(text_total.getText());
+                    db.InsRequest(id_nl,id_ncc,id_ql,id_bep,tongtien,null,soluong);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
 
     }
 }

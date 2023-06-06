@@ -3,7 +3,10 @@ package com.fast_food.demo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import model.LogedInUser;
@@ -34,16 +37,21 @@ public class ChangePasswordController implements Initializable {
     private Text texterror_validator_xnmk;
 
     @FXML
-    private TextField textfield_mkcu;
+    private PasswordField textfield_mkcu;
 
     @FXML
-    private TextField textfield_mkmoi;
+    private PasswordField textfield_mkmoi;
 
     @FXML
     private TextField textfield_tentk;
 
     @FXML
-    private TextField textfield_xnmk;
+    private PasswordField textfield_xnmk;
+
+    //DUNG QUAN TAM TOI NO
+
+
+
 
     DBHandler db = new DBHandler();
     UtilityFunctions uf = new UtilityFunctions();
@@ -69,6 +77,8 @@ public class ChangePasswordController implements Initializable {
         uf.setVisibleNode(texterror_validator_xnmk, false);
 
 
+
+
         button_hoantat.setOnMouseClicked(event -> {
             if (!check_is_error()) {
                 String username = textfield_tentk.getText();
@@ -85,8 +95,8 @@ public class ChangePasswordController implements Initializable {
 
 
                         // continue
-                        String newPassword = texterror_validator_mkmoi.getText();
-                        String confirmPassword = texterror_validator_xnmk.getText();
+                        String newPassword = textfield_mkmoi.getText();
+                        String confirmPassword = textfield_xnmk.getText();
                         if (newPassword.equals(confirmPassword)) {
                             uf.hideErrorMsg(texterror_validator_xnmk);
                             //DB
@@ -97,6 +107,8 @@ public class ChangePasswordController implements Initializable {
                             //
                             //
                             //
+                            db.UpdatePassword(username, newPassword);
+                            System.out.println("SUCCESS");
 
                         } else {
                             uf.setErrorMsg(texterror_validator_xnmk, "Mật khẩu xác nhận không trùng khớp");

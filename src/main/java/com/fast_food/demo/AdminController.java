@@ -14,7 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.ItemTopSeller;
 import utils.DBHandler;
-
+import javafx.util.Pair;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -43,13 +44,37 @@ public class AdminController implements Initializable {
     HashSet<ItemTopSeller> itsl = new HashSet<>();
 
 
+
+    class ItemBoxInfo implements Comparable<ItemBoxInfo> {
+        private HBox itemBox;
+        private int sl;
+
+        public ItemBoxInfo(HBox itemBox, int sl) {
+            this.itemBox = itemBox;
+            this.sl = sl;
+        }
+
+        public HBox getItemBox() {
+            return itemBox;
+        }
+
+        public int getSl() {
+            return sl;
+        }
+
+        @Override
+        public int compareTo(ItemBoxInfo other) {
+            // Sắp xếp giảm dần theo sl
+            return Integer.compare(other.getSl(), this.sl);
+        }
+    }
     public void render_top_seller(int num) {
         // RENDER BẢNG BEST SELLER
         vbox_top_seller_layout.getChildren().clear();
         try {
             List<ItemTopSeller> x = dbh.getDemoSellerFollowingNum(num);
 
-            Collections.sort(x, Comparator.comparingInt(ItemTopSeller::getGia).reversed());
+
 
             for (ItemTopSeller itemTopSeller : x) {
                 try {
@@ -57,7 +82,7 @@ public class AdminController implements Initializable {
                     fxmlLoader.setLocation(getClass().getResource("/com/fast_food/demo/AdminTopSeller.fxml"));
                     HBox itemBox = fxmlLoader.load();
                     AdminTopSellerController controller = fxmlLoader.getController();
-                    controller.setData(itemTopSeller.getTenMon(), String.valueOf(itemTopSeller.getGia()), itemTopSeller.getHinhAnh());
+                    controller.setData(itemTopSeller.getTenMon(), String.valueOf(itemTopSeller.getTongSl()), itemTopSeller.getHinhAnh());
                     vbox_top_seller_layout.getChildren().add(itemBox);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -68,7 +93,6 @@ public class AdminController implements Initializable {
         }
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // -------------------------------
@@ -77,7 +101,12 @@ public class AdminController implements Initializable {
         XYChart.Series series = new XYChart.Series();
         series.setName("Doanh thu");
 
-        double[] revenueData = {1000.0, 1200.0, 1300.0, 1500.0, 1400.0, 1600.0, 1800.0, 1900.0, 1700.0, 2000.0, 2100.0, 2200.0};
+        double[] revenueData = new double[12];
+        try {
+            dbh.getYearRevenu(revenueData);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         for (int i = 0; i < revenueData.length; i++) {
             series.getData().add(new XYChart.Data(String.valueOf(i + 1), revenueData[i]));
@@ -147,24 +176,7 @@ public class AdminController implements Initializable {
         // ---------------------------------
 
         // RENDER BẢNG BEST SELLER
-        try {
-            itsl = dbh.getDemoSeller();
-            for (ItemTopSeller itemTopSeller : itsl) {
-                try {
-                    FXMLLoader fxmlLoader = new FXMLLoader();
-                    fxmlLoader.setLocation(getClass().getResource("/com/fast_food/demo/AdminTopSeller.fxml"));
-                    HBox itemBox = fxmlLoader.load();
-                    AdminTopSellerController controller = fxmlLoader.getController();
-                    controller.setData(itemTopSeller.getTenMon(), String.valueOf(itemTopSeller.getGia()), itemTopSeller.getHinhAnh());
-                    vbox_top_seller_layout.getChildren().add(itemBox);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+        render_top_seller(10);
         // ---------------------------------
         // XỬ LÝ SỐ LƯỢNG MÓN ĂN BEST SELLER CẦN RENDER
         num_best_seller_show.setOnAction(event -> {
@@ -176,15 +188,22 @@ public class AdminController implements Initializable {
         // XỬ LÝ CHART TỔNG SỐ LƯỢNG ĐƠN HÀNG
         XYChart.Series series_dh = new XYChart.Series();
         series_dh.setName("Số đơn hàng theo ngày");
-
-        series_dh.getData().add(new XYChart.Data("1", 10));
-        series_dh.getData().add(new XYChart.Data("2", 15));
-        series_dh.getData().add(new XYChart.Data("3", 8));
-
+        ArrayList<Pair<Integer,Integer>> xy = new ArrayList<>();
+        try {
+            dbh.getTongDon(xy);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        for(Pair<Integer,Integer> pair: xy){
+            int x=pair.getKey();
+            int y=pair.getValue();
+            System.out.println(x);
+            System.out.println(y);
+            series_dh.getData().add(new XYChart.Data(String.valueOf(x),y));
+        }
         chart_tong_so_don_hang.getData().add(series_dh);
 
 
     }
 
 }
-

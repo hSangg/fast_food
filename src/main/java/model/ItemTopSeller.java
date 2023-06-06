@@ -4,13 +4,23 @@ public class ItemTopSeller {
     private String tenMon;
     private int gia;
     private byte[] hinhAnh;
+    private int tongSl;
 
-    public ItemTopSeller(String tenMon, int gia, byte[] hinhAnh) {
+    public ItemTopSeller(String tenMon, int gia) {
         this.tenMon = tenMon;
         this.gia = gia;
-        this.hinhAnh = hinhAnh;
+
+    }
+    public void setHinhAnh(byte[] hinhAnh){
+        this.hinhAnh=hinhAnh;
     }
 
+    public void setTongSl(int tongSl){
+        this.tongSl=tongSl;
+    }
+    public int getTongSl(){
+        return tongSl;
+    }
     public String getTenMon() {
         return tenMon;
     }

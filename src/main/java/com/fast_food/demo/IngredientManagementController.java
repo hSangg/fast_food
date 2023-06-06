@@ -186,12 +186,9 @@ public class IngredientManagementController implements Initializable {
         table_nguyen_lieu.getItems().clear();
         //RENDER ALL TEN NL
         ObservableList<SuperIngredient> nguyenLieu = FXCollections.observableArrayList();
-
-
         for (SuperIngredient ingredient : ingredientList) {
             nguyenLieu.add(ingredient);
         }
-
         //-----------THEM NGUYEN LIEU TUONG UNG VOI MON
         tablecolumn_tennl.setCellValueFactory(new PropertyValueFactory<>("ten"));
         tablecolumn_stt.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -292,17 +289,11 @@ public class IngredientManagementController implements Initializable {
                         // xử lý đã tồn tại
                     } else {
                         ingredientList.add(superIngredient);
-
-                        //////////////////
-                        /*
-                         * XU LY VOI DB
-                         *
-                         *
-                         *
-                         * */
-
-                        /////////////////
-
+                        try {
+                            db.InsIngre(id,ten_nl,don_vi,so_luong_trong_kho,gia);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         clearChiTiet();
                         renderTableNguyenLieu();
                     }
@@ -324,19 +315,13 @@ public class IngredientManagementController implements Initializable {
                             ingredient.setNgayNhapKho(ngay_nhap_kho);
                             ingredient.setSoLuongTrongKho(so_luong_trong_kho);
                             ingredient.setDonVi(don_vi);
-
+                            try {
+                                db.EditOfIngre(id,ten_nl,don_vi,so_luong_trong_kho,gia);
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                     });
-
-                    //////////////////
-                    /*
-                     * XU LY VOI DB
-                     *
-                     *
-                     *
-                     * */
-
-                    /////////////////
 
                     this.mode = "ADD_NL";
                     renderDetailFollowingMode();
@@ -353,13 +338,16 @@ public class IngredientManagementController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/RequestForIngredient.fxml"));
 
             Scene scene = null;
+
             try {
                 scene = new Scene(fxmlLoader.load());
-                RequestForIngredientController RFIC = fxmlLoader.getController();
-                RFIC.setCurrentUser(user);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            RequestForIngredientController RFIC = fxmlLoader.getController();
+                    RFIC.setCurrentUser(user);
+
+
             Stage stage = new Stage();
 
             stage.setScene(scene);
@@ -379,6 +367,11 @@ public class IngredientManagementController implements Initializable {
                     if (nl.getTen().equalsIgnoreCase(nlCanXoa)) {
                         ++result;
                         iterator.remove();
+                        try {
+                            db.xoaNCC(nl.getId());
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 if (result != 0) {
@@ -386,11 +379,9 @@ public class IngredientManagementController implements Initializable {
                     textfield_xoa_nl.setPromptText("đã xóa thành công");
                     renderTableNguyenLieu();
                     System.out.println("Enter key pressed");
-
                 } else {
                     textfield_xoa_nl.clear();
                     textfield_xoa_nl.setPromptText("Lỗi");
-
                 }
             }
         });

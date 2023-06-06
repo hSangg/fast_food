@@ -1,8 +1,10 @@
 package utils;
 
+import javafx.util.Pair;
 import model.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -157,6 +159,36 @@ public class DBHandler {
         return logedReturn;
     }
 
+    public int getSumSL(String name) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(SOLUONG) AS SL FROM CHITIET_DON WHERE ID_MON=? GROUP BY ID_MON");
+        int id = findIdMon(name);
+        pstmt.setInt(1,id);
+        ResultSet rs = pstmt.executeQuery();
+        int sl=0;
+        while(rs.next()){
+            sl=rs.getInt(1);
+        }
+        return sl;
+    }
+    public void getYearRevenu(double[] YearRevenu) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("SELECT EXTRACT(MONTH FROM NGAY_DAT) AS MONTH, SUM(TONG_TIEN) AS TOTAL_AMOUNT\n" +
+                "FROM DON_HANG\n" +
+                "GROUP BY EXTRACT(MONTH FROM NGAY_DAT) ORDER BY MONTH\n");
+        ResultSet rs = pstmt.executeQuery();
+        while(rs.next()){
+            YearRevenu[rs.getInt("MONTH")] = rs.getInt("TOTAL_AMOUNT");
+        }
+    }
+
+    public void getTongDon(ArrayList<Pair<Integer, Integer>> xy) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement("SELECT COUNT(*)  AS TONG_DON, EXTRACT(DAY FROM NGAY_DAT) AS NGAY FROM DON_HANG\n" +
+                "GROUP BY EXTRACT(DAY FROM NGAY_DAT)");
+        ResultSet rs = pstmt.executeQuery();
+        while(rs.next()){
+            xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
+        }
+    }
+
     public HashSet<MenuItem> getAllMenuItems() throws SQLException {
         Statement sm = conn.createStatement();
         ResultSet rs = sm.executeQuery("select ID, TEN_MON, MO_TA, LOAI, GIA, HINH_ANH from MON_AN");
@@ -176,37 +208,58 @@ public class DBHandler {
 
     public HashSet<ItemTopSeller> getDemoSeller() throws SQLException {
         Statement sm = conn.createStatement();
-        ResultSet rs = sm.executeQuery("SELECT TEN_MON, GIA, HINH_ANH FROM MON_AN FETCH FIRST 3 ROWS ONLY");
+        ResultSet rs = sm.executeQuery("SELECT ID, TEN_MON, GIA, HINH_ANH FROM MON_AN");
         HashSet<ItemTopSeller> result = new HashSet<>();
 
         while (rs.next()) {
             String tenMon = rs.getString("TEN_MON");
             int gia = rs.getInt("GIA");
-            byte[] hinhAnh = rs.getBytes("HINH_ANH");
-
-            ItemTopSeller item = new ItemTopSeller(tenMon, gia, hinhAnh);
+            PreparedStatement pstmt = conn.prepareStatement("SELECT HINH_ANH FROM MON_AN WHERE ID=?");
+            pstmt.setInt(1,rs.getInt("ID"));
+            ResultSet rsha = pstmt.executeQuery();
+            ItemTopSeller item = new ItemTopSeller(tenMon, gia);
+            while(rsha.next()){
+                item.setHinhAnh(rsha.getBytes(1));
+            }
             result.add(item);
         }
 
         return result;
     }
 
+
+
+
+
+
+
     public List<ItemTopSeller> getDemoSellerFollowingNum(int num) throws SQLException {
         Statement sm = conn.createStatement();
-        ResultSet rs = sm.executeQuery("SELECT * FROM MON_AN ORDER BY GIA DESC FETCH FIRST " + num + " ROWS ONLY");
+        ResultSet rs = sm.executeQuery("SELECT ID, TEN_MON, GIA, SUM(SOLUONG) AS TOTAL_SOLD\n" +
+                "FROM MON_AN\n" +
+                "LEFT JOIN CHITIET_DON ON MON_AN.ID = CHITIET_DON.ID_MON\n" +
+                "GROUP BY ID, TEN_MON, GIA\n" +
+                "ORDER BY CASE WHEN TOTAL_SOLD IS NULL THEN 1 ELSE 0 END, TOTAL_SOLD DESC FETCH FIRST "+ num +" ROWS ONLY");
         List<ItemTopSeller> result = new ArrayList<>();
 
         while (rs.next()) {
             String tenMon = rs.getString("TEN_MON");
             int gia = rs.getInt("GIA");
-            byte[] hinhAnh = rs.getBytes("HINH_ANH");
-
-            ItemTopSeller item = new ItemTopSeller(tenMon, gia, hinhAnh);
+            PreparedStatement pstmt = conn.prepareStatement("SELECT HINH_ANH FROM MON_AN WHERE ID=?");
+            pstmt.setInt(1,rs.getInt("ID"));
+            ResultSet rsha = pstmt.executeQuery();
+            ItemTopSeller item = new ItemTopSeller(tenMon, gia);
+            item.setTongSl(rs.getInt("TOTAL_SOLD"));
+            while(rsha.next()){
+                item.setHinhAnh(rsha.getBytes(1));
+            }
             result.add(item);
         }
 
         return result;
     }
+
+
 
     public List<Ingredient> getAllIngredients() throws SQLException {
         List<Ingredient> ingredients = new ArrayList<>();
@@ -444,12 +497,14 @@ public class DBHandler {
         return vouchers;
     }
 
-    public void AddFood(String ten, String moTa, String loai,int gia,String imagePath,String image) throws SQLException {
+    public void AddFood(String ten, String moTa, String loai, int gia, String imagePath, String image) throws SQLException {
         String sql = "INSERT INTO MON_AN ( ID, TEN_MON, MO_TA, LOAI, GIA ) VALUES (?,?,?,?,?)";
         Statement sm = conn.createStatement();
         ResultSet rs = sm.executeQuery("SELECT MAX(ID) FROM MON_AN");
-        int id=0;
-        id = rs.getInt(1)+1;
+        int id = 0;
+        while (rs.next()) {
+            id = rs.getInt(1) + 1;
+        }
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.setString(2, ten);
@@ -467,16 +522,17 @@ public class DBHandler {
         pstmt.setString(3, imagePath);
         pstmt.executeUpdate();
     }
-    public void UpdateFood(int idMon, String ten, String moTa, String loai, int gia,String imagePath,String image) throws SQLException {
+
+    public void UpdateFood(int idMon, String ten, String moTa, String loai, int gia, String imagePath, String image) throws SQLException {
         String sql = "UPDATE MON_AN SET TEN_MON=?, MO_TA=?, LOAI=?,GIA=? WHERE ID=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1,ten);
-        pstmt.setString(2,moTa);
-        pstmt.setString(3,loai);
-        pstmt.setInt(4,gia);
-        pstmt.setInt(5,idMon);
+        pstmt.setString(1, ten);
+        pstmt.setString(2, moTa);
+        pstmt.setString(3, loai);
+        pstmt.setInt(4, gia);
+        pstmt.setInt(5, idMon);
         pstmt.executeUpdate();
-        if(!imagePath.isEmpty()&&!image.isEmpty()) {
+        if (!imagePath.isEmpty() && !image.isEmpty()) {
             sql = "{call UPDATE_MON(?, ?, ?)}";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, image);
@@ -487,7 +543,16 @@ public class DBHandler {
         }
     }
 
-    public int findIdMon(String tenMon) throws SQLException{
+    public void UpdatePassword(String username, String newPassword) throws SQLException {
+        String sql = "UPDATE TAIKHOAN_NV SET PASSWORD ='" + newPassword + "' WHERE USERNAME ='" + username+"'";
+        PreparedStatement sm = conn.prepareStatement(sql);
+
+        sm.executeUpdate();
+
+    }
+
+
+    public int findIdMon(String tenMon) throws SQLException {
         int idMon = 0;
         PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM MON_AN WHERE TEN_MON = ?");
         pstmt.setString(1, tenMon);
@@ -498,7 +563,7 @@ public class DBHandler {
         return idMon;
     }
 
-    public int findIdNl(String tenNl) throws SQLException{
+    public int findIdNl(String tenNl) throws SQLException {
         int idNl = 0;
         PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NGUYEN_LIEU WHERE TEN = ?");
         pstmt.setString(1, tenNl);
@@ -508,13 +573,14 @@ public class DBHandler {
         }
         return idNl;
     }
-    public void EditNlOfMon(int idMon,  String tenMon, String tenNl,int sL) throws SQLException {
+
+    public void EditNlOfMon(int idMon, String tenMon, String tenNl, int sL) throws SQLException {
         int idNl = find_id(tenNl);
-        String sql ="Update NGUYEN_LIEU_MON_AN SET SO_LUONG=?  WHERE ID_MON=? AND ID_NL=?";
+        String sql = "Update NGUYEN_LIEU_MON_AN SET SO_LUONG=?  WHERE ID_MON=? AND ID_NL=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1,sL);
-        pstmt.setInt(2,idMon);
-        pstmt.setInt(3,idNl);
+        pstmt.setInt(1, sL);
+        pstmt.setInt(2, idMon);
+        pstmt.setInt(3, idNl);
         pstmt.executeUpdate();
     }
 
@@ -522,17 +588,255 @@ public class DBHandler {
         int idMon = findIdMon(tenMon);
         int idNl = findIdNl(tenNl);
         PreparedStatement pstmt = conn.prepareStatement("DELETE FROM NGUYEN_LIEU_MON_AN WHERE ID_MON=? AND ID_NL=?");
-        pstmt.setInt(1,idMon);
-        pstmt.setInt(2,idNl);
+        pstmt.setInt(1, idMon);
+        pstmt.setInt(2, idNl);
         pstmt.executeUpdate();
     }
-    public void InsNl(String tenMon,String tenNl,int sL) throws SQLException{
+
+    public void InsNl(String tenMon, String tenNl, int sL) throws SQLException {
         int idMon = findIdMon(tenMon);
         int idNl = findIdNl(tenNl);
         PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NGUYEN_LIEU_MON_AN VALUES (?,?,?)");
-        pstmt.setInt(1,idNl);
-        pstmt.setInt(2,idMon);
-        pstmt.setInt(3,sL);
+        pstmt.setInt(1, idNl);
+        pstmt.setInt(2, idMon);
+        pstmt.setInt(3, sL);
+        pstmt.executeUpdate();
+    }
+
+    public void InsVC(int id,String mota,String phanTramGiamGia,String maGiamGia,java.util.Date ngayBatDau,java.util.Date ngayKetThuc) throws SQLException{
+        java.sql.Date ngayBatDauSql=new java.sql.Date(ngayBatDau.getTime());
+        java.sql.Date ngayKetThucSql=new java.sql.Date(ngayKetThuc.getTime());
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO CHUONG_TRINH_KM (ID, MO_TA, NGAY_BAT_DAU, NGAY_KET_THUC, MA_GIAM_GIA, PHAN_TRAM_GIAM_GIA) VALUES (?,?,?,?,?,?)");
+        pstmt.setInt(1,id);
+        pstmt.setString(2,mota);
+        pstmt.setString(3, ngayBatDauSql.toString());
+        pstmt.setString(4, ngayKetThucSql.toString());
+        pstmt.setString(5,maGiamGia);
+        pstmt.setInt(6, Integer.parseInt(phanTramGiamGia));
+        pstmt.executeUpdate();
+    }
+    public void EditOfVC(int id,String mota,String phanTramGiamGia,String maGiamGia,java.util.Date ngayBatDau,java.util.Date ngayKetThuc) throws SQLException {
+        java.sql.Date ngayBatDauSql=new java.sql.Date(ngayBatDau.getTime());
+        java.sql.Date ngayKetThucSql=new java.sql.Date(ngayKetThuc.getTime());
+        String sql ="UPDATE CHUONG_TRINH_KM SET MO_TA=?,NGAY_BAT_DAU=?,NGAY_KET_THUC=?,MA_GIAM_GIA=?,PHAN_TRAM_GIAM_GIA=? WHERE ID=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,mota);
+        pstmt.setString(2,ngayBatDauSql.toString());
+        pstmt.setString(3,ngayKetThucSql.toString());
+        pstmt.setString(4,maGiamGia);
+        pstmt.setInt(5, Integer.parseInt(phanTramGiamGia));
+        pstmt.setInt(6,id);
+        pstmt.executeUpdate();
+    }
+    public void xoaKM(int id) throws SQLException{
+        PreparedStatement pstmt=conn.prepareStatement("DELETE FROM CHUONG_TRINH_KM WHERE ID=?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+    }
+
+    public void InsNCC(int id,String ten,String sdt,String email,String dia_chi) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NHA_CUNG_CAP (ID, TEN,SO_DIEN_THOAI,EMAIL,DIA_CHI) VALUES (?,?,?,?,?)");
+        pstmt.setInt(1,id);
+        pstmt.setString(2,ten);
+        pstmt.setString(3, sdt);
+        pstmt.setString(4, email);
+        pstmt.setString(5,dia_chi);
+        pstmt.executeUpdate();
+    }
+
+    public int find_idNl(String name) throws SQLException {
+        int id = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NGUYEN_LIEU WHERE TEN = ?");
+        pstmt.setString(1, name);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+        return id;
+    }
+    public int find_manager_id2(int id_nv) throws SQLException {
+        int manager_id = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID_QUAN_LY FROM NHAN_VIEN WHERE ID = ?");
+        pstmt.setInt(1, id_nv);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            manager_id = rs.getInt(1);
+        }
+        return manager_id;
+    }
+
+    public int findIdncc(String tenNcc) throws SQLException{
+        int idncc = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHA_CUNG_CAP WHERE TEN = ?");
+        pstmt.setString(1, tenNcc);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            idncc = rs.getInt(1);
+        }
+        return idncc;
+    }
+
+    public void EditOfNCC(int id,String ten,String sdt,String email,String dia_chi) throws SQLException {
+        String sql ="UPDATE NHA_CUNG_CAP SET TEN=?,SO_DIEN_THOAI=?,EMAIL=?,DIA_CHI=? WHERE ID=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,ten);
+        pstmt.setString(2,sdt.toString());
+        pstmt.setString(3,email.toString());
+        pstmt.setString(4,dia_chi);
+        pstmt.setInt(5,id);
+        pstmt.executeUpdate();
+    }
+    public void xoaNCC(int id) throws SQLException{
+        PreparedStatement pstmt=conn.prepareStatement("DELETE FROM NHA_CUNG_CAP WHERE ID=?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+    }
+    // chưa thao tác được dữ liệu ngày nhập kho
+    public void InsIngre(int id,String ten,String don_vi,int sl,int gia) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NGUYEN_LIEU (ID, TEN,DON_VI ,SO_LUONG_TRONG_KHO,GIA_NL) VALUES (?,?,?,?,?)");
+        pstmt.setInt(1,id);
+        pstmt.setString(2,ten);
+        pstmt.setString(3, don_vi);
+        pstmt.setInt(4, sl);
+        pstmt.setInt(5,gia);
+        pstmt.executeUpdate();
+
+    }
+    public void EditOfIngre(int id,String ten,String don_vi,int sl,int gia) throws SQLException {
+        String sql ="UPDATE NHA_CUNG_CAP SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,ten);
+        pstmt.setString(2,don_vi);
+        pstmt.setInt(3,sl);
+        pstmt.setInt(4,gia);
+        pstmt.setInt(5,id);
+        pstmt.executeUpdate();
+    }
+    public void xoaIngre(int id) throws SQLException{
+        PreparedStatement pstmt=conn.prepareStatement("DELETE FROM NGUYEN_LIEU WHERE ID=?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+    }
+
+    public boolean isBep(int id_nv) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHAN_VIEN WHERE ID = ? AND CHUC_VU='Đầu bếp'");
+        pstmt.setInt(1, id_nv);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            if(String.valueOf(rs.getInt(1))!=null){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public HashSet<Order1> getAllOrders1() throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("SELECT * FROM DON_HANG");
+        HashSet<Order1> result = new HashSet<>();
+
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            int customerId = rs.getInt("ID_KH");
+            int voucherId = rs.getInt("ID_KM");
+            int cashierId = rs.getInt("ID_THU_NGAN");
+            int numTables = rs.getInt("SO_BAN_TAO_DON");
+            int total = rs.getInt("TONG_TIEN");
+            String paymentMethod = rs.getString("HINH_THUC_THANH_TOAN");
+            String status = rs.getString("TRANG_THAI");
+            int isOnline = rs.getInt("DAT_ONLINE");
+            Date orderDate = rs.getDate("NGAY_DAT");
+            String notes = rs.getString("GHI_CHU");
+
+            // create a new Order object using the retrieved data
+            Order1 order = new Order1(id, customerId, voucherId, cashierId, numTables
+                    , total, paymentMethod,
+                    status, isOnline, orderDate, notes);
+
+            result.add(order);
+
+        }
+        return result;
+    }
+
+    public void InsOrder(int id, int id_kh, int id_km, Integer id_thu_ngan, int tongtien, int soban, String hinhthuc, String trangthai, int datonl, LocalDate ngay_dat, String ghiChu) throws SQLException{
+        java.sql.Date ngaydat = java.sql.Date.valueOf(ngay_dat);
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO DON_HANG (ID, ID_KH, ID_KM, ID_THU_NGAN, TONG_TIEN, SO_BAN_TAO_DON, HINH_THUC_THANH_TOAN, TRANG_THAI, DAT_ONLINE, NGAY_DAT, GHI_CHU) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+        pstmt.setInt(1, id);
+        pstmt.setInt(2, 1);
+        pstmt.setInt(3, id_km);
+        pstmt.setString(4, null);
+        pstmt.setInt(5, tongtien);
+        pstmt.setInt(6, soban);
+        pstmt.setString(7, hinhthuc);
+        pstmt.setString(8, trangthai);
+        pstmt.setInt(9, datonl);
+        pstmt.setDate(10, ngaydat);
+        pstmt.setString(11, ghiChu);
+        pstmt.executeUpdate();
+    }
+
+    public int findIdKh(String tenKh) throws SQLException{
+        int idKh = 0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM KHACH_HANG WHERE TEN = ?");
+        pstmt.setString(1, tenKh);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            idKh = rs.getInt(1);
+        }
+        return idKh;
+    }
+    public int findIdKm() throws SQLException{
+        LocalDate currentDate = LocalDate.now();
+        java.sql.Date ngayHienTai=java.sql.Date.valueOf(currentDate);
+        int idKm = 0;
+        Statement pstmt = conn.createStatement();
+        ResultSet rs = pstmt.executeQuery("SELECT * FROM CHUONG_TRINH_KM");
+        while (rs.next()) {
+            java.sql.Date ngayBatDau=rs.getDate(3);
+            java.sql.Date ngayKetThuc=rs.getDate(4);
+            if(ngayHienTai.compareTo(ngayBatDau)>=0 && ngayHienTai.compareTo(ngayKetThuc)<=0){
+                idKm=rs.getInt(1);
+            }
+        }
+        pstmt.close();
+        return idKm;
+    }
+    public double findPhanTramGiamGia() throws SQLException{
+        LocalDate currentDate = LocalDate.now();
+        java.sql.Date ngayHienTai=java.sql.Date.valueOf(currentDate);
+        double PhanTramGiamGia = 0;
+        Statement pstmt = conn.createStatement();
+        ResultSet rs = pstmt.executeQuery("SELECT * FROM CHUONG_TRINH_KM");
+        while (rs.next()) {
+            java.sql.Date ngayBatDau=rs.getDate(3);
+            java.sql.Date ngayKetThuc=rs.getDate(4);
+            if(ngayHienTai.compareTo(ngayBatDau)>=0 && ngayHienTai.compareTo(ngayKetThuc)<=0){
+                PhanTramGiamGia=rs.getDouble(6);
+            }
+        }
+        pstmt.close();
+        return PhanTramGiamGia;
+    }
+
+    public void InsOrderDetail(int id_don,int id_mon,int soluong) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO CHITIET_DON (ID_DON, ID_MON,SOLUONG) VALUES (?,?,?)");
+        pstmt.setInt(1,id_don);
+        pstmt.setInt(2,id_mon);
+        pstmt.setInt(3,soluong);
+        pstmt.executeUpdate();
+    }
+    public void InsRequest(int id_nl,int id_ncc,int id_quan_ly,int id_bep,int tongtien,LocalDate ngayNhap,int soluong) throws SQLException{
+        java.sql.Date ngaynhap= ngayNhap != null ? java.sql.Date.valueOf(ngayNhap) : null;
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO) VALUES (?,?,?,?,?,?,?)");
+        pstmt.setInt(1,id_nl);
+        pstmt.setInt(2,id_ncc);
+        pstmt.setInt(3,id_quan_ly);
+        pstmt.setInt(4,id_bep);
+        pstmt.setInt(5,tongtien);
+        pstmt.setInt(6,soluong);
+        pstmt.setDate(7,ngaynhap);
         pstmt.executeUpdate();
     }
 }
