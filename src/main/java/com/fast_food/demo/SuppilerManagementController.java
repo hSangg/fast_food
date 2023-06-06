@@ -137,24 +137,17 @@ public class SuppilerManagementController implements Initializable {
         //RENDER ALL TEN NL
         ObservableList<SuperSuppiler> ncc = FXCollections.observableArrayList();
 
-
         for (SuperSuppiler superSuppiler : suppilerList) {
             ncc.add(superSuppiler);
         }
-
         //-----------THEM NGUYEN LIEU TUONG UNG VOI MON
         tablecolumn_email.setCellValueFactory(new PropertyValueFactory<>("email"));
         tablecolumn_tenncc.setCellValueFactory(new PropertyValueFactory<>("ten"));
-
-
         // Create a custom CellValueFactory for the "sdt" field
-
         tablecolumn_sdt.setCellValueFactory(new PropertyValueFactory<SuperSuppiler, String>("soDienThoai"));
         tablecolumn_diachi.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
 
-
         tablecolumn_nlcungcap.setCellValueFactory(new PropertyValueFactory<>("nguyenLieuTen"));
-
 
         table_nha_cung_cap.setItems(ncc);
     }
@@ -172,7 +165,6 @@ public class SuppilerManagementController implements Initializable {
         try {
             suppilerList = db.getAllNhaCungCapWithNguyenLieu();
             ingredientList = db.getAllIngredients();
-
             renderTableNguyenLieu();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -181,7 +173,6 @@ public class SuppilerManagementController implements Initializable {
         for(Ingredient i : ingredientList) {
             choice_box_nlcc.getItems().add(i.getTen());
         }
-
         table_nha_cung_cap.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) { // Kiểm tra double click
 
@@ -248,7 +239,6 @@ public class SuppilerManagementController implements Initializable {
                     alert.setTitle("Confirmation");
                     alert.setHeaderText(null);
                     alert.setContentText("Are you sure you want to delete this row?");
-
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         table_nha_cung_cap.getItems().remove(selectedRow);
@@ -279,9 +269,13 @@ public class SuppilerManagementController implements Initializable {
                     String email = textfield_emailncc.getText();
                     String nl = choice_box_nlcc.getValue();
                     String diachi = textfield_diachi.getText();
-
-                    int id = suppilerList.size() + 1;
-
+                    int id = 0;
+                    for (int i = 0; i < suppilerList.size(); i++) {
+                        if(id<=suppilerList.get(i).getId()){
+                                id=suppilerList.get(i).getId();
+                        }
+                    }
+                    id++;
                     SuperSuppiler superSuppiler = new SuperSuppiler(id, ten_ncc, sdt, email, diachi, currentSuppilerClick.getNguyenLieuId(), choice_box_nlcc.getValue());
                     if (check_is_exit(ten_ncc)) {
                         System.out.println("Da ton tai");
@@ -289,7 +283,9 @@ public class SuppilerManagementController implements Initializable {
                     } else {
                         suppilerList.add(superSuppiler);
                         try {
-                            db.InsNCC(id,ten_ncc,sdt,email,diachi);
+                            ArrayList<Integer> ncc_nlID=db.getNcc_Nlid();
+                            db.InsNCC(id, ten_ncc, sdt, email, diachi);
+                            db.InsNCC_NL(ncc_nlID.get(ncc_nlID.size()-1)+1,id, db.find_idNl(choice_box_nlcc.getValue()));
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -312,14 +308,13 @@ public class SuppilerManagementController implements Initializable {
                             suppiler.setDiaChi(diachi);
                             suppiler.setSoDienThoai(sdt);
                             try {
+                                db.EditOfNCC_NL(choice_box_nlcc.getValue(),currentSuppilerClick.getId());
                                 db.EditOfNCC(currentSuppilerClick.getId(),ten_ncc,sdt,email,diachi);
                             } catch (SQLException ex) {
                                 throw new RuntimeException(ex);
                             }
                         }
                     });
-
-
                     this.mode = "ADD_NCC";
                     clearChiTiet();
                     label_them_chinh_sua_nl.setText("Thêm nguyên liệu");

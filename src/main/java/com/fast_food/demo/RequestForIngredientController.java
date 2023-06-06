@@ -226,13 +226,12 @@ public class RequestForIngredientController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-
+        HashMap<Integer,String> Tongtien= new HashMap<>();
         //RENDER DEFAULT
         textfield_xoa_nl.setDisable(true);
         uf.setVisibleNode(texterror_validator_nhacungcap, false);
         uf.setVisibleNode(texterror_validator_soluong, false);
         uf.setVisibleNode(texterror_validator_tennl, false);
-
 
         //RENDER ALL TEN NL
         ObservableList<Ingredient> nguyenLieu = FXCollections.observableArrayList();
@@ -259,7 +258,6 @@ public class RequestForIngredientController implements Initializable {
                 this.mode="ADD_NL";
                 label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
                 clearChiTietNguyenLieu();
-
                 Ingredient selectedMaterial = table_nguyenlieu.getSelectionModel().getSelectedItem();
                 if (selectedMaterial != null) {
                     textfield_soluong.setText("1");
@@ -274,6 +272,7 @@ public class RequestForIngredientController implements Initializable {
                     label_don_vi.setText(donVi);
 
                     renderTienNguyenLieuTheoSoLuong(1, gia);
+
                     try {
                         renderChoiceBoxNCCFollowNLID(selectedMaterial.getId());
                     } catch (SQLException e) {
@@ -290,8 +289,6 @@ public class RequestForIngredientController implements Initializable {
                     currentIngredientReceivedNote = ingredientReceivedNote;
 
                     Ingredient ingredient = getIngredientFollowingEditClick(currentIngredientReceivedNote.getIngredientId());
-
-
                     label_ten_nl.setText(ingredient.getTen());
                     label_gia.setText(String.valueOf(ingredient.getGiaNL()));
                     label_don_vi.setText(ingredient.getDonVi());
@@ -324,7 +321,7 @@ public class RequestForIngredientController implements Initializable {
                         ingredientReceivedNoteList.add(new IngredientReceivedNote(currentIngredientClick.getId(),
                                 currentIngredientClick.getTen(), Integer.parseInt(textfield_soluong.getText()),
                                 currentSuppiler.getId(), currentSuppiler.getTen(), 1, 2, LocalDate.now()));
-
+                        Tongtien.put(currentIngredientClick.getId(),label_tongtien.getText());
                         renderTablePhieuNguyenLieu();
                         clearChiTietNguyenLieu();
                     }
@@ -339,6 +336,7 @@ public class RequestForIngredientController implements Initializable {
                         int si = getIdSuppiler(choicebox_nhacungcap.getValue());
                         ingredient.setSupplierId(si);
                         ingredient.setSupplierName(choicebox_nhacungcap.getValue());
+                        Tongtien.put(ingredient.getIngredientId(),label_tongtien.getText());
                     }
                 });
 
@@ -391,11 +389,13 @@ public class RequestForIngredientController implements Initializable {
                     if (material.getIngredientName().equalsIgnoreCase(nl_can_xoa)) {
                         ++result;
                         iterator.remove();
+                        Tongtien.remove(material.getIngredientId());
                     }
                 }
                 if (result != 0) {
                     textfield_xoa_nl.clear();
                     textfield_xoa_nl.setPromptText("đã xóa thành công");
+
                     renderTablePhieuNguyenLieu();
                     System.out.println("Enter key pressed");
                     renderTotal();
@@ -416,8 +416,9 @@ public class RequestForIngredientController implements Initializable {
                     int soluong=table_nguyenlieu.getItems().get(i).getSoLuongTrongKho();
 
                     int id_ncc=db.findIdncc(table_phieunguyenlieu.getItems().get(i).getSupplierName());
-                    int tongtien= Integer.parseInt(text_total.getText());
+                    int tongtien= Integer.parseInt(Tongtien.get(id_nl));
                     db.InsRequest(id_nl,id_ncc,id_ql,id_bep,tongtien,null,soluong);
+
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

@@ -781,6 +781,37 @@ public class DBHandler {
         pstmt.setDate(7,null);
         pstmt.executeUpdate();
     }
+    public ArrayList<Integer> getNcc_Nlid() throws SQLException{
+         ArrayList<Integer> ncc_nlid = new ArrayList<Integer>();
+         ncc_nlid.add(0);
+        String sql = "SELECT ID FROM NCC_NL";
+
+        PreparedStatement statement = conn.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            int id=resultSet.getInt(1);
+            ncc_nlid.add(id);
+        }
+
+        return  ncc_nlid;
+    }
+    public void InsNCC_NL(int id,int id_ncc,int id_nl) throws SQLException{
+
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NCC_NL (ID,ID_NHA_CUNG_CAP,ID_NGUYEN_LIEU) VALUES (?,?,?)");
+        pstmt.setInt(1,id);
+        pstmt.setInt(2,id_ncc);
+        pstmt.setInt(3,id_nl);
+        pstmt.executeUpdate();
+
+    }
+    public void EditOfNCC_NL(String tennl,int id_ncc) throws SQLException {
+        String sql ="UPDATE NCC_NL SET ID_NGUYEN_LIEU=(SELECT ID FROM NGUYEN_LIEU WHERE TEN=?) WHERE ID_NHA_CUNG_CAP=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,tennl);
+        pstmt.setInt(2,id_ncc);
+        pstmt.executeUpdate();
+    }
 
 }
 
