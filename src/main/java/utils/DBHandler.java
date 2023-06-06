@@ -814,6 +814,60 @@
             pstmt.setString(2,username);
             pstmt.executeUpdate();
         }
+        public int find_idNl(String name) throws SQLException {
+            int id = 0;
+            PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NGUYEN_LIEU WHERE TEN = ?");
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+            return id;
+        }
+        public int find_manager_id2(int id_nv) throws SQLException {
+            int manager_id = 0;
+            PreparedStatement pstmt = conn.prepareStatement("SELECT ID_QUAN_LY FROM NHAN_VIEN WHERE ID = ?");
+            pstmt.setInt(1, id_nv);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                manager_id = rs.getInt(1);
+            }
+            return manager_id;
+        }
+        public int findIdncc(String tenNcc) throws SQLException{
+            int idncc = 0;
+            PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHA_CUNG_CAP WHERE TEN = ?");
+            pstmt.setString(1, tenNcc);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                idncc = rs.getInt(1);
+            }
+            return idncc;
+        }
+        public int getTongThu(ArrayList<Pair<Integer,Integer>> xy) throws SQLException {
+            int tong=0;
+            PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN), EXTRACT(MONTH FROM NGAY_DAT) AS THANG FROM DON_HANG\n" +
+                    "GROUP BY EXTRACT(MONTH FROM NGAY_DAT)");
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
+                tong+=rs.getInt(1);
+            }
+            return tong;
+        }
+        public int getTongChi(ArrayList<Pair<Integer,Integer>> xy) throws SQLException{
+            int tong=0;
+            PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN),EXTRACT(MONTH FROM NGAY_NL_NHAP_KHO) AS THANG\n" +
+                    "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP\n" +
+                    "GROUP BY EXTRACT(MONTH FROM NGAY_NL_NHAP_KHO)\n" +
+                    "ORDER BY THANG");
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
+                tong+=rs.getInt(1);
+            }
+            return tong;
+        }
     }
 
 

@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
-
-
     @FXML
     private HBox button_login;
 
@@ -42,6 +40,7 @@ public class LoginController implements Initializable {
     private TextField tf_username;
 
     public UtilityFunctions uf = new UtilityFunctions();
+    public static int id_nv;
 
     public boolean check_is_error() {
         boolean is_username_error = uf.isEmptyString(tf_username.getText());
@@ -53,8 +52,6 @@ public class LoginController implements Initializable {
 
         return is_username_error || is_pasword_error;
     }
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         uf.setVisibleNode(t_error_password,false);
@@ -68,6 +65,7 @@ public class LoginController implements Initializable {
             if (!check_is_error()) {
                 try {
                     LogedInUser userlogin = db.logIn(username, password);
+                    id_nv=userlogin.getCurentAcc().getIdEmployee();
                     if (userlogin == null) {
                         t_error_password.setText("Sai thông tin đăng nhập");
                         uf.setVisibleNode(t_error_password,true);
@@ -94,11 +92,9 @@ public class LoginController implements Initializable {
                 }
 
             }
-
         });
 
 
     }
 
 }
-
