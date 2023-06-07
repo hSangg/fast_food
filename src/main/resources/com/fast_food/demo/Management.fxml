@@ -91,7 +91,7 @@
                                     </Text>
                                  </children>
                               </VBox>
-                              <VBox fx:id="dashboard" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="250.0" styleClass="background-ingredient">
+                              <VBox fx:id="dashboard" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="250.0" styleClass="background-unknow">
                                  <children>
                                     <ImageView fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="-fx-scale-x: 0.9; -fx-scale-y: 0.9;">
                                        <image>
@@ -171,24 +171,24 @@
                                           <Insets />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý nguyên liệu">
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Yêu cầu nhập NL">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>
                                     </Text>
                                  </children>
                               </VBox>
-                              <VBox fx:id="ingredient11" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="250.0" styleClass="background-ingredient">
+                              <VBox fx:id="ingredient11" alignment="TOP_CENTER" prefHeight="285.0" prefWidth="250.0" styleClass="background-unknow">
                                  <children>
                                     <ImageView fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" style="-fx: 2;">
                                        <image>
-                                          <Image url="@../../../images/link-dynamic-gradient.png" />
+                                          <Image url="@../../../images/chart-dynamic-color.png" />
                                        </image>
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Quản lý nguyên liệu">
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Báo cáo">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>

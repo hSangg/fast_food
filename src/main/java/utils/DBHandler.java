@@ -75,6 +75,32 @@ public class DBHandler {
         return result;
     }
 
+    public HashSet<Employee> getAllEmployeesFollowingId(int id_) throws SQLException {
+        Statement sm = conn.createStatement();
+
+        String query = "SELECT X1.ID, X1.TEN, X1.CHUC_VU, X1.SO_DIEN_THOAI, X1.LUONG, NVL(X2.TEN, '') AS NGUOI_QUAN_LY, x2.ID AS ID_QUAN_LY " +
+                "FROM NHAN_VIEN X1 LEFT JOIN NHAN_VIEN X2 ON X1.ID_QUAN_LY = X2.ID " +
+                "WHERE X1.ID = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setInt(1, id_);
+        ResultSet rs = ps.executeQuery();
+        HashSet<Employee> result = new HashSet<>();
+
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String ten = rs.getString("TEN");
+            String chuc_vu = rs.getString("CHUC_VU");
+            String sdt = rs.getString("SO_DIEN_THOAI");
+            int luong = rs.getInt("LUONG");
+            String nguoi_quan_ly = rs.getString("NGUOI_QUAN_LY");
+            int id_quan_ly = rs.getInt("ID_QUAN_LY");
+
+            result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly));
+        }
+
+        return result;
+    }
+
 
     public HashSet<Order> getAllOrders() throws SQLException {
         Statement sm = conn.createStatement();
@@ -191,7 +217,7 @@ public class DBHandler {
 
     public HashSet<MenuItem> getAllMenuItems() throws SQLException {
         Statement sm = conn.createStatement();
-        ResultSet rs = sm.executeQuery("select ID, TEN_MON, MO_TA, LOAI, GIA, HINH_ANH from MON_AN");
+        ResultSet rs = sm.executeQuery("SELECT * FROM MON_AN");
         HashSet<MenuItem> result = new HashSet<MenuItem>();
         while (rs.next()) {
             int id = rs.getInt("ID");
@@ -205,6 +231,25 @@ public class DBHandler {
         }
         return result;
     }
+
+    public HashSet<MenuItem> getAvailableFastFood() throws SQLException {
+        Statement sm = conn.createStatement();
+        ResultSet rs = sm.executeQuery("select * from VIEW_MON_AN_CO_THE_CHE_BIEN");
+        HashSet<MenuItem> result = new HashSet<MenuItem>();
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String tenMon = rs.getString("TEN_MON");
+            String moTa = rs.getString("MO_TA");
+            String loai = rs.getString("LOAI");
+            int gia = rs.getInt("GIA");
+            byte[] hinhAnh = rs.getBytes("HINH_ANH");
+            MenuItem item = new MenuItem(id, tenMon, moTa, loai, gia, hinhAnh);
+            result.add(item);
+        }
+        return result;
+    }
+
+
 
     public HashSet<ItemTopSeller> getDemoSeller() throws SQLException {
         Statement sm = conn.createStatement();

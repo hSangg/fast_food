@@ -5,7 +5,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -16,7 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -24,7 +23,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import model.MenuItem;
-import model.Order;
 import model.Order1;
 import model.OrderDetail;
 import utils.DBHandler;
@@ -78,7 +76,7 @@ public class DashboardController implements Initializable, Callbacks {
         this.render_type = "do an";
         order_list = new HashSet<OrderDetail>();
         db = new DBHandler();
-        menu_list = db.getAllMenuItems();
+        menu_list = db.getAvailableFastFood();
     }
 
     public void updateTotalBill() {
@@ -231,6 +229,22 @@ public class DashboardController implements Initializable, Callbacks {
                 }
             }
             int id_don = maxNumber + 1;
+
+            //handler trường hợp ng dùng quên nhập số bàn
+
+            String sobandatText = soBandat.getText();
+            if (sobandatText == null || sobandatText.isEmpty()) {
+                // Hiển thị thông báo lỗi
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Lỗi");
+                alert.setHeaderText(null);
+                alert.setContentText("Vui lòng nhập số bàn đặt!");
+
+                alert.showAndWait();
+                return; // Dừng lại để người dùng nhập số bàn đặt
+            }
+
+            //handler trường hợp ng dùng quên nhập số bàn
 
             try {
                 db.InsOrder(id_don, 0, db.findIdKm(), null, 10, Integer.parseInt(soBandat.getText()), "chưa quyết định", "chưa thanh toán", 0, currentdate, "khong co");

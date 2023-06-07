@@ -132,7 +132,7 @@ public class SuppilerManagementController implements Initializable {
         return hasError;
     }
 
-    void renderTableNguyenLieu() {
+    void renderTableNCC() {
         table_nha_cung_cap.getItems().clear();
         //RENDER ALL TEN NL
         ObservableList<SuperSuppiler> ncc = FXCollections.observableArrayList();
@@ -173,7 +173,7 @@ public class SuppilerManagementController implements Initializable {
             suppilerList = db.getAllNhaCungCapWithNguyenLieu();
             ingredientList = db.getAllIngredients();
 
-            renderTableNguyenLieu();
+            renderTableNCC();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -231,7 +231,7 @@ public class SuppilerManagementController implements Initializable {
                 if (result != 0) {
                     textfield_xoa_nl.clear();
                     textfield_xoa_nl.setPromptText("đã xóa thành công");
-                    renderTableNguyenLieu();
+                    renderTableNCC();
                     System.out.println("Enter key pressed");
 
                 } else {
@@ -250,11 +250,14 @@ public class SuppilerManagementController implements Initializable {
                     alert.setTitle("Confirmation");
                     alert.setHeaderText(null);
                     alert.setContentText("Are you sure you want to delete this row?");
-
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         table_nha_cung_cap.getItems().remove(selectedRow);
-
+                        try {
+                            db.xoaNCC(selectedRow.getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         Iterator<SuperSuppiler> iterator = suppilerList.iterator();
                         while (iterator.hasNext()) {
                             SuperSuppiler x = iterator.next();
@@ -298,7 +301,7 @@ public class SuppilerManagementController implements Initializable {
                         /////////////////
 
                         clearChiTiet();
-                        renderTableNguyenLieu();
+                        renderTableNCC();
                     }
                 }
             } else if (this.mode.equals("EDIT_NCC")) {
@@ -334,7 +337,7 @@ public class SuppilerManagementController implements Initializable {
                     this.mode = "ADD_NCC";
                     clearChiTiet();
                     label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
-                    renderTableNguyenLieu();
+                    renderTableNCC();
                 }
             }
         });

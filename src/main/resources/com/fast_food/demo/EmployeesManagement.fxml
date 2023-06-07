@@ -21,9 +21,9 @@
          <children>
             <HBox prefHeight="76.0" prefWidth="1038.0">
                <children>
-                  <HBox>
+                  <HBox prefHeight="76.0" prefWidth="276.0">
                      <children>
-                        <Label prefHeight="76.0" prefWidth="98.0" style="-fx-pref-width: -1;" text="Tổng">
+                        <Label prefHeight="76.0" prefWidth="78.0" text="Tổng">
                            <font>
                               <Font name="Montserrat Regular" size="21.0" />
                            </font>
@@ -31,12 +31,12 @@
                               <Insets right="10.0" />
                            </padding>
                         </Label>
-                        <Label fx:id="text_tong_nv" prefHeight="76.0" prefWidth="26.0" style="-fx-pref-width: -1;" text="x">
+                        <Label fx:id="text_tong_nv" prefHeight="76.0" prefWidth="22.0" style="-fx-pref-width: -1;" text="x">
                            <font>
                               <Font name="Montserrat Bold" size="21.0" />
                            </font>
                         </Label>
-                        <Label prefHeight="76.0" prefWidth="136.0" text="nhân viên">
+                        <Label prefHeight="76.0" prefWidth="127.0" text="nhân viên">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
@@ -49,9 +49,9 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="777.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="76.0" prefWidth="819.0">
                      <children>
-                        <TextField fx:id="textfield_tim_kiem_nv" prefHeight="44.0" prefWidth="828.0" promptText="Tìm kiếm theo tên" style="-fx-font-size: 19;" stylesheets="@../../../css/managementStyle.css">
+                        <TextField fx:id="textfield_tim_kiem_nv" prefHeight="44.0" prefWidth="632.0" promptText="Tìm kiếm theo tên" style="-fx-font-size: 19;" stylesheets="@../../../css/managementStyle.css">
                            <font>
                               <Font name="Montserrat Regular" size="18.0" />
                            </font>
@@ -60,11 +60,13 @@
                               <String fx:value="drop_shadow" />
                            </styleClass>
                         </TextField>
+                        <Pane prefHeight="76.0" prefWidth="27.0" />
+                        <ChoiceBox fx:id="choicebox_searchtype" prefHeight="44.0" prefWidth="115.0" styleClass="custom-choice-box" />
                      </children>
                   </HBox>
                </children>
             </HBox>
-            <Pane prefHeight="76.0" prefWidth="75.0" />
+            <Pane prefHeight="76.0" prefWidth="31.0" />
             <HBox fx:id="button_them_nv" alignment="CENTER" prefHeight="46.0" prefWidth="501.0" spacing="5.0" styleClass="button_add_employee">
                <children>
                   <Label text="THÊM NHÂN VIÊN">

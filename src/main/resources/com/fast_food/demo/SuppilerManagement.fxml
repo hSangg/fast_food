@@ -59,7 +59,7 @@
                      <children>
                         <HBox fx:id="button_xoanguyenlieu" prefWidth="458.0">
                            <children>
-                              <TextField fx:id="textfield_xoa_nl" alignment="CENTER" prefHeight="44.0" prefWidth="582.0" promptText="nhập tên NL cần xóa" style="-fx-border-width: 2px;">
+                              <TextField fx:id="textfield_xoa_nl" alignment="CENTER" prefHeight="44.0" prefWidth="582.0" promptText="nhập tên NL cần xóa" style="-fx-border-width: 2px;" text="Nhập tên NCC cần xóa">
                                  <styleClass>
                                     <String fx:value="text_field_form_employee" />
                                     <String fx:value="text-button" />
@@ -70,7 +70,7 @@
                         </HBox>
                         <HBox fx:id="button_themnguyenlieu" alignment="CENTER" prefHeight="44.0" prefWidth="475.0" styleClass="button-add">
                            <children>
-                              <Label fx:id="label_them_chinh_sua_nl" prefHeight="40.0" prefWidth="174.0" style="-fx-pref-width: -1;" styleClass="text-button" text="Thêm nguyên liệu" textFill="#4f46e5">
+                              <Label fx:id="label_them_chinh_sua_nl" prefHeight="40.0" prefWidth="174.0" style="-fx-pref-width: -1;" styleClass="text-button" text="Thêm NCC_NL" textFill="#4f46e5">
                                  <padding>
                                     <Insets bottom="8.0" top="8.0" />
                                  </padding>

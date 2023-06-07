@@ -65,11 +65,13 @@ public class LoginController implements Initializable {
             if (!check_is_error()) {
                 try {
                     LogedInUser userlogin = db.logIn(username, password);
-                    id_nv=userlogin.getCurentAcc().getIdEmployee();
+                    System.out.println(userlogin);
                     if (userlogin == null) {
+
                         t_error_password.setText("Sai thông tin đăng nhập");
                         uf.setVisibleNode(t_error_password,true);
                     } else {
+                        id_nv=userlogin.getCurentAcc().getIdEmployee();
 
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/Management.fxml"));
                         Parent root = fxmlLoader.load();

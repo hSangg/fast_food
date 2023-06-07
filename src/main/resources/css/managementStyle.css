@@ -78,8 +78,14 @@
 }
 .background-ingredient {
   -fx-background-radius: 50;
-  -fx-background-color: #a855f740;
+  -fx-background-color: #c2410c40;
 }
+
+.background-unknow {
+  -fx-background-radius: 50;
+  -fx-background-color: #eab30840;
+}
+
 
 .background-form_submit {
   -fx-background-radius: 30;
