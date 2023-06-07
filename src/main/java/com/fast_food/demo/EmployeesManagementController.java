@@ -113,11 +113,15 @@ public class EmployeesManagementController implements Initializable {
         textfield_sdt.clear();
         textfiel_luong.clear();
         textfiel_ho_va_ten.clear();
+        choicebox_chuc_vu.setValue(null);
+        choicebox_nguoi_quan_ly.setValue(null);
     }
 
 
     UtilityFunctions uf = new UtilityFunctions();
     DBHandler db = new DBHandler();
+
+    Employee selectEm = new Employee();
 
     HashSet<Employee> employeeHashSet = new HashSet<Employee>();
 
@@ -137,7 +141,10 @@ public class EmployeesManagementController implements Initializable {
         hasError |= uf.isEmptyString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Vui lòng điền thông tin") :
                 (!uf.isNumericString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Sai định dạng lương") : uf.hideErrorMsg(text_error_validator_luong));
         hasError |= uf.isEmptyString(choicebox_chuc_vu.getValue()) ? uf.setErrorMsg(text_error_validator_chuc_vu, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_chuc_vu);
-        hasError |= uf.isEmptyString(choicebox_nguoi_quan_ly.getValue()) ? uf.setErrorMsg(text_error_validator_nguoi_ql, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_nguoi_ql);
+
+        if(!selectEm.getChuc_vu().equals("Quản lý")) {
+            hasError |= uf.isEmptyString(choicebox_nguoi_quan_ly.getValue()) ? uf.setErrorMsg(text_error_validator_nguoi_ql, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_nguoi_ql);
+        }
 
         return hasError;
     }
@@ -224,6 +231,16 @@ public class EmployeesManagementController implements Initializable {
 //        choicebox_nguoi_quan_ly.setValue(ten_ng_qly);
     }
 
+    public void clearError() {
+        uf.setVisibleNode(text_error_validator_luong, false);
+        uf.setVisibleNode(text_error_validator_name, false);
+        uf.setVisibleNode(text_error_validator_chuc_vu, false);
+        uf.setVisibleNode(text_error_validator_nguoi_ql, false);
+        uf.setVisibleNode(text_error_validator_sdt, false);
+    }
+
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -255,6 +272,7 @@ public class EmployeesManagementController implements Initializable {
                     choicebox_nguoi_quan_ly.getItems().add(e.getTen());
                 }
             }
+
 
             text_tong_nv.setText(String.valueOf(em.size()));
 
@@ -360,6 +378,8 @@ public class EmployeesManagementController implements Initializable {
                     }
                     System.out.println("Sửa nhân viên");
                     renderTableEmployee();
+                    clearDetail();
+
                 }
             }
         });
@@ -367,7 +387,9 @@ public class EmployeesManagementController implements Initializable {
         employee_list.setOnMouseClicked(e -> {
             uf.setVisibleNode(text_error_validator_nguoi_ql, false);
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+                clearError();
                 Employee employee = employee_list.getSelectionModel().getSelectedItem();
+                selectEm = employee;
                 if (employee != null) {
                     textfiel_ho_va_ten.setEditable(false);
                     button_submit.setDisable(false);
