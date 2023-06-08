@@ -234,7 +234,7 @@ public class DBHandler {
 
     public HashSet<MenuItem> getAvailableFastFood() throws SQLException {
         Statement sm = conn.createStatement();
-        ResultSet rs = sm.executeQuery("select * from VIEW_MON_AN_CO_THE_CHE_BIEN");
+        ResultSet rs = sm.executeQuery("select * from VIEW_AVALAIBLE_FOOD");
         HashSet<MenuItem> result = new HashSet<MenuItem>();
         while (rs.next()) {
             int id = rs.getInt("ID");
@@ -303,6 +303,28 @@ public class DBHandler {
 
         return result;
     }
+
+    public List<WorkMonthEmployee> getProductivityEmployee() {
+        List<WorkMonthEmployee> result = new ArrayList<>();
+
+        try (Statement statement = conn.createStatement();
+             ResultSet rs = statement.executeQuery("SELECT * FROM VIEW_THOI_GIAN_NHAN_VIEN_LAM_VIEC")) {
+
+            while (rs.next()) {
+                int employeeId = rs.getInt("ID_NHANVIEN");
+                String employeeName = rs.getString("TEN_NHANVIEN");
+                int totalWorkingTime = rs.getInt("TONG_THOIGIAN_LAMVIEC");
+
+                WorkMonthEmployee employee = new WorkMonthEmployee(employeeId, employeeName, totalWorkingTime);
+                result.add(employee);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
 
 
 
