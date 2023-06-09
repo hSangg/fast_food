@@ -1,5 +1,7 @@
 package com.fast_food.demo;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -7,19 +9,25 @@ import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+<<<<<<< HEAD
 import javafx.scene.control.Label;
+=======
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+>>>>>>> c254860ce43eea2d95a207dd64c17b32c3139f29
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import model.ItemTopSeller;
+import model.WorkMonthEmployee;
 import utils.DBHandler;
 import javafx.util.Pair;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -37,11 +45,32 @@ public class AdminController implements Initializable {
     private TextField num_best_seller_show;
 
     @FXML
+    private TableColumn<?, ?> tablecolumn_htrenthang;
+
+    @FXML
+    private TableColumn<?, ?> tablecolumn_id_nsnv;
+
+    @FXML
+    private TableColumn<?, ?> tablecolumn_ten_nsnv;
+
+    @FXML
     private VBox vbox_top_seller_layout;
+<<<<<<< HEAD
     @FXML
     private Label label_tong_thu;
     @FXML
     private Label label_tong_chi;
+=======
+
+    @FXML
+    private TableView<WorkMonthEmployee> table_productivity;
+
+    @FXML
+    private VBox vbox_top_seller_layout1;
+
+
+
+>>>>>>> c254860ce43eea2d95a207dd64c17b32c3139f29
 
     DBHandler dbh = new DBHandler();
 
@@ -99,6 +128,23 @@ public class AdminController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        List<WorkMonthEmployee> wmel = dbh.getProductivityEmployee();
+        ObservableList<WorkMonthEmployee> workMonthEmployeeObservableList = FXCollections.observableArrayList();
+
+
+        for(WorkMonthEmployee x: wmel) {
+            workMonthEmployeeObservableList.add(x);
+        }
+
+        // Thiết lập các cột của bảng
+        tablecolumn_htrenthang.setCellValueFactory(new PropertyValueFactory<>("totalWorkingTime"));
+        tablecolumn_id_nsnv.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+        tablecolumn_ten_nsnv.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
+
+        // Gọi phương thức để lấy dữ liệu và cập nhật bảng
+        List<WorkMonthEmployee> productivityList = dbh.getProductivityEmployee();
+        table_productivity.setItems(workMonthEmployeeObservableList);
+
         // -------------------------------
         // RENDER CHART DOANH THU TRONG NĂM
 

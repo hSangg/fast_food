@@ -16,7 +16,11 @@ public class InitialScene extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+<<<<<<< HEAD
         Parent root = FXMLLoader.load(getClass().getResource("/com/fast_food/demo/Login.fxml"));
+=======
+        Parent root = FXMLLoader.load(getClass().getResource("/com/fast_food/demo/Dashboard.fxml"));
+>>>>>>> c254860ce43eea2d95a207dd64c17b32c3139f29
         Scene scene = new Scene(root);
         Image icon = new Image(getClass().getResourceAsStream("/images/logo.png"));
         stage.getIcons().add(icon);
