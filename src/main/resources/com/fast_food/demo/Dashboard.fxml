@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<HBox prefHeight="1000.0" prefWidth="1600.0" spacing="19.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.DashboardController">
+<HBox prefHeight="1000.0" prefWidth="1600.0" spacing="19.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.DashboardController">
    <children>
       <VBox prefHeight="949.0" prefWidth="1317.0">
          <children>
@@ -36,6 +28,11 @@
                   </Label>
                </children>
             </HBox>
+            <Text fx:id="text_cant_make" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Những món sau không thể chế biến: ">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
             <HBox alignment="CENTER" prefHeight="250.0" prefWidth="1173.0" spacing="100.0" style="-fx-scale-x: 0.8; -fx-scale-y: 0.8;">
                <children>
                   <VBox fx:id="bt_food" alignment="CENTER" prefHeight="144.0" prefWidth="157.0" styleClass="background-food">

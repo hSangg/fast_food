@@ -138,6 +138,9 @@ public class MenuManagementController implements Initializable {
     private MenuItem currentMenuItemClick;
     private Material currentMaterielClick;
     public String mode = "ADD_NL";
+    private int originalPrice = 0;
+    private int countDouble = 0;
+    private String originalName = "";
     /*
     + EDIT_MON_AN (không sửa nguyên liệu)
     + EDIT_MON_AN_NL (có sửa nguyên liệu)
@@ -424,7 +427,8 @@ public class MenuManagementController implements Initializable {
 
                     try {
                         int idMon = currentMenuItemClick.getId();
-                        db.EditNlOfMon(idMon,ten_mon,ten_nl, so_luong);
+                        int idNl = db.findIdNl(currentMaterielClick.getName());
+                        db.EditNlOfMon(idMon,idNl, so_luong);
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -515,8 +519,18 @@ public class MenuManagementController implements Initializable {
                 try {
                     int idMon =  currentMenuItemClick.getId();
                     System.out.println(idMon);
+
+                    if(originalPrice== db.getFoodPrice(db.findIdMon(textfield_tenmon.getText()))){
                     db.UpdateFood(idMon, textfield_tenmon.getText(),textfield_mota.getText(),choicebox_loai.getValue(),Integer.parseInt(text_field_gia.getText()),imagePath,imageName);
                     renderTableMonAn();
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Lỗi");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Đã xảy ra lỗi. Vui lòng reset hệ thống và thử lại.");
+                        alert.show();
+                    }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -595,7 +609,25 @@ public class MenuManagementController implements Initializable {
                         isDisableChiTietNguyenLieu(false);
 
                         textfield_tenmon.setText(selectedItem.getName());
-                        text_field_gia.setText(String.valueOf(selectedItem.getPrice()));
+//                        if(countDouble==0) {
+//                            originalPrice = selectedItem.getPrice();
+//                        }
+//                        if(!originalName.equals("")){
+//                            if(!originalName.equals(textfield_tenmon.getText())){
+//                                countDouble=0;
+//                            }
+//                        }
+//                        if(countDouble==0) {
+                           text_field_gia.setText(String.valueOf(selectedItem.getPrice()));
+//                        }
+//                        else{
+//                            text_field_gia.setText(String.valueOf(originalPrice));
+//                        }
+//                        if(originalName.equals("") && countDouble==0){
+//                            countDouble++;
+//                            originalName=textfield_tenmon.getText();
+//                        }
+
                         textfield_mota.setText(selectedItem.getDescription());
                         choicebox_loai.setValue(selectedItem.getCategory());
 

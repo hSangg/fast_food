@@ -54,6 +54,8 @@ public class DashboardController implements Initializable, Callbacks {
     private TextField tenKh;
     @FXML
     private TextField soBandat;
+    @FXML
+    private Text text_cant_make;
 
     public String render_type;
 
@@ -62,6 +64,7 @@ public class DashboardController implements Initializable, Callbacks {
     public HashSet<MenuItem> menu_list;
 
     public DBHandler db;
+
 
     public int totalBill = 0;
     //Order 1 là import bảng DON_HANG
@@ -195,7 +198,7 @@ public class DashboardController implements Initializable, Callbacks {
 
 
         this.render_menu_list(menu_list);
-
+        text_cant_make.setVisible(false);
         bt_drink.setOnMouseClicked(e -> {
 
             this.render_menu_list(menu_list.stream().filter(x -> {
@@ -253,14 +256,29 @@ public class DashboardController implements Initializable, Callbacks {
                 throw new RuntimeException(ex);
             }
             try {
+                int check=0;
+                String popUp="Những món sau đây không thế chế biến: \n";
                 for (OrderDetail i : order_list) {
                     int id_mon = i.getOrder().getId();
-                    db.InsOrderDetail(id_don, id_mon, i.getCount());
+                    int sL=i.getCount();
+                    int sLC=db.checkMon(id_mon,sL);
+                    System.out.print(sL+"   ");
+                    System.out.println(sLC);
+                    if((sL-sLC)>0){
+                        check=1;
+                        popUp+=i.getOrder().getName() + " x"+ (sL - sLC);
+                        popUp+="\n";
+                        db.InsOrderDetail(id_don, id_mon, sLC);
+                    }
+                }
+                text_cant_make.setText(popUp);
+                if(check==1){
+                    text_cant_make.setVisible(true);
+                    popUp="";
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-
         });
 
 

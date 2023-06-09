@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "1652003Sang_";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -619,8 +619,7 @@ public class DBHandler {
         return idNl;
     }
 
-    public void EditNlOfMon(int idMon, String tenMon, String tenNl, int sL) throws SQLException {
-        int idNl = find_id(tenNl);
+    public void EditNlOfMon(int idMon, int idNl, int sL) throws SQLException {
         String sql = "Update NGUYEN_LIEU_MON_AN SET SO_LUONG=?  WHERE ID_MON=? AND ID_NL=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, sL);
@@ -883,6 +882,109 @@ public class DBHandler {
         pstmt.setInt(6,soluong);
         pstmt.setDate(7,ngaynhap);
         pstmt.executeUpdate();
+    }
+    public int getTongThu(ArrayList<Pair<Integer,Integer>> xy) throws SQLException {
+        int tong=0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN), EXTRACT(MONTH FROM NGAY_DAT) AS THANG FROM DON_HANG\n" +
+                "GROUP BY EXTRACT(MONTH FROM NGAY_DAT)");
+        ResultSet rs = pstmt.executeQuery();
+        while(rs.next()){
+            xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
+            tong+=rs.getInt(1);
+        }
+        return tong;
+    }
+    public int getTongChi(ArrayList<Pair<Integer,Integer>> xy) throws SQLException{
+        int tong=0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN),EXTRACT(MONTH FROM NGAY_NL_NHAP_KHO) AS THANG\n" +
+                "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP\n" +
+                "GROUP BY EXTRACT(MONTH FROM NGAY_NL_NHAP_KHO)\n" +
+                "ORDER BY THANG");
+        ResultSet rs = pstmt.executeQuery();
+        while(rs.next()){
+            xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
+            tong+=rs.getInt(1);
+        }
+        return tong;
+    }
+
+    public boolean checkTungMon(int id_mon) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement("SELECT\n" +
+                "        *\n" +
+                "    FROM\n" +
+                "        MON_AN MA,\n" +
+                "        (\n" +
+                "            SELECT\n" +
+                "                ID1\n" +
+                "            FROM\n" +
+                "                (\n" +
+                "                    SELECT\n" +
+                "                        ID_MON        AS ID1,\n" +
+                "                        COUNT(ID_MON) AS SL1\n" +
+                "                    FROM\n" +
+                "                        NGUYEN_LIEU_MON_AN\n" +
+                "                        LEFT JOIN NGUYEN_LIEU\n" +
+                "                        ON NGUYEN_LIEU_MON_AN.ID_NL = NGUYEN_LIEU.ID\n" +
+                "                        AND NGUYEN_LIEU_MON_AN.SO_LUONG <= NGUYEN_LIEU.SO_LUONG_TRONG_KHO\n" +
+                "                    WHERE\n" +
+                "                        NGUYEN_LIEU.TEN IS NOT NULL\n" +
+                "                    GROUP BY\n" +
+                "                        ID_MON\n" +
+                "                ) X1,\n" +
+                "                (\n" +
+                "                    SELECT\n" +
+                "                        ID_MON        AS ID2,\n" +
+                "                        COUNT(ID_MON) AS SL2\n" +
+                "                    FROM\n" +
+                "                        NGUYEN_LIEU_MON_AN\n" +
+                "                    GROUP BY\n" +
+                "                        NGUYEN_LIEU_MON_AN.ID_MON\n" +
+                "                ) X2\n" +
+                "            WHERE\n" +
+                "                X1.SL1 = X2.SL2\n" +
+                "                AND X1.ID1 = X2.ID2\n" +
+                "        )      X\n" +
+                "    WHERE\n" +
+                "        X.ID1 = MA.ID AND MA.ID = ?");
+        pstmt.setInt(1,id_mon);
+        ResultSet rs = pstmt.executeQuery();
+        if(!rs.next())
+            return false;
+        return true;
+    }
+    public int checkMon(int id_mon,int sL) throws SQLException {
+        int result=0;
+        for(int i=0;i<sL;i++){
+            if(checkTungMon(id_mon)){
+                result+=1;
+                System.out.println(result);
+                DelNl(id_mon);
+            }
+        }
+        return result;
+    }
+    public void DelNl(int id_mon) throws SQLException {
+        PreparedStatement selectStmt = conn.prepareStatement("SELECT ID_NL, SO_LUONG FROM NGUYEN_LIEU_MON_AN WHERE ID_MON = ?");
+        selectStmt.setInt(1,id_mon);
+        ResultSet rs = selectStmt.executeQuery();
+        PreparedStatement updateStmt = conn.prepareStatement("UPDATE NGUYEN_LIEU SET SO_LUONG_TRONG_KHO = SO_LUONG_TRONG_KHO - ? WHERE ID = ?");
+        while (rs.next()) {
+            int nguyenLieuId = rs.getInt("ID_NL");
+            int soLuong = rs.getInt("SO_LUONG");
+            updateStmt.setInt(1, soLuong);
+            updateStmt.setInt(2, nguyenLieuId);
+            updateStmt.executeUpdate();
+        }
+    }
+    public int getFoodPrice(int id_mon) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("Select GIA FROM MON_AN WHERE ID=?");
+        pstmt.setInt(1,id_mon);
+        ResultSet rs = pstmt.executeQuery();
+        int result=0;
+        while(rs.next()){
+            result = rs.getInt("GIA");
+        }
+        return result;
     }
 }
 

@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -37,7 +38,10 @@ public class AdminController implements Initializable {
 
     @FXML
     private VBox vbox_top_seller_layout;
-
+    @FXML
+    private Label label_tong_thu;
+    @FXML
+    private Label label_tong_chi;
 
     DBHandler dbh = new DBHandler();
 
@@ -147,15 +151,33 @@ public class AdminController implements Initializable {
         // RENDER CHART DOANH SỐ THU/CHI
 
         XYChart.Series line_thu = new XYChart.Series<>();
-        line_thu.getData().add(new XYChart.Data("1", 132));
-        line_thu.getData().add(new XYChart.Data("2", 341));
-        line_thu.getData().add(new XYChart.Data("3", 452));
-
-
+        ArrayList<Pair<Integer,Integer>> thu = new ArrayList<>();
+        int tongThu;
+        try {
+            tongThu = dbh.getTongThu(thu);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        for(Pair<Integer,Integer> x : thu){
+            int thang = x.getKey();
+            int value = x.getValue();
+            line_thu.getData().add(new XYChart.Data(String.valueOf(thang),value));
+        }
+        label_tong_thu.setText("$"+String.valueOf(tongThu));
+        ArrayList<Pair<Integer,Integer>> chi = new ArrayList<>();
+        int tongChi;
+        try {
+            tongChi= dbh.getTongChi(chi);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         XYChart.Series line_chi = new XYChart.Series<>();
-        line_chi.getData().add(new XYChart.Data("1", 462));
-        line_chi.getData().add(new XYChart.Data("2", 324));
-        line_chi.getData().add(new XYChart.Data("3", 232));
+        for(Pair<Integer,Integer> y : chi){
+            int thang = y.getKey();
+            int value = y.getValue();
+            line_chi.getData().add(new XYChart.Data(String.valueOf(thang),value));
+        }
+        label_tong_chi.setText("$"+String.valueOf(tongChi));
 
 
         chart_doanh_thu_thang.getData().add(line_thu);
@@ -197,8 +219,6 @@ public class AdminController implements Initializable {
         for(Pair<Integer,Integer> pair: xy){
             int x=pair.getKey();
             int y=pair.getValue();
-            System.out.println(x);
-            System.out.println(y);
             series_dh.getData().add(new XYChart.Data(String.valueOf(x),y));
         }
         chart_tong_so_don_hang.getData().add(series_dh);
