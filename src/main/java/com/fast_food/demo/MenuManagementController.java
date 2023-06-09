@@ -138,6 +138,7 @@ public class MenuManagementController implements Initializable {
     private MenuItem currentMenuItemClick;
     private Material currentMaterielClick;
     public String mode = "ADD_NL";
+    private int originalPrice = 0;
     /*
     + EDIT_MON_AN (không sửa nguyên liệu)
     + EDIT_MON_AN_NL (có sửa nguyên liệu)
@@ -515,19 +516,24 @@ public class MenuManagementController implements Initializable {
                 try {
                     int idMon =  currentMenuItemClick.getId();
                     System.out.println(idMon);
-                    db.UpdateFood(idMon, textfield_tenmon.getText(),textfield_mota.getText(),choicebox_loai.getValue(),Integer.parseInt(text_field_gia.getText()),imagePath,imageName);
-                    renderTableMonAn();
+
+                    if(originalPrice== db.getFoodPrice(db.findIdMon(textfield_tenmon.getText()))){
+                        db.UpdateFood(idMon, textfield_tenmon.getText(),textfield_mota.getText(),choicebox_loai.getValue(),Integer.parseInt(text_field_gia.getText()),imagePath,imageName);
+                        renderTableMonAn();
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Lỗi");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Đã xảy ra lỗi. Vui lòng reset hệ thống và thử lại.");
+                        alert.show();
+                    }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
                 imagePath="";
                 imageName="";
                 System.out.println(this.mode);
-            });
-
-            button_xoanguyenlieu.setOnMouseClicked(e -> {
-                this.mode = "DELETE_NGUYEN_LIEU";
-
             });
 
 

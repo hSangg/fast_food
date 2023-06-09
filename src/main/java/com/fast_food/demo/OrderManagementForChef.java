@@ -138,7 +138,10 @@ public class OrderManagementForChef implements Initializable {
 
             }
 
+        });
 
+        button_submit.setOnMouseClicked(e->{
+            //adding DB
         });
     }
 }

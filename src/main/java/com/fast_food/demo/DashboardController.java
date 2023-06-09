@@ -3,6 +3,7 @@ package com.fast_food.demo;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -253,15 +254,35 @@ public class DashboardController implements Initializable, Callbacks {
                 throw new RuntimeException(ex);
             }
             try {
+                int check=0;
+                String popUp="Những món sau đây không thế chế biến: \n";
                 for (OrderDetail i : order_list) {
                     int id_mon = i.getOrder().getId();
-                    db.InsOrderDetail(id_don, id_mon, i.getCount());
+                    int sL=i.getCount();
+                    int sLC=db.checkMon(id_mon,sL);
+                    System.out.print(sL+"   ");
+                    System.out.println(sLC);
+                    if((sL-sLC)>0){
+                        check=1;
+                        popUp+=i.getOrder().getName() + " x"+ (sL - sLC);
+                        popUp+="\n";
+                        db.InsOrderDetail(id_don, id_mon, sLC);
+                    }
+                }
+                System.out.println(popUp);
+                if(check==1){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Cant Cook these foods");
+                    alert.setHeaderText("Xin quý khách vui lòng thông cảm bỏ qua cho");
+                    alert.setContentText(popUp);
+                    alert.show();
+                    popUp="";
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-
         });
+
 
 
     }
