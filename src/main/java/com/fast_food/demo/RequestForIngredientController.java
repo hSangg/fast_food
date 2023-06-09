@@ -417,7 +417,7 @@ public class RequestForIngredientController implements Initializable {
 
                     int id_ncc=db.findIdncc(table_phieunguyenlieu.getItems().get(i).getSupplierName());
                     int tongtien= Integer.parseInt(text_total.getText());
-                    db.InsRequest(id_nl,id_ncc,id_ql,id_bep,tongtien,null,soluong);
+                    db.InsRequest(0,id_nl,id_ncc,id_ql,id_bep,tongtien,null,soluong);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

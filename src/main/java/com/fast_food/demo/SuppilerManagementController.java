@@ -132,29 +132,22 @@ public class SuppilerManagementController implements Initializable {
         return hasError;
     }
 
-    void renderTableNCC() {
+    void renderTableNguyenLieu() {
         table_nha_cung_cap.getItems().clear();
         //RENDER ALL TEN NL
         ObservableList<SuperSuppiler> ncc = FXCollections.observableArrayList();
 
-
         for (SuperSuppiler superSuppiler : suppilerList) {
             ncc.add(superSuppiler);
         }
-
         //-----------THEM NGUYEN LIEU TUONG UNG VOI MON
         tablecolumn_email.setCellValueFactory(new PropertyValueFactory<>("email"));
         tablecolumn_tenncc.setCellValueFactory(new PropertyValueFactory<>("ten"));
-
-
         // Create a custom CellValueFactory for the "sdt" field
-
         tablecolumn_sdt.setCellValueFactory(new PropertyValueFactory<SuperSuppiler, String>("soDienThoai"));
         tablecolumn_diachi.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
 
-
         tablecolumn_nlcungcap.setCellValueFactory(new PropertyValueFactory<>("nguyenLieuTen"));
-
 
         table_nha_cung_cap.setItems(ncc);
     }
@@ -172,8 +165,7 @@ public class SuppilerManagementController implements Initializable {
         try {
             suppilerList = db.getAllNhaCungCapWithNguyenLieu();
             ingredientList = db.getAllIngredients();
-
-            renderTableNCC();
+            renderTableNguyenLieu();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -181,7 +173,6 @@ public class SuppilerManagementController implements Initializable {
         for(Ingredient i : ingredientList) {
             choice_box_nlcc.getItems().add(i.getTen());
         }
-
         table_nha_cung_cap.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) { // Kiểm tra double click
 
@@ -211,8 +202,6 @@ public class SuppilerManagementController implements Initializable {
                 }
             }
 
-
-
         });
         textfield_xoa_nl.setOnKeyPressed(e -> {
             int result = 0;
@@ -229,9 +218,15 @@ public class SuppilerManagementController implements Initializable {
                     }
                 }
                 if (result != 0) {
+                    try {
+                        System.out.println(textfield_xoa_nl.getText());
+                        db.DelNcc(textfield_xoa_nl.getText());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     textfield_xoa_nl.clear();
                     textfield_xoa_nl.setPromptText("đã xóa thành công");
-                    renderTableNCC();
+                    renderTableNguyenLieu();
                     System.out.println("Enter key pressed");
 
                 } else {
@@ -280,66 +275,59 @@ public class SuppilerManagementController implements Initializable {
                     String email = textfield_emailncc.getText();
                     String nl = choice_box_nlcc.getValue();
                     String diachi = textfield_diachi.getText();
-
-                    int id = suppilerList.size() + 1;
-
+                    int id = 0;
+                    for (int i = 0; i < suppilerList.size(); i++) {
+                        if(id<=suppilerList.get(i).getId()){
+                            id=suppilerList.get(i).getId();
+                        }
+                    }
+                    id++;
                     SuperSuppiler superSuppiler = new SuperSuppiler(id, ten_ncc, sdt, email, diachi, currentSuppilerClick.getNguyenLieuId(), choice_box_nlcc.getValue());
                     if (check_is_exit(ten_ncc)) {
                         System.out.println("Da ton tai");
                         // xử lý đã tồn tại
                     } else {
                         suppilerList.add(superSuppiler);
-
-                        //////////////////
-                        /*
-                         * XU LY VOI DB
-                         *
-                         *
-                         *
-                         * */
-
-                        /////////////////
-
+                        try {
+                            ArrayList<Integer> ncc_nlID=db.getNcc_Nlid();
+                            db.InsNCC(id, ten_ncc, sdt, email, diachi);
+                            db.InsNCC_NL(ncc_nlID.get(ncc_nlID.size()-1)+1,id, db.find_idNl(choice_box_nlcc.getValue()));
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         clearChiTiet();
-                        renderTableNCC();
+                        renderTableNguyenLieu();
                     }
                 }
             } else if (this.mode.equals("EDIT_NCC")) {
                 if (!check()) {
+                    int id = suppilerList.size() + 1;
                     String ten_ncc = textfield_ncc.getText();
                     String sdt = textfield_sdt.getText();
                     String email = textfield_emailncc.getText();
-                    String nl = choice_box_nlcc.getValue();
                     String diachi = textfield_diachi.getText();
 
                     suppilerList.forEach(suppiler -> {
                         if (currentSuppilerClick.getId() == suppiler.getId()) {
-
                             suppiler.setEmail(email);
                             suppiler.setTen(ten_ncc);
                             suppiler.setDiaChi(diachi);
                             suppiler.setSoDienThoai(sdt);
-
-
+                            try {
+                                db.EditOfNCC_NL(choice_box_nlcc.getValue(),currentSuppilerClick.getId());
+                                db.EditOfNCC(currentSuppilerClick.getId(),ten_ncc,sdt,email,diachi);
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                     });
-
-                    //////////////////
-                    /*
-                     * XU LY VOI DB
-                     *
-                     *
-                     *
-                     * */
-
-                    /////////////////
-
                     this.mode = "ADD_NCC";
                     clearChiTiet();
                     label_them_chinh_sua_nl.setText("Thêm nguyên liệu");
-                    renderTableNCC();
+                    renderTableNguyenLieu();
                 }
             }
         });
     }
+
 }

@@ -676,8 +676,8 @@ public class DBHandler {
         PreparedStatement pstmt = conn.prepareStatement("INSERT INTO CHUONG_TRINH_KM (ID, MO_TA, NGAY_BAT_DAU, NGAY_KET_THUC, MA_GIAM_GIA, PHAN_TRAM_GIAM_GIA) VALUES (?,?,?,?,?,?)");
         pstmt.setInt(1,id);
         pstmt.setString(2,mota);
-        pstmt.setString(3, ngayBatDauSql.toString());
-        pstmt.setString(4, ngayKetThucSql.toString());
+        pstmt.setDate(3, ngayBatDauSql);
+        pstmt.setDate(4, ngayKetThucSql);
         pstmt.setString(5,maGiamGia);
         pstmt.setInt(6, Integer.parseInt(phanTramGiamGia));
         pstmt.executeUpdate();
@@ -688,8 +688,8 @@ public class DBHandler {
         String sql ="UPDATE CHUONG_TRINH_KM SET MO_TA=?,NGAY_BAT_DAU=?,NGAY_KET_THUC=?,MA_GIAM_GIA=?,PHAN_TRAM_GIAM_GIA=? WHERE ID=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1,mota);
-        pstmt.setString(2,ngayBatDauSql.toString());
-        pstmt.setString(3,ngayKetThucSql.toString());
+        pstmt.setDate(2, ngayBatDauSql);
+        pstmt.setDate(3, ngayKetThucSql);
         pstmt.setString(4,maGiamGia);
         pstmt.setInt(5, Integer.parseInt(phanTramGiamGia));
         pstmt.setInt(6,id);
@@ -894,17 +894,27 @@ public class DBHandler {
         pstmt.setInt(3,soluong);
         pstmt.executeUpdate();
     }
-    public void InsRequest(int id_nl,int id_ncc,int id_quan_ly,int id_bep,int tongtien,LocalDate ngayNhap,int soluong) throws SQLException{
+    public void InsRequest(int id, int id_nl,int id_ncc,int id_quan_ly,int id_bep,int tongtien,LocalDate ngayNhap,int soluong) throws SQLException{
         java.sql.Date ngaynhap= ngayNhap != null ? java.sql.Date.valueOf(ngayNhap) : null;
-        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO) VALUES (?,?,?,?,?,?,?)");
-        pstmt.setInt(1,id_nl);
-        pstmt.setInt(2,id_ncc);
-        pstmt.setInt(3,id_quan_ly);
-        pstmt.setInt(4,id_bep);
-        pstmt.setInt(5,tongtien);
-        pstmt.setInt(6,soluong);
-        pstmt.setDate(7,ngaynhap);
+        PreparedStatement pstmt = conn.prepareStatement("SELECT MAX(ID) AS MAXID FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP");
+        ResultSet rs = pstmt.executeQuery();
+        if(rs.next()){
+            id=rs.getInt("MAXID")+1;
+        }
+        pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID,ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO) VALUES (?,?,?,?,?,?,?,?)");
+        pstmt.setInt(1,id);
+        pstmt.setInt(2,id_nl);
+        pstmt.setInt(3,id_ncc);
+        pstmt.setInt(4,id_quan_ly);
+        pstmt.setInt(5,id_bep);
+        pstmt.setInt(6,tongtien);
+        pstmt.setInt(7,soluong);
+        pstmt.setDate(8,ngaynhap);
         pstmt.executeUpdate();
+//        pstmt = conn.prepareStatement("UPDATE NGUYEN_LIEU SET SO_LUONG_TRONG_KHO = SO_LUONG_TRONG_KHO + ? WHERE ID=?");
+//        pstmt.setInt(1,soluong);
+//        pstmt.setInt(2,id_nl);
+//        pstmt.executeUpdate();
     }
     public int getTongThu(ArrayList<Pair<Integer,Integer>> xy) throws SQLException {
         int tong=0;
@@ -1008,6 +1018,51 @@ public class DBHandler {
             result = rs.getInt("GIA");
         }
         return result;
+    }
+    public void EditOfNCC_NL(String tennl,int id_ncc) throws SQLException {
+        String sql ="UPDATE NCC_NL SET ID_NGUYEN_LIEU=(SELECT ID FROM NGUYEN_LIEU WHERE TEN=?) WHERE ID_NHA_CUNG_CAP=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,tennl);
+        pstmt.setInt(2,id_ncc);
+        pstmt.executeUpdate();
+    }
+    public void InsNCC_NL(int id,int id_ncc,int id_nl) throws SQLException{
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO NCC_NL (ID,ID_NHA_CUNG_CAP,ID_NGUYEN_LIEU) VALUES (?,?,?)");
+        pstmt.setInt(1,id);
+        pstmt.setInt(2,id_ncc);
+        pstmt.setInt(3,id_nl);
+        pstmt.executeUpdate();
+
+    }
+    public ArrayList<Integer> getNcc_Nlid() throws SQLException{
+        ArrayList<Integer> ncc_nlid = new ArrayList<Integer>();
+        ncc_nlid.add(0);
+        String sql = "SELECT ID FROM NCC_NL";
+
+        PreparedStatement statement = conn.prepareStatement(sql);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next()) {
+            int id=resultSet.getInt(1);
+            ncc_nlid.add(id);
+        }
+
+        return  ncc_nlid;
+    }
+    public void DelNcc(String ten) throws SQLException {
+        int id = 0 ;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM NHA_CUNG_CAP WHERE TEN=?");
+        pstmt.setString(1,ten);
+        ResultSet rs = pstmt.executeQuery();
+        if(rs.next()){
+            id=rs.getInt("ID");
+        }
+        pstmt = conn.prepareStatement("DELETE FROM NCC_NL WHERE ID_NHA_CUNG_CAP =?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+        pstmt = conn.prepareStatement(("DELETE FROM NHA_CUNG_CAP WHERE ID=?"));
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
     }
 }
 

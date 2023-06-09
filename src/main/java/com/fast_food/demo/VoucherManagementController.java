@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+//import java.sql.Date;
 import java.util.stream.Collectors;
 
 
@@ -31,9 +32,6 @@ public class VoucherManagementController implements Initializable {
 
     @FXML
     private HBox button_themnguyenlieu;
-
-    @FXML
-    private HBox button_xoanl;
 
     @FXML
     private Label label_ngaynhapkho;
@@ -130,7 +128,7 @@ public class VoucherManagementController implements Initializable {
 
 
     public boolean check_is_exit(String tennl) {
-        return voucherList.stream().filter(material1 -> material1.getMoTa().equals(tennl)).collect(Collectors.toList()).size() > 0 ? uf.setErrorMsg(texterror_validator_mota, "nguyên liệu đã tồn tại") : uf.hideErrorMsg(texterror_validator_mota);
+        return voucherList.stream().filter(material1 -> material1.getMoTa().equals(tennl)).collect(Collectors.toList()).size() > 0 ? uf.setErrorMsg(texterror_validator_mota, "Voucher đã tồn tại") : uf.hideErrorMsg(texterror_validator_mota);
     }
 
     void renderTableVoucher() {
@@ -151,8 +149,6 @@ public class VoucherManagementController implements Initializable {
                 return new SimpleStringProperty(formattedDate);
             }
         });
-
-
         tablecolumn_ngayketthuc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Voucher, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Voucher, String> p) {
@@ -176,18 +172,6 @@ public class VoucherManagementController implements Initializable {
         uf.setVisibleNode(texterror_validator_mota, false);
         uf.setVisibleNode(texterror_validator_magiamgia, false);
         uf.setVisibleNode(texterror_validator_phantramgiamgia, false);
-
-        textfield_ngaybd.getEditor().setOnMouseClicked(event -> {
-            textfield_ngaybd.show();
-        });
-
-        textfield_ngaykt.getEditor().setOnMouseClicked(event -> {
-            textfield_ngaykt.show();
-        });
-
-
-
-
         try {
             this.voucherList = db.getAllVoucher();
         } catch (SQLException e) {
@@ -206,7 +190,6 @@ public class VoucherManagementController implements Initializable {
 
 
                     this.currentVoucherClick = selectedItem;
-
                     int id = selectedItem.getId();
                     String mota = selectedItem.getMoTa();
                     String maGiamGia = selectedItem.getMaGiamGia();
@@ -246,42 +229,6 @@ public class VoucherManagementController implements Initializable {
             }
 
         });
-
-        button_xoanl.setOnMouseClicked(e -> {
-            Voucher selectedRow = currentVoucherClick;
-            if (selectedRow != null) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirmation");
-                alert.setHeaderText(null);
-                alert.setContentText("Are you sure you want to delete this row?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == ButtonType.OK) {
-                    table_voucher.getItems().remove(selectedRow);
-
-                    Iterator<Voucher> iterator = voucherList.iterator();
-                    while (iterator.hasNext()) {
-                        Voucher x = iterator.next();
-                        if (x.getId() == selectedRow.getId()) {
-                            iterator.remove();
-
-                            //////////////////
-                            /*
-                             * XU LY VOI DB
-                             *
-                             *
-                             *
-                             * */
-
-                            /////////////////
-                        }
-                    }
-
-
-                }
-            }
-        });
-
         table_voucher.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.DELETE) {
                 Voucher selectedRow = table_voucher.getSelectionModel().getSelectedItem();
@@ -293,33 +240,26 @@ public class VoucherManagementController implements Initializable {
 
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
+                        int id = 0;
                         table_voucher.getItems().remove(selectedRow);
-
                         Iterator<Voucher> iterator = voucherList.iterator();
                         while (iterator.hasNext()) {
                             Voucher x = iterator.next();
                             if (x.getId() == selectedRow.getId()) {
                                 iterator.remove();
-
-                                //////////////////
-                                /*
-                                 * XU LY VOI DB
-                                 *
-                                 *
-                                 *
-                                 * */
-
-                                /////////////////
+                                id=x.getId();
                             }
                         }
-
+                        try {
+                            db.xoaKM(id);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
 
                     }
                 }
             }
         });
-
-
         button_themnguyenlieu.setOnMouseClicked(e -> {
             if (this.mode.equals("ADD_VC")) {
                 if (!check()) {
@@ -329,25 +269,21 @@ public class VoucherManagementController implements Initializable {
                     String maGiamGia = textfield_magiamgia.getText();
                     Date ngayBD = Date.from(textfield_ngaybd.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                     Date ngayKT = Date.from(textfield_ngaykt.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-
                     Voucher voucher = new Voucher(id, mota, ngayBD, ngayKT, maGiamGia, Integer.parseInt(phanTramGiamGia));
+
                     if (check_is_exit(mota)) {
-                        System.out.println("Da ton tai");
-                        // xử lý đã tồn tại
-                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Voucher already exist");
+                    }
+                    else {
                         voucherList.add(voucher);
-
-                        //////////////////
-                        /*
-                         * XU LY VOI DB
-                         *
-                         *
-                         *
-                         * */
-
-                        /////////////////
-
+                        try {
+                            db.InsVC(id, mota, phanTramGiamGia, maGiamGia, ngayBD, ngayKT);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         clear();
                         renderTableVoucher();
                     }
@@ -360,28 +296,23 @@ public class VoucherManagementController implements Initializable {
                     String maGiamGia = textfield_magiamgia.getText();
                     Date ngayBD = Date.from(textfield_ngaybd.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                     Date ngayKT = Date.from(textfield_ngaykt.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-
+                    System.out.println(ngayBD);
+                    System.out.println(ngayKT);
                     voucherList.forEach(vc -> {
                         if (id == vc.getId()) {
-
                             vc.setMoTa(mota);
                             vc.setPhanTramGiamGia(Integer.parseInt(phanTramGiamGia));
                             vc.setMaGiamGia(maGiamGia);
                             vc.setNgayKetThuc(ngayKT);
                             vc.setNgayBatDau(ngayBD);
-
+                            try {
+                                db.EditOfVC(id,mota,phanTramGiamGia,maGiamGia,ngayBD,ngayKT);
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            };
                         }
                     });
-
                     //////////////////
-                    /*
-                     * XU LY VOI DB
-                     *
-                     *
-                     *
-                     * */
-
                     /////////////////
 
                     this.mode = "ADD_VC";
