@@ -5,11 +5,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Account;
 import model.LogedInUser;
@@ -82,16 +84,22 @@ public class ManagementController implements Initializable {
         if (currentAccout.getps().equals("Quản lý")) {
             uf.setVisibleNode(orders, false);
             uf.setVisibleNode(ingredient, false);
+            uf.setVisibleNode(ingredient1,false);
         } else if (currentAccout.getps().equals("Đầu bếp")) {
             uf.setVisibleNode(menu, false);
             uf.setVisibleNode(employees, false);
-
+            uf.setVisibleNode(voucher,false);
+            uf.setVisibleNode(supplier,false);
+            uf.setVisibleNode(ingredient11,false);
         } else if (currentAccout.getps().equals("Thu ngân")) {
             uf.setVisibleNode(supplier, false);
             uf.setVisibleNode(ingredient, false);
-            uf.setVisibleNode(orders, false);
-            uf.setVisibleNode(employees, false);
 
+            uf.setVisibleNode(employees, false);
+            uf.setVisibleNode(voucher,false);
+            uf.setVisibleNode(ingredient1,false);
+            uf.setVisibleNode(ingredient11,false);
+            uf.setVisibleNode(menu,false);
         }
 
     }
@@ -236,6 +244,29 @@ public class ManagementController implements Initializable {
 
             try {
                 scene_root.getChildren().add(employee_management.load());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        changepassword.setOnMouseClicked(e->{
+            control_menu.setManaged(false);
+            control_menu.setVisible(false);
+            FXMLLoader employee_management = new FXMLLoader();
+            employee_management.setLocation(getClass().getResource("/com/fast_food/demo/ChangePassword.fxml"));
+
+            try {
+
+                scene_root.getChildren().add(employee_management.load());
+                Stage stage = (Stage) scene_root.getScene().getWindow();
+                stage.setWidth(800);
+                stage.setHeight(600);
+                Screen screen = Screen.getPrimary();
+                Rectangle2D bounds = screen.getVisualBounds();
+                double centerX = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) / 2;
+                double centerY = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) / 2;
+                stage.setX(centerX);
+                stage.setY(centerY);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

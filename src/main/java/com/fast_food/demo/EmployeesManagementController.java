@@ -103,6 +103,7 @@ public class EmployeesManagementController implements Initializable {
 
     @FXML
     private ChoiceBox<String> choicebox_searchtype;
+    private int CountSelect = 0;
 
     public String searchStyle = "ID";
 
@@ -141,11 +142,11 @@ public class EmployeesManagementController implements Initializable {
         hasError |= uf.isEmptyString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Vui lòng điền thông tin") :
                 (!uf.isNumericString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Sai định dạng lương") : uf.hideErrorMsg(text_error_validator_luong));
         hasError |= uf.isEmptyString(choicebox_chuc_vu.getValue()) ? uf.setErrorMsg(text_error_validator_chuc_vu, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_chuc_vu);
-
-        if(!selectEm.getChuc_vu().equals("Quản lý")) {
-            hasError |= uf.isEmptyString(choicebox_nguoi_quan_ly.getValue()) ? uf.setErrorMsg(text_error_validator_nguoi_ql, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_nguoi_ql);
+        if(CountSelect!=0) {
+            if (!selectEm.getChuc_vu().equals("Quản lý")) {
+                hasError |= uf.isEmptyString(choicebox_nguoi_quan_ly.getValue()) ? uf.setErrorMsg(text_error_validator_nguoi_ql, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_nguoi_ql);
+            }
         }
-
         return hasError;
     }
 
@@ -338,23 +339,25 @@ public class EmployeesManagementController implements Initializable {
         button_submit.setOnMouseClicked(e -> {
             DBHandler DB = new DBHandler();
             if (!check_is_error() && rule_button_submit.equals("add")) {
-                if (choicebox_nguoi_quan_ly.getValue() == "Quản lý") {
+                if(!choicebox_chuc_vu.getValue().equals("Quản lý")&&choicebox_nguoi_quan_ly.getValue().isEmpty()){}
+                else {
+                    if (choicebox_nguoi_quan_ly.getValue() == "Quản lý") {
+                    }
+                    int manager_id = 0;
+                    try {
+                        manager_id = DB.find_manager_id(choicebox_nguoi_quan_ly.getValue());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    try {
+                        DB.InsertEmp(textfiel_ho_va_ten.getText(), textfield_sdt.getText(), choicebox_chuc_vu.getValue(), Integer.parseInt(textfiel_luong.getText()), manager_id);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    System.out.println("Thêm nhân viên");
+                    renderTableEmployee();
+                    textfield_tim_kiem_nv.clear();
                 }
-                int manager_id = 0;
-                try {
-                    manager_id = DB.find_manager_id(choicebox_nguoi_quan_ly.getValue());
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    DB.InsertEmp(textfiel_ho_va_ten.getText(), textfield_sdt.getText(), choicebox_chuc_vu.getValue(), Integer.parseInt(textfiel_luong.getText()), manager_id);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                System.out.println("Thêm nhân viên");
-                renderTableEmployee();
-                textfield_tim_kiem_nv.clear();
-
             }
             if (!check_is_error() && rule_button_submit.equals("edit")) {
 
@@ -388,6 +391,7 @@ public class EmployeesManagementController implements Initializable {
             uf.setVisibleNode(text_error_validator_nguoi_ql, false);
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 clearError();
+                CountSelect=1;
                 Employee employee = employee_list.getSelectionModel().getSelectedItem();
                 selectEm = employee;
                 if (employee != null) {
