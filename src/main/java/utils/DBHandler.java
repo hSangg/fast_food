@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
-            String user = "SYSTEM";
-            String pass = "thanhcong";
+            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String user = "SINHVIEN03";
+            String pass = "1";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -1062,6 +1062,13 @@ public class DBHandler {
         pstmt.executeUpdate();
         pstmt = conn.prepareStatement(("DELETE FROM NHA_CUNG_CAP WHERE ID=?"));
         pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+    }
+    public void updateChefOrder(int id,String trangthai) throws SQLException{
+        String sql ="UPDATE DON_HANG SET TRANG_THAI=? WHERE ID=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,trangthai);
+        pstmt.setInt(2,id);
         pstmt.executeUpdate();
     }
 }

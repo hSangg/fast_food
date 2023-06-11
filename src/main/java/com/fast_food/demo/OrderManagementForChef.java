@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class OrderManagementForChef implements Initializable {
 
@@ -105,31 +107,25 @@ public class OrderManagementForChef implements Initializable {
                 return new SimpleStringProperty(dateFormat.format(p.getValue().getNgay_dat()));
             }
         });
+
         ghi_chu.setCellValueFactory(new PropertyValueFactory<>("ghi_chu"));
         order_list.setItems(orderList);
-
-        //
-
         order_list.setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 button_submit.setDisable(false);
-
                 table_chi_tiet_hoa_don.getItems().clear();
                 Order order = order_list.getSelectionModel().getSelectedItem();
                 this.currentOrderClick = order;
+                cb_trang_thai.setValue(order.getTrang_thai());
                 if (order != null) {
                     try {
                         HashSet<FastFood> food = db.getFastFoodByIdOrder(order.getId());
                         for (FastFood x : food) {
                             foodInOrder.add(x);
                         }
-
                         tb_mon_an.setCellValueFactory(new PropertyValueFactory<>("tenMon"));
                         tb_so_luong.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
-                        cb_trang_thai.setValue(order.getTrang_thai());
-
                         table_chi_tiet_hoa_don.setItems(foodInOrder);
-
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -137,11 +133,19 @@ public class OrderManagementForChef implements Initializable {
                 }
 
             }
-
+            button_submit.setOnMouseClicked(ex->{
+                try {
+                    db.updateChefOrder(currentOrderClick.getId(),cb_trang_thai.getValue());
+                    orderList.clear();
+                    HashSet<Order> result = db.getAllOrders();
+                    for (Order or : result) {
+                        orderList.add(or);
+                    }
+                } catch (SQLException ex1) {
+                    throw new RuntimeException(ex1);
+                }
+            });
         });
 
-        button_submit.setOnMouseClicked(e->{
-            //adding DB
-        });
     }
 }
