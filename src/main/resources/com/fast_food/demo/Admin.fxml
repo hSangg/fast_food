@@ -62,12 +62,12 @@
                               </Label>
                               <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="137.0">
                                  <children>
-                                    <ImageView fitHeight="15.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="Image_Chi" fitHeight="15.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../images/decrease.png" />
                                        </image>
                                     </ImageView>
-                                    <Label styleClass="text-field" text="10%" textFill="RED">
+                                    <Label fx:id="P_chi" styleClass="text-field" text="10%" textFill="RED">
                                        <padding>
                                           <Insets left="5.0" />
                                        </padding>
@@ -111,12 +111,12 @@
                               <Label fx:id="label_tong_thu" styleClass="text-header-1" text="\$47567" />
                               <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="137.0">
                                  <children>
-                                    <ImageView fitHeight="15.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="Image_thu" fitHeight="15.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../images/increase.png" />
                                        </image>
                                     </ImageView>
-                                    <Label styleClass="text-field" text="10%" textFill="#26d00f">
+                                    <Label fx:id="P_thu" styleClass="text-field" text="10%" textFill="#26d00f">
                                        <padding>
                                           <Insets left="5.0" />
                                        </padding>

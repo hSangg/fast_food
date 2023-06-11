@@ -932,9 +932,10 @@ public class DBHandler {
     }
     public int getTongChi(ArrayList<Pair<Integer,Integer>> xy) throws SQLException{
         int tong=0;
-        PreparedStatement pstmt = conn.prepareStatement("SELECT TONG_TIEN, ID\n" +
-                "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP \n" +
-                "GROUP BY EXTRACT(DAY FROM NGAY_NL_NHAP_KHO)\n" +
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN), EXTRACT(DAY FROM NGAY_VIET_PHIEU) AS NGAY \n" +
+                "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP\n" +
+                "WHERE EXTRACT(MONTH FROM NGAY_VIET_PHIEU)=EXTRACT(MONTH FROM SYSDATE)\n" +
+                "GROUP BY EXTRACT(DAY FROM NGAY_VIET_PHIEU)\n" +
                 "ORDER BY NGAY");
         ResultSet rs = pstmt.executeQuery();
         while(rs.next()){
@@ -1073,6 +1074,31 @@ public class DBHandler {
         pstmt.setString(1,trangthai);
         pstmt.setInt(2,id);
         pstmt.executeUpdate();
+    }
+    public int getTongChiLastMonth() throws SQLException {
+        int result=0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(tong_tien)\n" +
+                "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP\n" +
+                "WHERE TRUNC(NGAY_VIET_PHIEU) >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MONTH')\n" +
+                "  AND TRUNC(NGAY_VIET_PHIEU) < TRUNC(SYSDATE, 'MONTH')");
+        ResultSet rs = pstmt.executeQuery();
+        if(rs.next()){
+            result =rs.getInt(1);
+        }
+        return result;
+    }
+
+    public  int getTongThuLastMonth() throws SQLException{
+        int result=0;
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(tong_tien)\n" +
+                "FROM don_hang\n" +
+                "WHERE TRUNC(ngay_dat) >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MONTH')\n" +
+                "  AND TRUNC(ngay_dat) < TRUNC(SYSDATE, 'MONTH')");
+        ResultSet rs = pstmt.executeQuery();
+        if(rs.next()){
+            result=rs.getInt(1);
+        }
+        return result;
     }
 }
 

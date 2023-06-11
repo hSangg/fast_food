@@ -11,6 +11,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -18,6 +20,8 @@ import model.ItemTopSeller;
 import model.WorkMonthEmployee;
 import utils.DBHandler;
 import javafx.util.Pair;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.net.URL;
@@ -54,6 +58,14 @@ public class AdminController implements Initializable {
     private TableColumn<?, ?> tablecolumn_ten_nsnv;
     @FXML
     private TableView<WorkMonthEmployee> table_productivity;
+    @FXML
+    private Label P_thu;
+    @FXML
+    private Label P_chi;
+    @FXML
+    private ImageView Image_thu;
+    @FXML
+    private ImageView Image_chi;
 
     DBHandler dbh = new DBHandler();
 
@@ -201,8 +213,55 @@ public class AdminController implements Initializable {
             line_chi.getData().add(new XYChart.Data(String.valueOf(thang),value));
         }
         label_tong_chi.setText(String.valueOf(tongChi));
+        int tongThuLast=0, tongChiLast=0;
+        try {
+            tongThuLast = dbh.getTongThuLastMonth();
+            tongChiLast = dbh.getTongChiLastMonth();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        double percentThu=100,percentChi=100;
+        if(tongThuLast!=0) {
+            percentThu = (tongThu / (double)tongThuLast) * 100;
+            System.out.println(percentThu);
+        }
+        if(tongChiLast!=0) {
+            percentChi = (tongChi / (double)tongChiLast) * 100;
+        }
+        if(percentThu<100){
+            percentThu=100-percentThu;
+            P_thu.setStyle("-fx-text-fill: red;");
+            Image image_thu = null;
+            try {
+                image_thu = new Image(getClass().getResource("/images/decrease.png").openStream());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Image_thu.setImage(image_thu);
+        }
+        else{
+            percentThu%=100;
+        }
+        if(percentChi>100){
+            percentChi%=100;
+            P_chi.setStyle("-fx-text-fill: green");
+            Image image_chi = null;
+            try {
+                image_chi = new Image(getClass().getResource("/images/increase.png").openStream());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Image_chi.setImage(image_chi);
+        }
+        else{
+            percentChi=100-percentChi;
 
-
+        }
+        DecimalFormat df = new DecimalFormat("#.##");
+        String roundedThu = df.format(percentThu);
+        String roundedChi = df.format(percentChi);
+        P_chi.setText(roundedChi+"%");
+        P_thu.setText(roundedThu+"%");
         chart_doanh_thu_thang.getData().add(line_thu);
         chart_doanh_thu_thang.getData().add(line_chi);
 
