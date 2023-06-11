@@ -19,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import model.Employee;
 import model.Ingredient;
 import model.Material;
@@ -148,6 +149,7 @@ public class MenuManagementController implements Initializable {
     + DELETE_MON_AN
     *
     */
+    HashMap<Integer, Integer> allPrice = new HashMap<>();
 
     HashSet<MenuItem> menuList;
 
@@ -376,7 +378,11 @@ public class MenuManagementController implements Initializable {
             button_xoanguyenlieu.setDisable(true);
 
             button_themnguyenlieu.setDisable(true);
-
+            for(MenuItem i : menuList){
+                int name = i.getId();
+                int price = i.getPrice();
+                allPrice.put(name,price);
+            }
 
             //-------RENDER DEFAULT VALUE -----------------
 
@@ -518,17 +524,19 @@ public class MenuManagementController implements Initializable {
                         int idMon = currentMenuItemClick.getId();
                         System.out.println(idMon);
 
-                        //if(originalPrice== db.getFoodPrice(db.findIdMon(textfield_tenmon.getText()))){
-                        db.UpdateFood(idMon, textfield_tenmon.getText(), textfield_mota.getText(), choicebox_loai.getValue(), Integer.parseInt(text_field_gia.getText()), imagePath, imageName);
-                        renderTableMonAn();
-//                    }
-//                    else{
-//                        Alert alert = new Alert(Alert.AlertType.ERROR);
-//                        alert.setTitle("Lỗi");
-//                        alert.setHeaderText(null);
-//                        alert.setContentText("Đã xảy ra lỗi. Vui lòng reset hệ thống và thử lại.");
-//                        alert.show();
-//                    }
+                        int giaCu = allPrice.getOrDefault(idMon,-1);
+                        if(giaCu==db.getFoodPrice(db.findIdMon(textfield_tenmon.getText()))) {
+                            db.UpdateFood(idMon, textfield_tenmon.getText(), textfield_mota.getText(), choicebox_loai.getValue(), Integer.parseInt(text_field_gia.getText()), imagePath, imageName);
+                            allPrice.put(idMon, Integer.parseInt(text_field_gia.getText()));
+                            renderTableMonAn();
+                        }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Lỗi");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Đã xảy ra lỗi. Vui lòng reset hệ thống và thử lại.");
+                        alert.show();
+                    }
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -603,7 +611,10 @@ public class MenuManagementController implements Initializable {
                         isDisableChiTietNguyenLieu(false);
 
                         textfield_tenmon.setText(selectedItem.getName());
-                        text_field_gia.setText(String.valueOf(selectedItem.getPrice()));
+                        int idMonvuaselect = selectedItem.getId();
+                        int oldGia = allPrice.getOrDefault(idMonvuaselect,-1);
+                        text_field_gia.setText(String.valueOf(oldGia));
+
                         textfield_mota.setText(selectedItem.getDescription());
                         choicebox_loai.setValue(selectedItem.getCategory());
 

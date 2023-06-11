@@ -65,6 +65,7 @@ public class OrdersManagementController implements Initializable {
 
     @FXML
     private Text text_error_tt;
+    Order currentOrderClick = new Order();
 
     UtilityFunctions uf = new UtilityFunctions();
 
@@ -121,7 +122,16 @@ public class OrdersManagementController implements Initializable {
 
             if (!check_is_error()) {
                 System.out.println("submit");
-
+                try {
+                    db.updateOrders(currentOrderClick.getId(),hinh_thuc_thanh_toan.getValue(),cb_trang_thai.getValue());
+                    orderList.clear();
+                    HashSet<Order> result = db.getAllOrders();
+                    for (Order or : result) {
+                        orderList.add(or);
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
 
         });
@@ -134,6 +144,7 @@ public class OrdersManagementController implements Initializable {
                 button_submit.setDisable(false);
                 table_chi_tiet_hoa_don.getItems().clear();
                 Order order = order_list.getSelectionModel().getSelectedItem();
+                this.currentOrderClick = order;
                 if (order != null) {
                     try {
                         HashSet<FastFood> food = db.getFastFoodByIdOrder(order.getId());

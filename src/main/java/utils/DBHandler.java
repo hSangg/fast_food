@@ -1100,6 +1100,13 @@ public class DBHandler {
         }
         return result;
     }
+    public void updateOrders(int id,String hT,String trangThai) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement("UPDATE DON_HANG SET TRANG_THAI=?, HINH_THUC_THANH_TOAN=? WHERE ID=?");
+        pstmt.setString(1,trangThai);
+        pstmt.setString(2,hT);
+        pstmt.setInt(3,id);
+        pstmt.executeUpdate();
+    }
 }
 
 
