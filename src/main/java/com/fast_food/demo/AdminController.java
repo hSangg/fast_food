@@ -9,10 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,6 +21,7 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -41,6 +39,12 @@ public class AdminController implements Initializable {
     private TextField num_best_seller_show;
 
     @FXML
+    private VBox vbox_top_seller_layout;
+    @FXML
+    private Label label_tong_thu;
+    @FXML
+    private Label label_tong_chi;
+    @FXML
     private TableColumn<?, ?> tablecolumn_htrenthang;
 
     @FXML
@@ -48,18 +52,8 @@ public class AdminController implements Initializable {
 
     @FXML
     private TableColumn<?, ?> tablecolumn_ten_nsnv;
-
-    @FXML
-    private VBox vbox_top_seller_layout;
-
     @FXML
     private TableView<WorkMonthEmployee> table_productivity;
-
-    @FXML
-    private VBox vbox_top_seller_layout1;
-
-
-
 
     DBHandler dbh = new DBHandler();
 
@@ -117,6 +111,8 @@ public class AdminController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // -------------------------------
+        // RENDER CHART DOANH THU TRONG NĂM
         List<WorkMonthEmployee> wmel = dbh.getProductivityEmployee();
         ObservableList<WorkMonthEmployee> workMonthEmployeeObservableList = FXCollections.observableArrayList();
 
@@ -124,19 +120,6 @@ public class AdminController implements Initializable {
         for(WorkMonthEmployee x: wmel) {
             workMonthEmployeeObservableList.add(x);
         }
-
-        // Thiết lập các cột của bảng
-        tablecolumn_htrenthang.setCellValueFactory(new PropertyValueFactory<>("totalWorkingTime"));
-        tablecolumn_id_nsnv.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
-        tablecolumn_ten_nsnv.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
-
-        // Gọi phương thức để lấy dữ liệu và cập nhật bảng
-        List<WorkMonthEmployee> productivityList = dbh.getProductivityEmployee();
-        table_productivity.setItems(workMonthEmployeeObservableList);
-
-        // -------------------------------
-        // RENDER CHART DOANH THU TRONG NĂM
-
         XYChart.Series series = new XYChart.Series();
         series.setName("Doanh thu");
 
@@ -150,9 +133,12 @@ public class AdminController implements Initializable {
         for (int i = 0; i < revenueData.length; i++) {
             series.getData().add(new XYChart.Data(String.valueOf(i + 1), revenueData[i]));
         }
-
+        tablecolumn_htrenthang.setCellValueFactory(new PropertyValueFactory<>("totalWorkingTime"));
+        tablecolumn_id_nsnv.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+        tablecolumn_ten_nsnv.setCellValueFactory(new PropertyValueFactory<>("employeeName"));
         chart_doanh_thu.getData().add(series);
-
+        List<WorkMonthEmployee> productivityList = dbh.getProductivityEmployee();
+        table_productivity.setItems(workMonthEmployeeObservableList);
 
         // DUNG DE HIEN DU LIEU CU THE KHI HOVER CHUOT VAO DUONG LINE
         Tooltip tooltip = new Tooltip();
@@ -186,15 +172,35 @@ public class AdminController implements Initializable {
         // RENDER CHART DOANH SỐ THU/CHI
 
         XYChart.Series line_thu = new XYChart.Series<>();
-        line_thu.getData().add(new XYChart.Data("1", 132));
-        line_thu.getData().add(new XYChart.Data("2", 341));
-        line_thu.getData().add(new XYChart.Data("3", 452));
-
-
+        ArrayList<Pair<Integer,Integer>> thu = new ArrayList<>();
+        int tongThu;
+        try {
+            tongThu = dbh.getTongThu(thu);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        for(Pair<Integer,Integer> x : thu){
+            int thang = x.getKey();
+            int value = x.getValue();
+            System.out.println(thang);
+            System.out.println(value);
+            line_thu.getData().add(new XYChart.Data(String.valueOf(thang),value));
+        }
+        label_tong_thu.setText(String.valueOf(tongThu));
+        ArrayList<Pair<Integer,Integer>> chi = new ArrayList<>();
+        int tongChi;
+        try {
+            tongChi= dbh.getTongChi(chi);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         XYChart.Series line_chi = new XYChart.Series<>();
-        line_chi.getData().add(new XYChart.Data("1", 462));
-        line_chi.getData().add(new XYChart.Data("2", 324));
-        line_chi.getData().add(new XYChart.Data("3", 232));
+        for(Pair<Integer,Integer> y : chi){
+            int thang = y.getKey();
+            int value = y.getValue();
+            line_chi.getData().add(new XYChart.Data(String.valueOf(thang),value));
+        }
+        label_tong_chi.setText(String.valueOf(tongChi));
 
 
         chart_doanh_thu_thang.getData().add(line_thu);
@@ -236,8 +242,6 @@ public class AdminController implements Initializable {
         for(Pair<Integer,Integer> pair: xy){
             int x=pair.getKey();
             int y=pair.getValue();
-            System.out.println(x);
-            System.out.println(y);
             series_dh.getData().add(new XYChart.Data(String.valueOf(x),y));
         }
         chart_tong_so_don_hang.getData().add(series_dh);

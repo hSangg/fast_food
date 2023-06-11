@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
-            String user = "SINHVIEN03";
-            String pass = "1";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
+            String user = "SYSTEM";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -901,7 +901,8 @@ public class DBHandler {
         if(rs.next()){
             id=rs.getInt("MAXID")+1;
         }
-        pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID,ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO) VALUES (?,?,?,?,?,?,?,?)");
+        System.out.println(soluong);
+        pstmt = conn.prepareStatement("INSERT INTO NHACUNGCAP_NGUYENLIEU_QUANLY_BEP (ID,ID_NL,ID_NCC,ID_QUAN_LY,ID_BEP,TONG_TIEN,SOLUONG,NGAY_NL_NHAP_KHO,NGAY_VIET_PHIEU) VALUES (?,?,?,?,?,?,?,?,SYSDATE)");
         pstmt.setInt(1,id);
         pstmt.setInt(2,id_nl);
         pstmt.setInt(3,id_ncc);
@@ -911,15 +912,17 @@ public class DBHandler {
         pstmt.setInt(7,soluong);
         pstmt.setDate(8,ngaynhap);
         pstmt.executeUpdate();
-//        pstmt = conn.prepareStatement("UPDATE NGUYEN_LIEU SET SO_LUONG_TRONG_KHO = SO_LUONG_TRONG_KHO + ? WHERE ID=?");
-//        pstmt.setInt(1,soluong);
-//        pstmt.setInt(2,id_nl);
-//        pstmt.executeUpdate();
+        pstmt = conn.prepareStatement("UPDATE NGUYEN_LIEU SET SO_LUONG_TRONG_KHO = SO_LUONG_TRONG_KHO + ? WHERE ID=?");
+        pstmt.setInt(1,soluong);
+        pstmt.setInt(2,id_nl);
+        pstmt.executeUpdate();
     }
     public int getTongThu(ArrayList<Pair<Integer,Integer>> xy) throws SQLException {
         int tong=0;
-        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN), EXTRACT(MONTH FROM NGAY_DAT) AS THANG FROM DON_HANG\n" +
-                "GROUP BY EXTRACT(MONTH FROM NGAY_DAT)");
+        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN), EXTRACT(DAY FROM NGAY_DAT) FROM DON_HANG \n" +
+                "WHERE EXTRACT(MONTH FROM NGAY_DAT) = EXTRACT(MONTH FROM SYSDATE)\n" +
+                "GROUP BY EXTRACT(DAY FROM NGAY_DAT)\n" +
+                "ORDER BY EXTRACT(DAY FROM NGAY_DAT)");
         ResultSet rs = pstmt.executeQuery();
         while(rs.next()){
             xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
@@ -929,10 +932,10 @@ public class DBHandler {
     }
     public int getTongChi(ArrayList<Pair<Integer,Integer>> xy) throws SQLException{
         int tong=0;
-        PreparedStatement pstmt = conn.prepareStatement("SELECT SUM(TONG_TIEN),EXTRACT(MONTH FROM NGAY_NL_NHAP_KHO) AS THANG\n" +
-                "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP\n" +
-                "GROUP BY EXTRACT(MONTH FROM NGAY_NL_NHAP_KHO)\n" +
-                "ORDER BY THANG");
+        PreparedStatement pstmt = conn.prepareStatement("SELECT TONG_TIEN, ID\n" +
+                "FROM NHACUNGCAP_NGUYENLIEU_QUANLY_BEP \n" +
+                "GROUP BY EXTRACT(DAY FROM NGAY_NL_NHAP_KHO)\n" +
+                "ORDER BY NGAY");
         ResultSet rs = pstmt.executeQuery();
         while(rs.next()){
             xy.add(new Pair<>(rs.getInt(2),rs.getInt(1)));
