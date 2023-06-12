@@ -419,6 +419,14 @@ public class RequestForIngredientController implements Initializable {
                     int id_ncc=db.findIdncc(table_phieunguyenlieu.getItems().get(i).getSupplierName());
                     int tongtien= Integer.parseInt(text_total.getText());
                     db.InsRequest(0,id_nl,id_ncc,id_ql,id_bep,tongtien,null,soluong);
+                    table_phieunguyenlieu.getItems().clear();
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Thông báo");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Đã yêu cầu nhập thành công, đợi duyệt từ quản lý");
+                    alert.showAndWait();
+
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

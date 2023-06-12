@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -68,6 +70,9 @@ public class ManagementController implements Initializable {
     @FXML
     private VBox voucher;
 
+    @FXML
+    private VBox button_logout;
+
 
     public LogedInUser getUserlogin() {
         return userlogin;
@@ -84,28 +89,63 @@ public class ManagementController implements Initializable {
         if (currentAccout.getps().equals("Quản lý")) {
             uf.setVisibleNode(orders, false);
             uf.setVisibleNode(ingredient, false);
-            uf.setVisibleNode(ingredient1,false);
+            uf.setVisibleNode(ingredient1, false);
         } else if (currentAccout.getps().equals("Đầu bếp")) {
             uf.setVisibleNode(menu, false);
             uf.setVisibleNode(employees, false);
-            uf.setVisibleNode(voucher,false);
-            uf.setVisibleNode(supplier,false);
-            uf.setVisibleNode(ingredient11,false);
+            uf.setVisibleNode(voucher, false);
+            uf.setVisibleNode(supplier, false);
+            uf.setVisibleNode(ingredient11, false);
         } else if (currentAccout.getps().equals("Thu ngân")) {
             uf.setVisibleNode(supplier, false);
             uf.setVisibleNode(ingredient, false);
 
             uf.setVisibleNode(employees, false);
-            uf.setVisibleNode(voucher,false);
-            uf.setVisibleNode(ingredient1,false);
-            uf.setVisibleNode(ingredient11,false);
-            uf.setVisibleNode(menu,false);
+            uf.setVisibleNode(voucher, false);
+            uf.setVisibleNode(ingredient1, false);
+            uf.setVisibleNode(ingredient11, false);
+            uf.setVisibleNode(menu, false);
         }
 
     }
 
+    private void showLogoutConfirmation(Stage primaryStage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout");
+        alert.setHeaderText("Bạn có chắc muốn đăng xuất?");
+        alert.setContentText("Nhấn OK để đăng xuất.");
+
+        ButtonType buttonTypeOK = new ButtonType("OK");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel");
+        alert.getButtonTypes().setAll(buttonTypeOK, buttonTypeCancel);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == buttonTypeOK) {
+                showLogoutAlert();
+                primaryStage.close();
+            }
+        });
+    }
+
+    private void showLogoutAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Logout");
+        alert.setHeaderText(null);
+        alert.setContentText("Bạn đã đăng xuất thành công!");
+        alert.showAndWait();
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        button_logout.setOnMouseClicked(e -> {
+
+            Stage stage = (Stage) button_logout.getScene().getWindow();
+            showLogoutConfirmation(stage);
+
+
+
+        });
+
         scene_root.setOnMouseClicked(e -> {
             scene_root.setAlignment(Pos.TOP_CENTER);
 
@@ -201,10 +241,9 @@ public class ManagementController implements Initializable {
 
 
             FXMLLoader employee_management = new FXMLLoader();
-            if(userlogin.getCurentAcc().getps().equals("Thu ngân")) {
+            if (userlogin.getCurentAcc().getps().equals("Thu ngân")) {
                 employee_management.setLocation(getClass().getResource("/com/fast_food/demo/OrdersManagement.fxml"));
-            }
-            else {
+            } else {
                 employee_management.setLocation(getClass().getResource("/com/fast_food/demo/OrdersManagementForChef.fxml"));
             }
 
@@ -215,7 +254,7 @@ public class ManagementController implements Initializable {
             }
         });
 
-        menu.setOnMouseClicked(e->{
+        menu.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
@@ -228,7 +267,7 @@ public class ManagementController implements Initializable {
             }
         });
 
-        ingredient1.setOnMouseClicked(e->{
+        ingredient1.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
@@ -241,7 +280,7 @@ public class ManagementController implements Initializable {
             }
         });
 
-        ingredient11.setOnMouseClicked(e->{
+        ingredient11.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
@@ -254,7 +293,7 @@ public class ManagementController implements Initializable {
             }
         });
 
-        changepassword.setOnMouseClicked(e->{
+        changepassword.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();

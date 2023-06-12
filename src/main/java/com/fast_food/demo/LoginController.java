@@ -85,7 +85,8 @@ public class LoginController implements Initializable {
 
                         stage.setScene(scene);
                         stage.show();
-
+                        tf_password.clear();
+                        tf_username.clear();
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);

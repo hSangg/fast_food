@@ -62,7 +62,7 @@
                               </Label>
                               <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="137.0">
                                  <children>
-                                    <ImageView fx:id="Image_Chi" fitHeight="15.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="Image_chi" fitHeight="15.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../images/decrease.png" />
                                        </image>
