@@ -81,7 +81,7 @@ public class EmployeesManagementController implements Initializable {
     private ChoiceBox<String> choicebox_nguoi_quan_ly;
 
     @FXML
-    private TextField textfield_delete_e;
+    private HBox button_delete;
 
     @FXML
     private Text text_error_validator_chuc_vu;
@@ -106,6 +106,8 @@ public class EmployeesManagementController implements Initializable {
     private int CountSelect = 0;
 
     public String searchStyle = "ID";
+
+    public Employee currentEmpClick = new Employee();
 
 
     public String rule_button_submit;
@@ -142,7 +144,7 @@ public class EmployeesManagementController implements Initializable {
         hasError |= uf.isEmptyString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Vui lòng điền thông tin") :
                 (!uf.isNumericString(textfiel_luong.getText()) ? uf.setErrorMsg(text_error_validator_luong, "Sai định dạng lương") : uf.hideErrorMsg(text_error_validator_luong));
         hasError |= uf.isEmptyString(choicebox_chuc_vu.getValue()) ? uf.setErrorMsg(text_error_validator_chuc_vu, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_chuc_vu);
-        if(CountSelect!=0) {
+        if (CountSelect != 0) {
             if (!selectEm.getChuc_vu().equals("Quản lý")) {
                 hasError |= uf.isEmptyString(choicebox_nguoi_quan_ly.getValue()) ? uf.setErrorMsg(text_error_validator_nguoi_ql, "Vui lòng điền thông tin") : uf.hideErrorMsg(text_error_validator_nguoi_ql);
             }
@@ -241,8 +243,6 @@ public class EmployeesManagementController implements Initializable {
     }
 
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -329,7 +329,7 @@ public class EmployeesManagementController implements Initializable {
             button_submit.setDisable(false);
 
             uf.setVisibleNode(text_ng_quan_ly, true);
-            uf.setVisibleNode(textfield_delete_e, false);
+
 
             uf.setVisibleNode(choicebox_nguoi_quan_ly, true);
 
@@ -339,8 +339,8 @@ public class EmployeesManagementController implements Initializable {
         button_submit.setOnMouseClicked(e -> {
             DBHandler DB = new DBHandler();
             if (!check_is_error() && rule_button_submit.equals("add")) {
-                if(!choicebox_chuc_vu.getValue().equals("Quản lý")&&choicebox_nguoi_quan_ly.getValue().isEmpty()){}
-                else {
+                if (!choicebox_chuc_vu.getValue().equals("Quản lý") && choicebox_nguoi_quan_ly.getValue().isEmpty()) {
+                } else {
                     if (choicebox_nguoi_quan_ly.getValue() == "Quản lý") {
                     }
                     int manager_id = 0;
@@ -361,38 +361,48 @@ public class EmployeesManagementController implements Initializable {
             }
             if (!check_is_error() && rule_button_submit.equals("edit")) {
 
-                String e_name = textfiel_ho_va_ten.getText();
-                String e_name_delete = textfield_delete_e.getText();
-                if (e_name_delete.equals(e_name)) {
-                    //xóa nhân viên
-                    try {
-                        DB.DeleteEmp(e_name);
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    System.out.println("Xóa nhân viên");
-                    renderTableEmployee();
-                } else {
-                    // sửa những thay đổi
-                    try {
-                        DB.UpdateEmp(textfiel_ho_va_ten.getText(), textfield_sdt.getText(), Integer.parseInt(textfiel_luong.getText()), choicebox_nguoi_quan_ly.getValue());
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    System.out.println("Sửa nhân viên");
-                    renderTableEmployee();
-                    clearDetail();
 
+                // sửa những thay đổi
+                try {
+                    DB.UpdateEmp(textfiel_ho_va_ten.getText(), textfield_sdt.getText(), Integer.parseInt(textfiel_luong.getText()), choicebox_nguoi_quan_ly.getValue());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
+                System.out.println("Sửa nhân viên");
+                renderTableEmployee();
+                clearDetail();
+
+
             }
+        });
+
+        button_delete.setOnMouseClicked(e -> {
+            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmationAlert.setTitle("Xác nhận xóa");
+            confirmationAlert.setHeaderText("Bạn có chắc chắn muốn xóa nhân viên này?");
+            confirmationAlert.setContentText("Hành động này không thể hoàn tác.");
+
+            confirmationAlert.showAndWait().ifPresent(result -> {
+                if (result == ButtonType.OK) {
+                    try {
+                        db.DeleteEmp(currentEmpClick.getId());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    renderTableEmployee();
+                    System.out.println("Nhân viên đã được xóa.");
+                }
+            });
+
         });
 
         employee_list.setOnMouseClicked(e -> {
             uf.setVisibleNode(text_error_validator_nguoi_ql, false);
             if (e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
                 clearError();
-                CountSelect=1;
+                CountSelect = 1;
                 Employee employee = employee_list.getSelectionModel().getSelectedItem();
+                this.currentEmpClick = employee;
                 selectEm = employee;
                 if (employee != null) {
                     textfiel_ho_va_ten.setEditable(false);
@@ -404,7 +414,7 @@ public class EmployeesManagementController implements Initializable {
                     textfield_sdt.setText(employee.getSdt());
 
                     uf.setVisibleNode(text_ng_quan_ly, true);
-                    uf.setVisibleNode(textfield_delete_e, true);
+
                     uf.setVisibleNode(choicebox_chuc_vu, false);
                     uf.setVisibleNode(t_chuc_vu, false);
                     if (employee.getChuc_vu().equals("Quản lý")) {

@@ -73,6 +73,9 @@ public class ManagementController implements Initializable {
     @FXML
     private VBox button_logout;
 
+    @FXML
+    private VBox button_backtoquanly;
+
 
     public LogedInUser getUserlogin() {
         return userlogin;
@@ -82,9 +85,30 @@ public class ManagementController implements Initializable {
     public void setUserlogin(LogedInUser userlogin) {
         this.userlogin = userlogin;
         text_name.setText(userlogin.getCurentAcc().getName());
+        renderLayout();
+
+    }
+
+    public void renderLayout() {
+
         Account currentAccout = userlogin.getCurentAcc();
 
         UtilityFunctions uf = new UtilityFunctions();
+        uf.setVisibleNode(orders, true);
+
+        uf.setVisibleNode(menu, true);
+        uf.setVisibleNode(employees, true);
+        uf.setVisibleNode(voucher, true);
+        uf.setVisibleNode(supplier, true);
+        uf.setVisibleNode(ingredient11, true);
+
+        uf.setVisibleNode(ingredient, true);
+
+
+        uf.setVisibleNode(ingredient1, true);
+
+
+
         //phan quyen
         if (currentAccout.getps().equals("Quản lý")) {
             uf.setVisibleNode(orders, false);
@@ -106,7 +130,6 @@ public class ManagementController implements Initializable {
             uf.setVisibleNode(ingredient11, false);
             uf.setVisibleNode(menu, false);
         }
-
     }
 
     private void showLogoutConfirmation(Stage primaryStage) {
@@ -137,6 +160,8 @@ public class ManagementController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
         button_logout.setOnMouseClicked(e -> {
 
             Stage stage = (Stage) button_logout.getScene().getWindow();
@@ -291,6 +316,13 @@ public class ManagementController implements Initializable {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+        });
+
+        button_backtoquanly.setOnMouseClicked(e -> {
+            scene_root.getChildren().remove(1);
+            control_menu.setManaged(true);
+            control_menu.setVisible(true);
+           renderLayout();
         });
 
         changepassword.setOnMouseClicked(e -> {

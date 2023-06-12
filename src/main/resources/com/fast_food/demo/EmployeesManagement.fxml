@@ -155,22 +155,22 @@
                         <Insets />
                      </VBox.margin>
                   </Pane>
-                  <TextField fx:id="textfield_delete_e" prefHeight="44.0" prefWidth="436.0" promptText="Nhập lại tên nhân viên vào đay để xóa" stylesheets="@../../../css/managementStyle.css">
-                     <font>
-                        <Font name="Montserrat Regular" size="18.0" />
-                     </font>
-                     <styleClass>
-                        <String fx:value="text_field_form_employee" />
-                        <String fx:value="text_field_delete_employee" />
-                     </styleClass>
-                     <VBox.margin>
-                        <Insets bottom="5.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <HBox fx:id="button_submit" alignment="CENTER" prefHeight="48.0" prefWidth="436.0" spacing="5.0" styleClass="button_submit">
+                  <HBox fx:id="button_delete" alignment="CENTER" prefHeight="48.0" prefWidth="436.0" spacing="5.0" style="-fx-background-color: red;" styleClass="button-delete">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
+                     <children>
+                        <Label text="XÓA NHÂN VIÊN" textFill="WHITE">
+                           <font>
+                              <Font name="Montserrat Black" size="19.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="button_submit" alignment="CENTER" prefHeight="48.0" prefWidth="436.0" spacing="5.0" styleClass="button_submit">
                      <children>
                         <Label text="HOÀN TẤT" textFill="WHITE">
                            <font>

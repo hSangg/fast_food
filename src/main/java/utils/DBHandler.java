@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
+            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "thanhcong";
+            String pass = "1652003Sang_";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -406,8 +406,8 @@ public class DBHandler {
 
     }
 
-    public void DeleteEmp(String emp_name) throws SQLException {
-        int id = find_id(emp_name);
+    public void DeleteEmp(int id) throws SQLException {
+
         String sql = "DELETE FROM NHAN_VIEN WHERE ID = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
