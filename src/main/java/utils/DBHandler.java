@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "1652003Sang_";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
