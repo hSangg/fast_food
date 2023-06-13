@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -26,6 +27,9 @@ import java.util.ResourceBundle;
 public class LoginController implements Initializable {
     @FXML
     private HBox button_login;
+
+    DBHandler db = new DBHandler();
+
 
     @FXML
     private Text t_error_password;
@@ -52,51 +56,65 @@ public class LoginController implements Initializable {
 
         return is_username_error || is_pasword_error;
     }
+    public void login() {
+        String username = tf_username.getText().trim();
+        String password = tf_password.getText().trim();
+        if (!check_is_error()) {
+            try {
+                LogedInUser userlogin = db.logIn(username, password);
+                System.out.println(userlogin);
+                if (userlogin == null) {
+
+                    t_error_password.setText("Sai thông tin đăng nhập");
+                    uf.setVisibleNode(t_error_password,true);
+                } else {
+                    id_nv=userlogin.getCurentAcc().getIdEmployee();
+
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/Management.fxml"));
+                    Parent root = fxmlLoader.load();
+
+                    ManagementController managementController = fxmlLoader.getController();
+                    managementController.setUserlogin(userlogin);
+
+
+                    Scene scene = new Scene(root);
+                    Stage stage = new Stage();
+
+                    stage.setScene(scene);
+                    stage.show();
+                    tf_password.clear();
+                    tf_username.clear();
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         uf.setVisibleNode(t_error_password,false);
         uf.setVisibleNode(t_error_username,false);
 
-        DBHandler db = new DBHandler();
 
         button_login.setOnMouseClicked(e -> {
-            String username = tf_username.getText();
-            String password = tf_password.getText();
-            if (!check_is_error()) {
-                try {
-                    LogedInUser userlogin = db.logIn(username, password);
-                    System.out.println(userlogin);
-                    if (userlogin == null) {
+                login();
+        });
 
-                        t_error_password.setText("Sai thông tin đăng nhập");
-                        uf.setVisibleNode(t_error_password,true);
-                    } else {
-                        id_nv=userlogin.getCurentAcc().getIdEmployee();
-
-                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/Management.fxml"));
-                        Parent root = fxmlLoader.load();
-
-                        ManagementController managementController = fxmlLoader.getController();
-                        managementController.setUserlogin(userlogin);
-
-
-                        Scene scene = new Scene(root);
-                        Stage stage = new Stage();
-
-                        stage.setScene(scene);
-                        stage.show();
-                        tf_password.clear();
-                        tf_username.clear();
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-
+        tf_password.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                login();
             }
         });
 
+        tf_username.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                login();
+            }
+        });
 
     }
 

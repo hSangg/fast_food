@@ -150,6 +150,8 @@ public class ManagementController implements Initializable {
         });
     }
 
+    UtilityFunctions uf = new UtilityFunctions();
+
     private void showLogoutAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Logout");
@@ -160,9 +162,10 @@ public class ManagementController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        uf.setVisibleNode(button_backtoquanly, false);
 
         button_logout.setOnMouseClicked(e -> {
+            uf.setVisibleNode(button_backtoquanly, true);
 
             Stage stage = (Stage) button_logout.getScene().getWindow();
             showLogoutConfirmation(stage);
@@ -171,14 +174,12 @@ public class ManagementController implements Initializable {
 
         });
 
-        scene_root.setOnMouseClicked(e -> {
-            scene_root.setAlignment(Pos.TOP_CENTER);
 
-        });
 
         employees.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
+            uf.setVisibleNode(button_backtoquanly, true);
 
 
             FXMLLoader employee_management = new FXMLLoader();
@@ -195,6 +196,7 @@ public class ManagementController implements Initializable {
         voucher.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
+            uf.setVisibleNode(button_backtoquanly, true);
 
 
             FXMLLoader fxml = new FXMLLoader();
@@ -210,6 +212,7 @@ public class ManagementController implements Initializable {
         supplier.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
+            uf.setVisibleNode(button_backtoquanly, true);
 
 
             FXMLLoader fxml = new FXMLLoader();
@@ -225,6 +228,7 @@ public class ManagementController implements Initializable {
 
         dashboard.setOnMouseClicked(e -> {
             //open new UI
+
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fast_food/demo/Dashboard.fxml"));
 
@@ -245,6 +249,7 @@ public class ManagementController implements Initializable {
         ingredient.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
+            uf.setVisibleNode(button_backtoquanly, true);
 
 
             FXMLLoader fxml = new FXMLLoader();
@@ -263,6 +268,7 @@ public class ManagementController implements Initializable {
         orders.setOnMouseClicked(e -> {
             control_menu.setManaged(false);
             control_menu.setVisible(false);
+            uf.setVisibleNode(button_backtoquanly, true);
 
 
             FXMLLoader employee_management = new FXMLLoader();
@@ -280,6 +286,8 @@ public class ManagementController implements Initializable {
         });
 
         menu.setOnMouseClicked(e -> {
+            uf.setVisibleNode(button_backtoquanly, true);
+
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
@@ -293,6 +301,8 @@ public class ManagementController implements Initializable {
         });
 
         ingredient1.setOnMouseClicked(e -> {
+            uf.setVisibleNode(button_backtoquanly, true);
+
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
@@ -306,6 +316,8 @@ public class ManagementController implements Initializable {
         });
 
         ingredient11.setOnMouseClicked(e -> {
+            uf.setVisibleNode(button_backtoquanly, true);
+
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
@@ -326,6 +338,7 @@ public class ManagementController implements Initializable {
         });
 
         changepassword.setOnMouseClicked(e -> {
+
             control_menu.setManaged(false);
             control_menu.setVisible(false);
             FXMLLoader employee_management = new FXMLLoader();
