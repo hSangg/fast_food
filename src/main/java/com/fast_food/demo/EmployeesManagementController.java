@@ -19,6 +19,7 @@ import utils.UtilityFunctions;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -152,6 +153,20 @@ public class EmployeesManagementController implements Initializable {
         return hasError;
     }
 
+    private String generateRandomString() {
+        String ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        int length = random.nextInt(2) + 4; // Random length between 4 and 5
+
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(ALLOWED_CHARS.length());
+            char randomChar = ALLOWED_CHARS.charAt(randomIndex);
+            sb.append(randomChar);
+        }
+
+        return sb.toString();
+    }
     HashSet<Employee> ds_nguoi_quan_ly;
 
     public void renderTableEmployee() {
@@ -349,8 +364,10 @@ public class EmployeesManagementController implements Initializable {
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
+                    String passwd = generateRandomString();
                     try {
-                        DB.InsertEmp(textfiel_ho_va_ten.getText(), textfield_sdt.getText(), choicebox_chuc_vu.getValue(), Integer.parseInt(textfiel_luong.getText()), manager_id);
+                        DB.InsertEmp(textfiel_ho_va_ten.getText(), textfield_sdt.getText(), choicebox_chuc_vu.getValue(), Integer.parseInt(textfiel_luong.getText()), manager_id,passwd);
+
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }

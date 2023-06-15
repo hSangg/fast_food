@@ -201,8 +201,6 @@ public class AdminController implements Initializable {
         for(Pair<Integer,Integer> x : thu){
             int thang = x.getKey();
             int value = x.getValue();
-            System.out.println(thang);
-            System.out.println(value);
             line_thu.getData().add(new XYChart.Data(String.valueOf(thang),value));
         }
         label_tong_thu.setText(String.valueOf(tongThu));
@@ -230,7 +228,6 @@ public class AdminController implements Initializable {
         double percentThu=100,percentChi=100;
         if(tongThuLast!=0) {
             percentThu = (tongThu / (double)tongThuLast) * 100;
-            System.out.println(percentThu);
         }
         if(tongChiLast!=0) {
             percentChi = (tongChi / (double)tongChiLast) * 100;

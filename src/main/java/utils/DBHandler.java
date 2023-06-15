@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
+            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
             String user = "SYSTEM";
-            String pass = "1652003Sang_";
+            String pass = "thanhcong";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -45,7 +45,7 @@ public class DBHandler {
             result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly));
 
         }
-
+        sm.close();
         return result;
     }
 
@@ -71,7 +71,7 @@ public class DBHandler {
 
             result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly));
         }
-
+        sm.close();
         return result;
     }
 
@@ -97,7 +97,7 @@ public class DBHandler {
 
             result.add(new Employee(id, sdt, id_quan_ly, chuc_vu, ten, luong, nguoi_quan_ly));
         }
-
+        sm.close();
         return result;
     }
 
@@ -380,7 +380,7 @@ public class DBHandler {
         return manager_id;
     }
 
-    public void InsertEmp(String name, String sdt, String chuc_vu, int luong, int id_quan_ly) throws SQLException {
+    public void InsertEmp(String name, String sdt, String chuc_vu, int luong, int id_quan_ly,String passwd) throws SQLException {
         String sql = "INSERT INTO NHAN_VIEN ( ID, TEN, SO_DIEN_THOAI, CHUC_VU, LUONG, ID_QUAN_LY ) VALUES (?,?,?,?,?,?)";
         Statement sm = conn.createStatement();
         ResultSet rs = sm.executeQuery("SELECT MAX(ID) FROM NHAN_VIEN");
@@ -404,6 +404,11 @@ public class DBHandler {
             throw new RuntimeException(e);
         }
 
+        PreparedStatement pstmt = conn.prepareStatement("INSERT INTO TAIKHOAN_NV VALUES (?,?,?)");
+        pstmt.setString(1,name);
+        pstmt.setString(2,passwd);
+        pstmt.setInt(3,id);
+        pstmt.executeUpdate();
     }
 
     public void DeleteEmp(int id) throws SQLException {
@@ -415,6 +420,9 @@ public class DBHandler {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        PreparedStatement pstmt = conn.prepareStatement("DELETE FROM TAIKHOAN_NV WHERE ID_NV = ?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
     }
 
     public int find_id(String name) throws SQLException {
