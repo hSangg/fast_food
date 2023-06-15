@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox prefHeight="1000.0" prefWidth="1600.0" stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.ManagementController">
+<VBox prefHeight="1000.0" prefWidth="1600.0" stylesheets="@../../../css/managementStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fast_food.demo.ManagementController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1570.0" spacing="13.0">
          <children>
@@ -121,7 +118,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </ImageView>
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Màng hình chọn món">
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-normal" text="Màn hình chọn món">
                                        <VBox.margin>
                                           <Insets top="10.0" />
                                        </VBox.margin>

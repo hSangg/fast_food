@@ -778,7 +778,7 @@ public class DBHandler {
 
     }
     public void EditOfIngre(int id,String ten,String don_vi,int sl,int gia) throws SQLException {
-        String sql ="UPDATE NHA_CUNG_CAP SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
+        String sql ="UPDATE NUGYEN_LIEU SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1,ten);
         pstmt.setString(2,don_vi);
