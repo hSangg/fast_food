@@ -130,6 +130,9 @@ public class MenuManagementController implements Initializable {
 
     @FXML
     private HBox button_xoamon;
+    @FXML
+    private TextField textfield_xoa_mon;
+
 
     @FXML
     private TextField textfield_tenmon;
@@ -139,6 +142,7 @@ public class MenuManagementController implements Initializable {
     private MenuItem currentMenuItemClick;
     private Material currentMaterielClick;
     public String mode = "ADD_NL";
+
     //private int originalPrice = 0;
     /*
     + EDIT_MON_AN (không sửa nguyên liệu)
@@ -444,7 +448,33 @@ public class MenuManagementController implements Initializable {
 
 
             });
-
+            textfield_xoa_mon.setOnKeyPressed(event->{
+                int result =0;
+                if(event.getCode()== KeyCode.ENTER){
+                    String moncanxoa = textfield_xoa_mon.getText();
+                    int id=0;
+                    try {
+                        id = db.findIdMon(moncanxoa);
+                        result++;
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if(result!=0){
+                        try {
+                            db.DelFood(id);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        textfield_xoa_mon.clear();
+                        textfield_xoa_mon.setPromptText("Đã xóa thành công");
+                        try {
+                            renderTableMonAn();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            });
             textfield_xoa_nl.setOnKeyPressed(event -> {
                 int result = 0;
                 if (event.getCode() == KeyCode.ENTER) {

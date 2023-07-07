@@ -55,7 +55,8 @@ public class DashboardController implements Initializable, Callbacks {
     private TextField tenKh;
     @FXML
     private TextField soBandat;
-
+    @FXML
+    private Text T_km;
     public String render_type;
 
     public HashSet<OrderDetail> order_list;
@@ -210,7 +211,9 @@ public class DashboardController implements Initializable, Callbacks {
         });
 
 
-
+        total_bill.setText("$0.00");
+        total.setText("$0.00");
+        T_km.setText("0%");
         Submit.setOnMouseClicked(e->{
             try {
                 this.result = db.getAllOrders1();

@@ -435,7 +435,6 @@ public class DBHandler {
         }
         return id_;
     }
-
     public void UpdateEmp(String name, String sdt, int luong, String ten_quan_ly) throws SQLException {
         int id = find_id(name);
         int id_quan_ly = find_manager_id(ten_quan_ly);
@@ -571,7 +570,17 @@ public class DBHandler {
 
         return vouchers;
     }
-
+    public void DelFood(int id) throws SQLException {
+        PreparedStatement pstmt=conn.prepareStatement("DELETE FROM CHITIET_DON WHERE ID_MON=?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+        pstmt = conn.prepareStatement("DELETE FROM NGUYEN_LIEU_MON_AN WHERE ID_MON=?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+        pstmt = conn.prepareStatement("Delete from MON_AN WHERE ID=?");
+        pstmt.setInt(1,id);
+        pstmt.executeUpdate();
+    }
     public void AddFood(String ten, String moTa, String loai, int gia, String imagePath, String image) throws SQLException {
         String sql = "INSERT INTO MON_AN ( ID, TEN_MON, MO_TA, LOAI, GIA ) VALUES (?,?,?,?,?)";
         Statement sm = conn.createStatement();
