@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -57,6 +58,14 @@ public class DashboardController implements Initializable, Callbacks {
     private TextField soBandat;
     @FXML
     private Text T_km;
+    @FXML
+    private void onHboxHoantatClicked() {
+        // Ẩn hoặc xóa các orderItem trong fxml dashboard
+        for (Node orderItem : order_layout.getChildren()) {
+            orderItem.setVisible(false); // Ẩn orderItem
+
+        }
+    }
     public String render_type;
 
     public HashSet<OrderDetail> order_list;
@@ -253,6 +262,11 @@ public class DashboardController implements Initializable, Callbacks {
             try {
                 db.InsOrder(id_don, 0, db.findIdKm(), null, 10, Integer.parseInt(soBandat.getText()), "chưa quyết định", "chưa thanh toán", 0, currentdate, "khong co");
                 System.out.println(id_don);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Thành công");
+                alert.setContentText("Đã in hóa đơn thành công");
+                alert.show();
+                onHboxHoantatClicked();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
