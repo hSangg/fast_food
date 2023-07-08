@@ -63,7 +63,7 @@ public class DashboardController implements Initializable, Callbacks {
         // Ẩn hoặc xóa các orderItem trong fxml dashboard
         for (Node orderItem : order_layout.getChildren()) {
             orderItem.setVisible(false); // Ẩn orderItem
-
+            orderItem.setDisable(true);
         }
     }
     public String render_type;
@@ -262,10 +262,6 @@ public class DashboardController implements Initializable, Callbacks {
             try {
                 db.InsOrder(id_don, 0, db.findIdKm(), null, 10, Integer.parseInt(soBandat.getText()), "chưa quyết định", "chưa thanh toán", 0, currentdate, "khong co");
                 System.out.println(id_don);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Thành công");
-                alert.setContentText("Đã in hóa đơn thành công");
-                alert.show();
                 onHboxHoantatClicked();
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
@@ -273,6 +269,7 @@ public class DashboardController implements Initializable, Callbacks {
             try {
                 int check=0;
                 String popUp="Những món sau đây không thế chế biến: \n";
+                int count=0;
                 for (OrderDetail i : order_list) {
                     int id_mon = i.getOrder().getId();
                     int sL=i.getCount();
@@ -285,7 +282,15 @@ public class DashboardController implements Initializable, Callbacks {
                         popUp+="\n";
                         db.InsOrderDetail(id_don, id_mon, sLC);
                     }
+                    count++;
                 }
+                if(count!=0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Thành công");
+                    alert.setContentText("Đã in hóa đơn thành công");
+                    alert.show();
+                }
+                order_list.clear();
                 System.out.println(popUp);
                 if(check==1){
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
