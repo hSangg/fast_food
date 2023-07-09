@@ -61,10 +61,12 @@ public class DashboardController implements Initializable, Callbacks {
     @FXML
     private void onHboxHoantatClicked() {
         // Ẩn hoặc xóa các orderItem trong fxml dashboard
-        for (Node orderItem : order_layout.getChildren()) {
-            orderItem.setVisible(false); // Ẩn orderItem
-            orderItem.setDisable(true);
-        }
+//        for (Node orderItem : order_layout.getChildren()) {
+//            orderItem.setVisible(false); // Ẩn orderItem
+//            orderItem.setDisable(true);
+//            order_layout.getChildren().remove(orderItem);
+//        }
+        order_layout.getChildren().clear();
     }
     public String render_type;
 

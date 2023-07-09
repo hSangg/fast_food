@@ -132,6 +132,8 @@ public class MenuManagementController implements Initializable {
     private HBox button_xoamon;
     @FXML
     private TextField textfield_xoa_mon;
+    @FXML
+    private HBox HBox_refresh;
 
 
     @FXML
@@ -576,7 +578,13 @@ public class MenuManagementController implements Initializable {
                 }
             });
 
-
+            HBox_refresh.setOnMouseClicked(e->{
+                try {
+                    renderTableMonAn();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
 
             // ------XU LY BUTTON-------------------
 

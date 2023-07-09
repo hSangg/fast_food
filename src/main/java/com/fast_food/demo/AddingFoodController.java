@@ -238,6 +238,10 @@ public class AddingFoodController implements Initializable {
                     for (Material material : allMaterial) {
                         db.InsNl(textfield_tenmon.getText(),material.getName(),material.getQuantity());
                     }
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Thành công");
+                    alert.setContentText("Đã thêm món thành công");
+                    alert.show();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
