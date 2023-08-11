@@ -304,16 +304,26 @@ public class DBHandler {
         return result;
     }
 
+    public String FindNameEmp(int id) throws SQLException {
+        PreparedStatement pstmt = conn.prepareStatement("SELECT TEN FROM NHAN_VIEN WHERE ID = ?");
+        pstmt.setInt(1,id);
+        ResultSet rs = pstmt.executeQuery();
+        String ten = null;
+        if(rs.next()){
+            ten = rs.getString("TEN");
+        }
+        return ten;
+    }
     public List<WorkMonthEmployee> getProductivityEmployee() {
         List<WorkMonthEmployee> result = new ArrayList<>();
 
         try (Statement statement = conn.createStatement();
-             ResultSet rs = statement.executeQuery("SELECT * FROM VIEW_THOI_GIAN_NHAN_VIEN_LAM_VIEC")) {
+             ResultSet rs = statement.executeQuery("SELECT * FROM GIO_LAMVIEC")) {
 
             while (rs.next()) {
-                int employeeId = rs.getInt("ID_NHANVIEN");
-                String employeeName = rs.getString("TEN_NHANVIEN");
-                int totalWorkingTime = rs.getInt("TONG_THOIGIAN_LAMVIEC");
+                int employeeId = rs.getInt("NHANVIEN_ID");
+                String employeeName = FindNameEmp(employeeId);
+                int totalWorkingTime = rs.getInt("TONGGIO");
 
                 WorkMonthEmployee employee = new WorkMonthEmployee(employeeId, employeeName, totalWorkingTime);
                 result.add(employee);
