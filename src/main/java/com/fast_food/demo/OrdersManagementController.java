@@ -149,6 +149,7 @@ public class OrdersManagementController implements Initializable {
                     try {
                         HashSet<FastFood> food = db.getFastFoodByIdOrder(order.getId());
                         for (FastFood x: food) {
+                            System.out.println(x.getId());
                             foodInOrder.add(x);
                         }
 

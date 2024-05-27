@@ -16,9 +16,9 @@ public class DBHandler {
     public DBHandler() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-            String url = "jdbc:oracle:thin:@192.168.56.1:1521:ORCL";
-            String user = "SYSTEM";
-            String pass = "thanhcong";
+            String url = "jdbc:oracle:thin:@localhost:1521:orcl";
+            String user = "sys as sysdba";
+            String pass = "chs2003";
 
             this.conn = DriverManager.getConnection(url, user, pass);
 
@@ -797,7 +797,7 @@ public class DBHandler {
 
     }
     public void EditOfIngre(int id,String ten,String don_vi,int sl,int gia) throws SQLException {
-        String sql ="UPDATE NUGYEN_LIEU SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
+        String sql ="UPDATE NGUYEN_LIEU SET TEN=?,DON_VI=?,SO_LUONG_TRONG_KHO=?,GIA_NL=? WHERE ID=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1,ten);
         pstmt.setString(2,don_vi);

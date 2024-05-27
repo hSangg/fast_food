@@ -275,11 +275,14 @@ public class IngredientManagementController implements Initializable {
         button_themnguyenlieu.setOnMouseClicked(e -> {
             if (this.mode.equals("ADD_NL")) {
                 if (!check_nl()) {
-
+                    Random random = new Random();
+                    int min = 100000; // The smallest 6-digit number
+                    int max = 999999; // The largest 6-digit number
+                    int randomNumber = random.nextInt((max - min) + 1) + min;
                     String ten_nl = textfield_tennl.getText();
                     int so_luong_trong_kho = 0;
                     String don_vi = textfield_donvi.getText();
-                    int id = ingredientList.size() + 1;
+                    int id = randomNumber;
                     Date ngay_nhap_kho = null;
                     int gia = Integer.parseInt(textfield_gia.getText());
 
@@ -315,6 +318,7 @@ public class IngredientManagementController implements Initializable {
                             ingredient.setNgayNhapKho(ngay_nhap_kho);
                             ingredient.setSoLuongTrongKho(so_luong_trong_kho);
                             ingredient.setDonVi(don_vi);
+                            System.out.print(id);
                             try {
                                 db.EditOfIngre(id,ten_nl,don_vi,so_luong_trong_kho,gia);
                             } catch (SQLException ex) {

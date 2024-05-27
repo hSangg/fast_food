@@ -272,16 +272,21 @@ public class DashboardController implements Initializable, Callbacks {
                 int check=0;
                 String popUp="Những món sau đây không thế chế biến: \n";
                 int count=0;
+
                 for (OrderDetail i : order_list) {
                     int id_mon = i.getOrder().getId();
+                    System.out.println(id_mon);
                     int sL=i.getCount();
                     int sLC=db.checkMon(id_mon,sL);
                     System.out.print(sL+"   ");
                     System.out.println(sLC);
+                    db.InsOrderDetail(id_don, id_mon, sLC);
+
                     if((sL-sLC)>0){
                         check=1;
                         popUp+=i.getOrder().getName() + " x"+ (sL - sLC);
                         popUp+="\n";
+                        System.out.println("insert hoa don");
                         db.InsOrderDetail(id_don, id_mon, sLC);
                     }
                     count++;

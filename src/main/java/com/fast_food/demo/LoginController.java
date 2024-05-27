@@ -59,6 +59,10 @@ public class LoginController implements Initializable {
     public void login() {
         String username = tf_username.getText().trim();
         String password = tf_password.getText().trim();
+
+        System.out.println(username);
+        System.out.println(password);
+
         if (!check_is_error()) {
             try {
                 LogedInUser userlogin = db.logIn(username, password);
